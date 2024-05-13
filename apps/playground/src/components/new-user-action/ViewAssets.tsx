@@ -1,6 +1,6 @@
 import { Button, Typo } from "@axieinfinity/ronin-ui"
 import { useWalletgo } from "@roninnetwork/walletgo"
-import { ID_URL } from "src/connectors/IdConnector"
+import { ID_URL } from "src/connectors/MavisIdConnector"
 import { useGlobalToast } from "src/hooks/useToast"
 
 import { Card } from "../Card"

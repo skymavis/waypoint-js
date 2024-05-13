@@ -1,3 +1,3 @@
-const prettierConfig = require("@axieinfinity/eslint-config-ronin/config/prettier.cjs")
+const prettierConfig = require("@sky-mavis/eslint-config-default/config/prettier.cjs")
 
 module.exports = prettierConfig

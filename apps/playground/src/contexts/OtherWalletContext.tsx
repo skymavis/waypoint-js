@@ -9,7 +9,7 @@ import {
 import { createContext, FC, ReactNode, useCallback, useState } from "react"
 import { GgLogin } from "src/components/GgLogin"
 
-import { idConnectorImpl } from "../connectors/IdConnector"
+import { mavisIdConnector } from "../connectors/MavisIdConnector"
 
 export const EXPLORER_DOMAIN = "https://app.roninchain.com"
 export const EXPLORER_CDN_URL = "https://cdn.skymavis.com/explorer-cdn"
@@ -42,7 +42,7 @@ const DEFAULT_WALLETS = createRoninWallets({
   noGnosisSafe: true,
 })
 
-const WITH_ID_WALLETS = [idConnectorImpl, ...DEFAULT_WALLETS]
+const WITH_ID_WALLETS = [mavisIdConnector, ...DEFAULT_WALLETS]
 
 interface IProviderProps {
   children: ReactNode

@@ -1,4 +1,4 @@
 module.exports = {
   root: true,
-  extends: ["@axieinfinity/ronin"],
+  extends: ["@sky-mavis/default"],
 }

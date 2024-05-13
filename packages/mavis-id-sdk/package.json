@@ -1,6 +1,6 @@
 {
-  "name": "@axieinfinity/mavis-id-sdk",
-  "version": "0.0.3",
+  "name": "@sky-mavis/mavis-id-sdk",
+  "version": "0.0.1",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -36,11 +36,17 @@
     "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-commonjs": "25.0.7",
     "@rollup/plugin-node-resolve": "15.2.3",
+    "@sky-mavis/eslint-config-default": "*",
+    "@types/node": "20.12.11",
+    "eslint": "8.57.0",
     "fs-extra": "11.2.0",
+    "prettier": "3.2.5",
     "rollup": "4.14.1",
     "rollup-plugin-peer-deps-external": "2.2.4",
     "rollup-plugin-postcss": "4.0.2",
     "rollup-plugin-typescript2": "0.36.0",
+    "tslib": "2.6.2",
+    "typescript": "5.4.5",
     "viem": "2.9.2"
   },
   "dependencies": {

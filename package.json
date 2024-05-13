@@ -11,13 +11,7 @@
     "clean": "turbo run clean && rm -rf node_modules .turbo"
   },
   "devDependencies": {
-    "@axieinfinity/eslint-config-ronin": "1.0.2",
-    "eslint": "8.57.0",
-    "prettier": "3.2.5",
-    "turbo": "1.13.2",
-    "typescript": "5.4.4",
-    "tslib": "2.6.2",
-    "@types/node": "20.12.4"
+    "turbo": "1.13.3"
   },
   "engines": {
     "node": ">=20",

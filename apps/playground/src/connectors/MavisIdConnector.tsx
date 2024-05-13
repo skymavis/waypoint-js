@@ -1,11 +1,11 @@
-import { MavisIdProvider } from "@axieinfinity/mavis-id-sdk"
+import { MavisIdProvider } from "@sky-mavis/mavis-id-sdk"
 import {
   AutoConnectPriority,
   BaseConnector,
   ConnectorError,
   IConnectResult,
 } from "@roninnetwork/walletgo"
-import type { IAddEthereumChainParameter } from "@roninnetwork/walletgo/dist/types/common/eip3085"
+
 import { ReactNode } from "react"
 
 import { MavisLogo } from "./MavisLogo"
@@ -13,7 +13,9 @@ import { MavisLogo } from "./MavisLogo"
 export const ID_URL = "https://id.skymavis.com"
 const STORAGE_KEY = "MAVIS.ID:PROFILE"
 
-class IdConnector extends BaseConnector<MavisIdProvider> {
+const mavisIdLogo = <MavisLogo />
+
+class MavisIdConnector extends BaseConnector<MavisIdProvider> {
   switchable: false
   scannable: false
   autoPriority = AutoConnectPriority.WalletConnect
@@ -22,8 +24,14 @@ class IdConnector extends BaseConnector<MavisIdProvider> {
 
   provider?: MavisIdProvider
 
-  constructor(logo: ReactNode) {
-    super("MAVIS_ID_CONNECTOR", "Mavis ID", { default: ID_URL, external: ID_URL }, logo, false)
+  constructor() {
+    super(
+      "MAVIS_ID_CONNECTOR",
+      "Mavis ID",
+      { default: ID_URL, external: ID_URL },
+      mavisIdLogo,
+      false,
+    )
   }
 
   async shouldAutoConnect(): Promise<boolean> {
@@ -59,10 +67,9 @@ class IdConnector extends BaseConnector<MavisIdProvider> {
     return true
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  switchChain(chain: IAddEthereumChainParameter): Promise<boolean> {
+  switchChain(chain: unknown): Promise<boolean> {
     throw new Error("Method not implemented.")
   }
 }
 
-export const idConnectorImpl = new IdConnector(<MavisLogo />)
+export const mavisIdConnector = new MavisIdConnector()

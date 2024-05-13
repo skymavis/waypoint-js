@@ -2,8 +2,6 @@
 
 # dependencies
 **/node_modules
-/.pnp
-.pnp.js
 .npmrc
 
 # testing
@@ -16,9 +14,12 @@
 # rollup
 **/.rollup.cache
 
-# production buidl
+# production build
 **/build
 **/dist
+
+# turbo repo
+**/.turbo
 
 # misc
 .DS_Store

@@ -31,7 +31,7 @@ npm install ethers@5
 ```js
 import * as ethers from "ethers"
 
-const provider = new ethers.providers.Web3Provider(mavisIdProvider);
+const provider = new ethers.providers.Web3Provider(mavisIdProvider)
 ```
 
 ## Usage with web3.js
@@ -41,9 +41,9 @@ npm install web3
 ```
 
 ```js
-import Web3 from "web3";
+import Web3 from "web3"
 
-const web3 = new Web3(mavisIdProvider);
+const web3 = new Web3(mavisIdProvider)
 ```
 
 ## Example

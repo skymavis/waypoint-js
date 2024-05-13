@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: ["@axieinfinity/ronin", "plugin:@next/next/recommended"],
+  extends: ["@sky-mavis/default", "plugin:@next/next/recommended"],
   rules: {
     "@next/next/no-img-element": "off",
     "no-console": "off",
