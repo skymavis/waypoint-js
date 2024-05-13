@@ -1,0 +1,58 @@
+{
+  "name": "@axieinfinity/mavis-id-sdk",
+  "version": "0.0.3",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/mjs/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./dist/*": "./dist/*"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/mjs/index.js",
+  "types": "./dist/types/index.d.ts",
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && rollup -c",
+    "dev": "rm -rf dist && rollup -c --watch",
+    "lint": "eslint . --ext .js,.tsx,.ts",
+    "clean": "rm -rf .turbo node_modules dist"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "7.24.4",
+    "@rollup/plugin-babel": "6.0.4",
+    "@rollup/plugin-commonjs": "25.0.7",
+    "@rollup/plugin-node-resolve": "15.2.3",
+    "fs-extra": "11.2.0",
+    "rollup": "4.14.1",
+    "rollup-plugin-peer-deps-external": "2.2.4",
+    "rollup-plugin-postcss": "4.0.2",
+    "rollup-plugin-typescript2": "0.36.0",
+    "viem": "2.9.2"
+  },
+  "dependencies": {
+    "jwt-decode": "4.0.0"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.4",
+    "viem": ">=2.9.2"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  }
+}

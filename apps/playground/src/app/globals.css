@@ -1,0 +1,39 @@
+@import "@axieinfinity/ronin-ui/dist/bundle.css";
+
+@import "@roninnetwork/walletgo/dist/base.css";
+@import "@roninnetwork/walletgo/dist/theme/ronin-ui.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply m-0 box-border bg-tc-bg font-sans text-tc-text antialiased;
+
+  font-size: var(--dg-t-body-md-font-size);
+  font-weight: var(--dg-t-body-md-font-weight);
+  line-height: var(--dg-t-body-md-line-height);
+
+  font-feature-settings:
+    "tnum" on,
+    "lnum" on,
+    "ss01" on,
+    "ss02" on,
+    "ss04" on,
+    "cv08" on,
+    "case" on;
+
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dango-toast-bottomLeft {
+  bottom: 28px;
+  left: 28px;
+}
+
+.dango-toast {
+  overflow: hidden;
+  gap: 12px;
+  flex-direction: column;
+}
