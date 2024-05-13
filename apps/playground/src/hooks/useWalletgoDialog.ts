@@ -2,6 +2,6 @@
 
 import { useContext } from "react"
 
-import { OtherWalletDialogContext } from "../contexts/OtherWalletContext"
+import { WalletgoDialogContext } from "../contexts/WalletContext"
 
-export const useWalletgoDialog = () => useContext(OtherWalletDialogContext)
+export const useWalletgoDialog = () => useContext(WalletgoDialogContext)

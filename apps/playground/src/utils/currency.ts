@@ -1,5 +1,6 @@
-import { BigNumber, parseFixed } from "@ethersproject/bignumber"
-import { formatEther } from "@ethersproject/units"
+import { parseFixed } from "@ethersproject/bignumber"
+import { BigNumber } from "ethers"
+import { formatEther } from "ethers/lib/utils"
 
 export const formatBalance = (amount: BigNumber) => {
   const remainder = amount.mod(1e14)

@@ -1,12 +1,10 @@
-import { MavisIdProvider } from "@sky-mavis/mavis-id-sdk"
 import {
   AutoConnectPriority,
   BaseConnector,
   ConnectorError,
   IConnectResult,
 } from "@roninnetwork/walletgo"
-
-import { ReactNode } from "react"
+import { MavisIdProvider } from "@sky-mavis/mavis-id-sdk"
 
 import { MavisLogo } from "./MavisLogo"
 
@@ -67,6 +65,7 @@ class MavisIdConnector extends BaseConnector<MavisIdProvider> {
     return true
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   switchChain(chain: unknown): Promise<boolean> {
     throw new Error("Method not implemented.")
   }

@@ -1,17 +1,17 @@
 import { Intro } from "src/components/Intro"
-import { NewUserActions } from "src/components/new-user-action/NewUserActions"
+import { UserAction } from "src/components/UserAction"
 
 const RootPage = () => {
   return (
     <>
       <div className="flex h-screen w-screen items-stretch justify-start">
-        <div className="flex flex-[3] flex-col bg-tc-itr-plain-hovered p-40">
+        <div className="flex flex-[3] flex-col bg-secondary p-20">
           <Intro />
         </div>
 
-        <div className="flex-[7] overflow-auto bg-tc-bg p-40">
-          <div className="mx-auto flex max-w-[600px] flex-col justify-center gap-40">
-            <NewUserActions />
+        <div className="flex-[7] overflow-auto bg-background p-20">
+          <div className="mx-auto flex max-w-[660px] flex-col justify-center gap-4">
+            <UserAction />
           </div>
         </div>
       </div>

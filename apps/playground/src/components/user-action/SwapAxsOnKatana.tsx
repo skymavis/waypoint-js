@@ -1,20 +1,30 @@
-import { Button, Link, ProgressCircleLoader, TextField, Typo } from "@axieinfinity/ronin-ui"
+"use client"
+
+import { Label } from "@radix-ui/react-label"
 import { useWalletgo } from "@roninnetwork/walletgo"
 import { BigNumber, constants } from "ethers"
 import { parseUnits } from "ethers/lib/utils"
 import { useState } from "react"
+import { Button } from "src/@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "src/@/components/ui/card"
+import { Input } from "src/@/components/ui/input"
 import { addressConfig } from "src/config/address"
 import { KatanaRouter__factory } from "src/contracts"
-import { useGlobalToast } from "src/hooks/useToast"
+import { useWrapToast } from "src/hooks/useWrapToast"
 import { debugError } from "src/utils/debug"
 
-import { Card } from "../Card"
-import { Divider } from "../Divider"
-import { ResultBox } from "../ResultBox"
+import { LoadingSpinner } from "../LoadingSpinner"
 
 export const SwapAxsOnKatana = () => {
   const { walletProvider, account } = useWalletgo()
-  const { showError, showSuccess } = useGlobalToast()
+  const { toastError, toastConsoleError, toastSuccess } = useWrapToast()
 
   const [amount, setAmount] = useState<string>("0.1")
   const [txHash, setTxHash] = useState<string>()
@@ -22,7 +32,7 @@ export const SwapAxsOnKatana = () => {
 
   const handleSwapAxsToRon = async () => {
     if (!walletProvider || !account) {
-      showError("Please connect your wallet first!")
+      toastError("Please connect your wallet first!")
       return
     }
 
@@ -56,16 +66,15 @@ export const SwapAxsOnKatana = () => {
         path,
         account,
         deadline,
-        { gasPrice: parseUnits("20", "gwei"), gasLimit: 200000 }, // Set gas price according to network conditions
       )
 
-      showSuccess(`Swap ${amount} AXS successfully!`)
+      toastSuccess(`Swap ${amount} AXS successfully!`)
       setTxHash(swapTX.hash)
 
       setLoading(false)
     } catch (error) {
       debugError("handleSwapAxsToRon", error)
-      showError()
+      toastConsoleError()
 
       setLoading(false)
     }
@@ -73,7 +82,7 @@ export const SwapAxsOnKatana = () => {
 
   const handleSwapRonToAxs = async () => {
     if (!walletProvider || !account) {
-      showError("Please connect your wallet first!")
+      toastError("Please connect your wallet first!")
       return
     }
 
@@ -102,16 +111,16 @@ export const SwapAxsOnKatana = () => {
         path,
         account,
         deadline,
-        { gasPrice: parseUnits("20", "gwei"), gasLimit: 200000, value: amountToSwap }, // Set gas price according to network conditions
+        { value: amountToSwap },
       )
 
-      showSuccess(`Swap ${amount} RON successfully!`)
+      toastSuccess(`Swap ${amount} RON successfully!`)
       setTxHash(swapTX.hash)
 
       setLoading(false)
     } catch (error) {
       debugError("handleSwapRonToAxs", error)
-      showError()
+      toastConsoleError()
 
       setLoading(false)
     }
@@ -119,58 +128,53 @@ export const SwapAxsOnKatana = () => {
 
   return (
     <Card>
-      <Typo level="display-sm">swap on katana | eth_sendTransaction</Typo>
-      <Typo dim className="mt-4 italic" level="body-sm">
-        Swap AXS to RON or vice versa
-      </Typo>
+      <CardHeader>
+        <CardTitle>Katana</CardTitle>
+        <CardDescription>Swap AXS & RON on Katana.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form>
+          <div className="grid w-full items-center gap-4">
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="amount">Amount</Label>
+              <Input
+                id="amount"
+                placeholder="Swap amount"
+                value={amount}
+                onChange={event => {
+                  setAmount(event.target.value)
+                }}
+                type="number"
+                min={0}
+                max={999999999}
+              />
+            </div>
 
-      <TextField
-        type="string"
-        placeholder="AXS Amount"
-        className="mt-20"
-        value={amount}
-        onChange={event => setAmount(event.target.value)}
-      />
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="result">Result</Label>
+              <Input
+                id="result"
+                tabIndex={-1}
+                placeholder="Your transaction hash"
+                value={txHash ?? ""}
+                readOnly
+                type="string"
+              />
+            </div>
+          </div>
+        </form>
+      </CardContent>
+      <CardFooter className="flex justify-end gap-1">
+        <Button onClick={handleSwapAxsToRon} disabled={!account || loading} className="gap-1">
+          {loading && <LoadingSpinner />}
+          Swap to RON
+        </Button>
 
-      <div className="mt-20 flex gap-12">
-        <Button
-          fullWidth
-          label="Swap AXS to RON"
-          onClick={handleSwapAxsToRon}
-          disabled={!account || loading}
-          customRightIcon={
-            loading ? <ProgressCircleLoader className="ml-12" size="sm" /> : undefined
-          }
-        />
-
-        <Button
-          fullWidth
-          label="Swap RON to AXS"
-          onClick={handleSwapRonToAxs}
-          disabled={!account || loading}
-          customRightIcon={
-            loading ? <ProgressCircleLoader className="ml-12" size="sm" /> : undefined
-          }
-        />
-      </div>
-
-      <Divider />
-
-      <Typo level="body-md-strong">Result</Typo>
-      <ResultBox className="mt-8">
-        {txHash ? (
-          <Link
-            href={`https://saigon-app.roninchain.com/tx/${txHash}`}
-            level="body-md-strong"
-            target="_blank"
-            className="block truncate"
-          >
-            {txHash}
-          </Link>
-        ) : (
-          "--"
-        )}
-      </ResultBox>
+        <Button onClick={handleSwapRonToAxs} disabled={!account || loading} className="gap-1">
+          {loading && <LoadingSpinner />}
+          Swap to AXS
+        </Button>
+      </CardFooter>
     </Card>
   )
 }

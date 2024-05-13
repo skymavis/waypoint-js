@@ -1,13 +1,23 @@
-import { Button, ProgressCircleLoader, Typo } from "@axieinfinity/ronin-ui"
+"use client"
+
+import { Label } from "@radix-ui/react-label"
 import { useWalletgo } from "@roninnetwork/walletgo"
 import { splitSignature, verifyTypedData } from "ethers/lib/utils"
 import { useState } from "react"
-import { useGlobalToast } from "src/hooks/useToast"
+import { Button } from "src/@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "src/@/components/ui/card"
+import { Input } from "src/@/components/ui/input"
+import { useWrapToast } from "src/hooks/useWrapToast"
 import { debugError } from "src/utils/debug"
 
-import { Card } from "../Card"
-import { Divider } from "../Divider"
-import { ResultBox } from "../ResultBox"
+import { LoadingSpinner } from "../LoadingSpinner"
 
 const SIGN_DATA = {
   types: {
@@ -64,14 +74,14 @@ const SIGN_DATA = {
 
 export const SignTypedDataV4 = () => {
   const { walletProvider, account } = useWalletgo()
-  const { showError, showSuccess } = useGlobalToast()
+  const { toastError, toastConsoleError, toastSuccess } = useWrapToast()
 
   const [signResult, setSignResult] = useState<string>()
   const [loading, setLoading] = useState<boolean>(false)
 
   const handleSignTypedData = async () => {
     if (!walletProvider || !account) {
-      showError("Please connect your wallet first!")
+      toastError("Please connect your wallet first!")
       return
     }
 
@@ -92,45 +102,52 @@ export const SignTypedDataV4 = () => {
 
       if (recoverAddress === account) {
         setSignResult(result)
-        showSuccess("Signature is valid!")
+        toastSuccess("Signature is valid!")
       } else {
-        showError("Signature is invalid!")
+        toastError("Signature is invalid!")
       }
 
       setLoading(false)
     } catch (error) {
       debugError("handleSignTypedData", error)
-      showError()
+      toastConsoleError()
 
       setLoading(false)
     }
   }
 
   return (
-    <>
-      <Card>
-        <Typo level="display-sm">eth_signTypedData_v4</Typo>
-        <Typo dim className="mt-4 italic" level="body-sm">
+    <Card>
+      <CardHeader>
+        <CardTitle>Sign Data</CardTitle>
+        <CardDescription>
           Presents a data message for the user to sign in a structured and readable format and
           returns the signed response.
-        </Typo>
-
-        <Button
-          fullWidth
-          label="Sign"
-          className="mt-20"
-          onClick={handleSignTypedData}
-          disabled={!account || loading}
-          customRightIcon={
-            loading ? <ProgressCircleLoader className="ml-12" size="sm" /> : undefined
-          }
-        />
-
-        <Divider />
-
-        <Typo level="body-md-strong">Result</Typo>
-        <ResultBox className="mt-8">{signResult ?? "--"}</ResultBox>
-      </Card>
-    </>
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form>
+          <div className="grid w-full items-center gap-4">
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="result">Result</Label>
+              <Input
+                id="result"
+                tabIndex={-1}
+                placeholder="Your signature"
+                value={signResult ?? ""}
+                readOnly
+                type="string"
+              />
+            </div>
+          </div>
+        </form>
+      </CardContent>
+      <CardFooter className="flex justify-end">
+        <Button onClick={handleSignTypedData} disabled={!account || loading} className="gap-1">
+          {loading && <LoadingSpinner />}
+          Sign data
+        </Button>
+      </CardFooter>
+    </Card>
   )
 }

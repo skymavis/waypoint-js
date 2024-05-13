@@ -7,7 +7,6 @@ import {
   WalletWidget,
 } from "@roninnetwork/walletgo"
 import { createContext, FC, ReactNode, useCallback, useState } from "react"
-import { GgLogin } from "src/components/GgLogin"
 
 import { mavisIdConnector } from "../connectors/MavisIdConnector"
 
@@ -20,7 +19,7 @@ interface IDialogContext {
   setOpen: (value: boolean) => void
 }
 
-export const OtherWalletDialogContext = createContext<IDialogContext>({
+export const WalletgoDialogContext = createContext<IDialogContext>({
   open: false,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   setOpen: (value: boolean) => {},
@@ -48,7 +47,7 @@ interface IProviderProps {
   children: ReactNode
 }
 
-export const OtherWalletProvider: FC<IProviderProps> = ({ children }) => {
+export const WalletContext: FC<IProviderProps> = ({ children }) => {
   const [open, setOpen] = useState(false)
 
   const handleOpen = useCallback(() => {
@@ -61,16 +60,15 @@ export const OtherWalletProvider: FC<IProviderProps> = ({ children }) => {
 
   return (
     <WalletgoProvider defaultChainId={SupportedChainIds.RoninTestnet}>
-      <OtherWalletDialogContext.Provider value={{ open, setOpen }}>
+      <WalletgoDialogContext.Provider value={{ open, setOpen }}>
         <WalletWidget
           wallets={WITH_ID_WALLETS}
           isOpen={open}
           onOpen={handleOpen}
           onClose={handleClose}
         />
-        <GgLogin />
         {children}
-      </OtherWalletDialogContext.Provider>
+      </WalletgoDialogContext.Provider>
     </WalletgoProvider>
   )
 }
