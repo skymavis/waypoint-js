@@ -1,0 +1,60 @@
+name: Security and Build
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  scan:
+    if: github.event_name == 'pull_request'
+    uses: axieinfinity/workflows-samples/.github/workflows/security-basic-scan.yml@main
+
+  build:
+    name: Build for PR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout Repo"
+        uses: "actions/checkout@v4"
+
+      - name: "Setup pnpm"
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.12.1
+          cache: "pnpm"
+          cache-dependency-path: "pnpm-lock.yaml"
+          registry-url: https://npm.pkg.github.com/
+          scope: "@axieinfinity"
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('js/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_READ_TOKEN }}
+
+      - name: Build
+        run: pnpm build
