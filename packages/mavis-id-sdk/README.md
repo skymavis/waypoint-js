@@ -1,86 +1,94 @@
-# Mavis ID Web3 Provider
+# Mavis ID SDK
 
-Mavis ID Provider [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) Compatible Ethereum JavaScript Provider
+## What is Mavis ID?
 
-## Introduction
+The [Mavis ID](https://id.skymavis.com) lets developers use features such as player authorization, account creation, and in-app wallet interaction in mobile and desktop games.
 
-The Mavis ID Web3 Provider is a JavaScript provider that is compatible with the EIP-1193 standard. It allows developers to interact with the Ronin blockchain using embedded wallet.
+#### Features:
+
+- Creating a wallet without requiring web3/crypto knowledge or downloading an external app
+- Recover & access the wallet on different devices with a simple passphrase
+- Perform on-chain actions like minting NFTs, sending transactions & signing messages
+- Gas sponsoring
+
+## SDK Introduction
+
+The Mavis ID SDK lets developers integrate with Mavis ID seamlessly & easily.
+
+- [Head to the playground](https://mavis-id-playground.vercel.app) to experience Mavis ID your way
+- [Head to the faucet](https://faucet.roninchain.com) to get your RON on Saigon Testnet
+
+#### Features:
+
+- `MavisIdProvider` is [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) Compatible Ethereum JavaScript Provider
+- Interact with any Javascript Ethereum Interface such as `viem`, `ether.js`, `web3js`
+- `WagmiConnector` | `WalletgoConnector` is coming soon
+- Standalone utilities for game developers (nfts, token balance, token approval, katana swap, ...) is coming soon
+
+## Prerequisites
+
+- Register your application with Sky Mavis to get `YOUR_APP_ID`
+- Request permission to use Mavis ID
+- Go to Developer Console > your app > App Permission > Mavis ID > Request Access
+
+[Head to the detail guide](https://docs.skymavis.com/placeholder) to acquired `YOUR_APP_ID`
 
 ## Installation
 
+npm:
+
 ```bash
-npm install @axieinfinity/mavis-id-sdk
+npm install @sky-mavis/mavis-id-sdk
 ```
 
-## Setup
+yarn:
+
+```bash
+yarn add @sky-mavis/mavis-id-sdk
+```
+
+pnpm:
+
+```bash
+pnpm install @sky-mavis/mavis-id-sdk
+```
+
+## Initialization
 
 ```js
 import { MavisIdProvider } from "mavis-id-sdk"
 
-const mavisIdProvider = MavisIdProvider.create({
-  clientId: process.env.YOUR_CLIENT_ID,
+const IdProvider = MavisIdProvider.create({
+  clientId: process.env.YOUR_APP_ID,
+  chainId: chainId,
 })
 ```
 
-## Usage with ethers.js (v5)
-
-```sh
-npm install ethers@5
-```
+Usage with ethers.js (v5):
 
 ```js
 import * as ethers from "ethers"
 
-const provider = new ethers.providers.Web3Provider(mavisIdProvider)
+const provider = new ethers.providers.Web3Provider(IdProvider)
 ```
 
-## Usage with web3.js
-
-```sh
-npm install web3
-```
+Usage with web3.js
 
 ```js
 import Web3 from "web3"
 
-const web3 = new Web3(mavisIdProvider)
+const web3 = new Web3(IdProvider)
+```
+
+Usage with viem
+
+```js
+import { createWalletClient, custom } from "viem"
+import { saigon } from "viem/chains"
+
+const viemClient = createWalletClient({ chain, transport: custom(mavisIdProvider) })
 ```
 
 ## Example
 
-Below are examples written using ethers.js. You can wrap the Mavis ID Provider with your favorite library that is compatible with EIP-1193.
-
-### Request accounts
-
-Before a user can write on the blockchain, they need to request accounts to sign into their wallet. If a user is already registered, this function will return the connected addresses.
-
-```js
-const accounts = await provider.send("eth_requestAccounts", [])
-```
-
-### Personal Sign
-
-Sign a message.
-
-```js
-const signature = await provider.getSigner().signMessage(<your_message>)
-```
-
-### Sign Typed Data V4
-
-Sign data according to the Typed Data Signing Standard [EIP-712](https://eips.ethereum.org/EIPS/eip-712).
-
-```js
-const signature = await provider
-      .getSigner()
-      ._signTypedData(<your_domains>, <your_types>, <your_values>)
-```
-
-### Send transaction
-
-Transfer token.
-
-```js
-const value = 2 // 2 RON
-const txData = await provider.getSigner().sendTransaction({ to: <your_address>, value})
-```
+[Head to the playground source code](https://github.com/skymavis/mavis-id-js/tree/main/apps/playground) for full use-cases
