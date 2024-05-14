@@ -42,3 +42,7 @@ yarn-error.log*
 
 # typechain build
 **/contracts/
+
+# ide
+.vscode
+.idea

@@ -20,7 +20,7 @@ import type { Requires } from "./utils/types"
 export type MavisIdProviderSetupOptions = {
   clientId: string
   chainId: number
-
+  redirectUri?: string
   gateOrigin?: string
   rpcUrl?: string
 }
@@ -38,6 +38,7 @@ export class MavisIdProvider extends EventEmitter implements IEip1193Provider {
   readonly clientId: string
   readonly gateOrigin: string
   readonly chainId: number
+  readonly redirectUri?: string
   private profile?: Profile
   private mpcAddress?: string
   private viemClient: Client
@@ -48,11 +49,12 @@ export class MavisIdProvider extends EventEmitter implements IEip1193Provider {
   ) {
     super()
 
-    const { clientId, chainId, gateOrigin, rpcUrl } = options
+    const { clientId, chainId, gateOrigin, rpcUrl, redirectUri } = options
 
     this.clientId = clientId
     this.chainId = chainId
     this.gateOrigin = gateOrigin
+    this.redirectUri = redirectUri
 
     this.viemClient = createClient({
       chain: VIEM_CHAIN_MAPPING[chainId],
@@ -109,7 +111,7 @@ export class MavisIdProvider extends EventEmitter implements IEip1193Provider {
     }>(requestId =>
       openPopup(`${gateOrigin}/client/${clientId}/authorize`, {
         state: requestId,
-        redirect: window.location.origin,
+        redirect: this.redirectUri ?? window.location.origin,
         origin: window.location.origin,
         scope: ["openid", "profile", "wallet", "email"].join(" "),
       }),
