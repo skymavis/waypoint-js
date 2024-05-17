@@ -23,20 +23,14 @@ jobs:
       - name: "Checkout Repo"
         uses: "actions/checkout@v4"
 
-      - name: "Setup pnpm"
-        uses: pnpm/action-setup@v3
-        with:
-          version: 8
-          run_install: false
-
-      - name: Setup Node
+      - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.12.1
-          cache: "pnpm"
-          cache-dependency-path: "pnpm-lock.yaml"
-          registry-url: https://npm.pkg.github.com/
-          scope: "@axieinfinity"
+
+      - name: "Setup pnpm"
+        shell: bash
+        run: corepack enable pnpm && corepack use pnpm@9.1.1
 
       - name: Get pnpm store directory
         shell: bash
@@ -47,7 +41,7 @@ jobs:
         name: Setup pnpm cache
         with:
           path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('js/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
