@@ -1,42 +1,30 @@
-name: Security and Build
+name: Release
 
 on:
-  pull_request:
-    branches: [main]
   push:
-    branches: [main]
-
-permissions:
-  contents: read
-  id-token: write
+    tags:
+      - 'mavis-id-sdk@v**'
+  workflow_dispatch:
 
 jobs:
   scan:
-    if: github.event_name == 'pull_request'
     uses: axieinfinity/workflows-samples/.github/workflows/security-basic-scan.yml@main
-
-  build:
-    name: Build for PR
+  release: 
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
-        uses: "actions/checkout@v4"
-
+        uses: actions/checkout@v4
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.12.1
-
       - name: Setup pnpm
         shell: bash
         run: corepack enable pnpm && corepack use pnpm@9.1.1
-
       - name: Get pnpm store directory
         shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
       - uses: actions/cache@v4
         name: Setup cache
         with:
@@ -44,11 +32,18 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READ_TOKEN }}
-
+      - name: Get package
+        run: |
+          echo "PACKAGE_NAME=$(echo "${{ github.ref_name }}" | cut -d'@' -f1)" >> $GITHUB_ENV
       - name: Build
-        run: pnpm build
+        run: pnpm build --filter="@sky-mavis/${{ env.PACKAGE_NAME }}"
+      - name: Publish to npm
+        run: |
+          cd packages/${{ env.PACKAGE_NAME }}
+          pnpm publish --tag $(echo "${{ github.ref_name }}" | cut -d'@' -f2 | sed 's/v//')
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_WRITE_TOKEN }}
