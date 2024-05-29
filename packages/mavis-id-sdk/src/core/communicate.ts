@@ -1,5 +1,5 @@
 import { Deferred } from "../utils/defer"
-import { JsonRpcError } from "./error"
+import { normalizeIdError } from "../utils/error"
 
 export type CallbackMessage = {
   state: string
@@ -62,8 +62,9 @@ export class CommunicateHelper {
 
     switch (type) {
       case "fail": {
-        const error = callbackMessage.error
-        return responseHandler.reject(new JsonRpcError(error.code, error.message))
+        const err = normalizeIdError(callbackMessage.error)
+
+        return responseHandler.reject(err)
       }
 
       default: {

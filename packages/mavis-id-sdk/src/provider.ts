@@ -1,23 +1,30 @@
 import { EventEmitter } from "events"
 import { jwtDecode } from "jwt-decode"
-import { Chain, Client, createClient, http, toHex } from "viem"
-import { goerli, mainnet, ronin, saigon } from "viem/chains"
+import {
+  Address,
+  Client,
+  createClient,
+  EIP1193Parameters,
+  getAddress,
+  http,
+  ProviderDisconnectedError,
+  toHex,
+} from "viem"
 
-import { CommunicateHelper } from "./common/communicate-helper"
-import { IEip1193Provider, IEip1193RequestArgs } from "./common/eip1193"
-import { EIP1193Event } from "./common/eip1193-event"
-import { JsonRpcError, ProviderErrorCode, RpcErrorCode } from "./common/error"
+import { VIEM_CHAIN_MAPPING } from "./common/chain"
+import { Eip1193EventName, Eip1193Provider, MavisIdRequestSchema } from "./common/eip1193"
 import { GATE_ORIGIN_PROD } from "./common/gate"
 import { Profile, RawProfile } from "./common/profile"
-import { getStorage, removeStorage, setStorage, STORAGE_PROFILE_KEY } from "./common/storage"
-import { personalSign } from "./personalSign"
-import { sendTransaction } from "./sendTransaction"
-import { signTypedDataV4 } from "./signTypedDataV4"
+import { CommunicateHelper } from "./core/communicate"
+import { personalSign } from "./core/personal-sign"
+import { sendTransaction } from "./core/send-tx"
+import { signTypedDataV4 } from "./core/sign-data"
 import { convertToZeroAddress } from "./utils/address"
 import { openPopup } from "./utils/popup"
+import { getStorage, removeStorage, setStorage, STORAGE_PROFILE_KEY } from "./utils/storage"
 import type { Requires } from "./utils/types"
 
-export type MavisIdProviderSetupOptions = {
+export type MavisIdProviderOpts = {
   clientId: string
   chainId: number
   redirectUri?: string
@@ -25,27 +32,21 @@ export type MavisIdProviderSetupOptions = {
   rpcUrl?: string
 }
 
-const VIEM_CHAIN_MAPPING: Record<number, Chain> = {
-  [ronin.id]: ronin,
-  [saigon.id]: saigon,
-  [mainnet.id]: mainnet,
-  [goerli.id]: goerli,
-}
+export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
+  private readonly clientId: string
+  private readonly gateOrigin: string
+  private readonly redirectUri?: string
 
-// TODO: Support both postMessage & redirect
-// TODO: Add redirect config true or false
-export class MavisIdProvider extends EventEmitter implements IEip1193Provider {
-  readonly clientId: string
-  readonly gateOrigin: string
   readonly chainId: number
-  readonly redirectUri?: string
+
   private profile?: Profile
-  private mpcAddress?: string
-  private viemClient: Client
+  private idAddress?: Address
+
+  private readonly viemClient: Client
   private readonly communicateHelper: CommunicateHelper
 
   protected constructor(
-    options: Requires<MavisIdProviderSetupOptions, "chainId" | "gateOrigin" | "rpcUrl">,
+    options: Requires<MavisIdProviderOpts, "chainId" | "gateOrigin" | "rpcUrl">,
   ) {
     super()
 
@@ -64,7 +65,7 @@ export class MavisIdProvider extends EventEmitter implements IEip1193Provider {
     this.communicateHelper = new CommunicateHelper(gateOrigin)
   }
 
-  public static create = (options: MavisIdProviderSetupOptions) => {
+  public static create = (options: MavisIdProviderOpts) => {
     const {
       clientId,
       chainId,
@@ -79,16 +80,11 @@ export class MavisIdProvider extends EventEmitter implements IEip1193Provider {
       rpcUrl: rpcUrl,
     })
 
-    provider.getProfile()
-
+    provider.getStorageProfile()
     return provider
   }
 
-  private isLoggedIn = () => {
-    return !!this.mpcAddress
-  }
-
-  private getProfile = () => {
+  private getStorageProfile = () => {
     if (this.profile) return this.profile
 
     const profileJSON = getStorage(STORAGE_PROFILE_KEY)
@@ -96,13 +92,13 @@ export class MavisIdProvider extends EventEmitter implements IEip1193Provider {
     if (profileJSON) {
       const profile = JSON.parse(profileJSON) as Profile
       this.profile = profile
-      this.mpcAddress = profile.mpcAddress
+      this.idAddress = getAddress(profile.mpcAddress)
     }
 
     return undefined
   }
 
-  private connect = async () => {
+  connect = async () => {
     const { gateOrigin, clientId } = this
 
     const authData = await this.communicateHelper.sendRequest<{
@@ -129,22 +125,38 @@ export class MavisIdProvider extends EventEmitter implements IEip1193Provider {
     }
 
     this.profile = profile
-    this.mpcAddress = profile.mpcAddress
+    this.idAddress = getAddress(profile.mpcAddress)
 
     setStorage(STORAGE_PROFILE_KEY, JSON.stringify(profile))
 
-    const addresses = [profile.mpcAddress]
+    const addresses = [this.idAddress]
 
-    this.emit(EIP1193Event.ACCOUNTS_CHANGED, addresses)
-    this.emit(EIP1193Event.CONNECT, { chainId: this.chainId })
+    this.emit(Eip1193EventName.accountsChanged, addresses)
+    this.emit(Eip1193EventName.connect, { chainId: this.chainId })
 
     return addresses
   }
 
-  private getAccounts = () => {
-    this.getProfile()
+  disconnect = () => {
+    const shouldEmitDisconnectEvent = !!this.idAddress
 
-    const address = this.mpcAddress
+    this.profile = undefined
+    this.idAddress = undefined
+    removeStorage(STORAGE_PROFILE_KEY)
+
+    if (shouldEmitDisconnectEvent) {
+      const err = new Error("The provider is disconnected from all chains.")
+      const providerErr = new ProviderDisconnectedError(err)
+
+      this.emit(Eip1193EventName.accountsChanged, [])
+      this.emit(Eip1193EventName.disconnect, providerErr)
+    }
+  }
+
+  private getAccounts = () => {
+    this.getStorageProfile()
+
+    const address = this.idAddress
 
     return address ? [address] : []
   }
@@ -152,113 +164,77 @@ export class MavisIdProvider extends EventEmitter implements IEip1193Provider {
   private requestAccounts = async () => {
     const addresses = this.getAccounts()
 
-    if (!addresses.length) return await this.connect()
+    if (addresses.length) return addresses
 
-    return addresses
+    return await this.connect()
   }
 
-  disconnect = () => {
-    const shouldEmitDisconnectEvent = this.isLoggedIn()
-
-    removeStorage(STORAGE_PROFILE_KEY)
-    this.profile = undefined
-    this.mpcAddress = undefined
-
-    if (shouldEmitDisconnectEvent) {
-      this.emit(EIP1193Event.ACCOUNTS_CHANGED, [])
-      this.emit(
-        EIP1193Event.DISCONNECT,
-        ProviderErrorCode.DISCONNECTED,
-        "The provider is disconnected from all chains.",
-      )
-    }
-  }
-
-  private handleRequest = async <T = any>(args: IEip1193RequestArgs): Promise<T> => {
+  request = async <ReturnType = unknown>(args: EIP1193Parameters<MavisIdRequestSchema>) => {
+    const { clientId, gateOrigin, communicateHelper, requestAccounts, chainId, getAccounts } = this
     const { method, params } = args
 
     switch (method) {
-      case "eth_accounts": {
-        return this.getAccounts() as T
-      }
+      case "eth_accounts":
+        return getAccounts() as ReturnType
 
-      case "eth_requestAccounts": {
-        return (await this.requestAccounts()) as T
-      }
+      case "eth_requestAccounts":
+        return (await requestAccounts()) as ReturnType
 
-      case "eth_chainId": {
-        return toHex(this.chainId) as T
-      }
+      case "eth_chainId":
+        return toHex(chainId) as ReturnType
 
       case "personal_sign": {
-        if (!this.isLoggedIn())
-          throw new JsonRpcError(
-            ProviderErrorCode.UNAUTHORIZED,
-            "Unauthorized - call eth_requestAccounts first",
-          )
-
-        return personalSign({
+        const [expectAddress] = await requestAccounts()
+        const sig = await personalSign({
           params,
-          clientId: this.clientId,
-          gateOrigin: this.gateOrigin,
-          communicateHelper: this.communicateHelper,
-        }) as T
+
+          expectAddress,
+
+          clientId,
+          gateOrigin,
+          communicateHelper,
+        })
+
+        return sig as ReturnType
       }
 
-      case "eth_signTypedData":
       case "eth_signTypedData_v4": {
-        if (!this.isLoggedIn())
-          throw new JsonRpcError(
-            ProviderErrorCode.UNAUTHORIZED,
-            "Unauthorized - call eth_requestAccounts first",
-          )
+        const [expectAddress] = await requestAccounts()
 
-        return signTypedDataV4({
+        const sig = await signTypedDataV4({
           params,
-          clientId: this.clientId,
-          chainId: this.chainId,
-          gateOrigin: this.gateOrigin,
-          communicateHelper: this.communicateHelper,
-        }) as T
+
+          chainId,
+          expectAddress,
+
+          clientId,
+          gateOrigin,
+          communicateHelper,
+        })
+
+        return sig as ReturnType
       }
 
       case "eth_sendTransaction": {
-        if (!this.isLoggedIn())
-          throw new JsonRpcError(
-            ProviderErrorCode.UNAUTHORIZED,
-            "Unauthorized - call eth_requestAccounts first",
-          )
+        const [expectAddress] = await requestAccounts()
 
         return sendTransaction({
           params,
-          clientId: this.clientId,
-          gateOrigin: this.gateOrigin,
-          chainId: this.chainId,
-          communicateHelper: this.communicateHelper,
-        }) as T
-      }
 
-      case "eth_sign": {
-        throw new JsonRpcError(ProviderErrorCode.UNSUPPORTED_METHOD, "Method not supported")
+          chainId,
+          expectAddress,
+
+          clientId,
+          gateOrigin,
+          communicateHelper,
+        }) as ReturnType
       }
 
       default: {
-        const result = (await this.viemClient.request(args as any)) as T
+        const result = await this.viemClient.request(args)
 
-        return result
+        return result as ReturnType
       }
-    }
-  }
-
-  public async request<T = any>(args: IEip1193RequestArgs): Promise<T> {
-    try {
-      return this.handleRequest<T>(args)
-    } catch (error: unknown) {
-      if (error instanceof JsonRpcError) throw error
-
-      if (error instanceof Error) throw new JsonRpcError(RpcErrorCode.INTERNAL_ERROR, error.message)
-
-      throw new JsonRpcError(RpcErrorCode.INTERNAL_ERROR, "Internal error")
     }
   }
 }

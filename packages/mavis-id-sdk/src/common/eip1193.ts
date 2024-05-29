@@ -1,10 +1,55 @@
-import { IEip1193EventEmitter } from "./eip1193-event"
+import type {
+  Address,
+  EIP1193Events,
+  EIP1193Parameters,
+  Hash,
+  Hex,
+  PublicRpcSchema,
+  TypedDataDefinition,
+} from "viem"
 
-export interface IEip1193RequestArgs {
-  readonly method: string
-  readonly params?: Array<any>
+import type { GenericTransaction } from "./tx"
+
+export interface Eip1193Provider extends EIP1193Events {
+  request: <ReturnType = unknown>(
+    args: EIP1193Parameters<MavisIdRequestSchema>,
+  ) => Promise<ReturnType>
 }
 
-export interface IEip1193Provider extends IEip1193EventEmitter {
-  request: <T = any>(args: IEip1193RequestArgs) => Promise<T>
+export type MavisIdRequestSchema = [
+  ...PublicRpcSchema,
+
+  {
+    Method: "eth_accounts"
+    Parameters?: undefined
+    ReturnType: Address[]
+  },
+  {
+    Method: "eth_requestAccounts"
+    Parameters?: undefined
+    ReturnType: Address[]
+  },
+  {
+    Method: "eth_sendTransaction"
+    Parameters: [transaction: GenericTransaction]
+    ReturnType: Hash
+  },
+  {
+    Method: "eth_signTypedData_v4"
+    Parameters: [address: Address, typedData: TypedDataDefinition]
+    ReturnType: Hex
+  },
+  {
+    Method: "personal_sign"
+    Parameters: [data: Hex, address: Address]
+    ReturnType: Hex
+  },
+]
+
+export enum Eip1193EventName {
+  accountsChanged = "accountsChanged",
+  chainChanged = "chainChanged",
+  connect = "connect",
+  disconnect = "disconnect",
+  message = "message",
 }

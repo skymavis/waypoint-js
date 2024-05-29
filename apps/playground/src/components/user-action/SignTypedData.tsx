@@ -45,7 +45,7 @@ const SIGN_DATA = {
   domain: {
     name: "MarketGateway",
     version: "1",
-    chainId: "2021",
+    chainId: 2021,
     verifyingContract: "0xfff9ce5f71ca6178d3beecedb61e7eff1602950e",
   },
   primaryType: "Order",

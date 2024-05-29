@@ -1,8 +1,12 @@
+import { UserRejectedRequestError } from "viem"
+
 const DEFAULT_WIDTH = 480
 const DEFAULT_HEIGHT = 720
-const DEFAULT_TITLE = "Confirm this transaction"
+const DEFAULT_TITLE = "Confirm your action!"
 
-export const openPopup = (inputUrl: string, query?: Record<string, string>) => {
+type UrlParams = string | number | object | undefined | null
+
+export const openPopup = (inputUrl: string, query?: Record<string, UrlParams>) => {
   if (typeof window !== "undefined" && window.top) {
     const left = Math.max(0, Math.round(window.screenX + (window.outerWidth - DEFAULT_WIDTH) / 2))
     const top = Math.max(0, Math.round(window.screenY + (window.outerHeight - DEFAULT_HEIGHT) / 2))
@@ -11,7 +15,7 @@ export const openPopup = (inputUrl: string, query?: Record<string, string>) => {
 
     if (query) {
       Object.entries(query).forEach(([key, value]) => {
-        value && url.searchParams.set(key, value)
+        value !== undefined && value !== null && url.searchParams.set(key, value.toString())
       })
     }
 
@@ -27,10 +31,12 @@ export const openPopup = (inputUrl: string, query?: Record<string, string>) => {
       `,
     )
 
-    if (!popup) throw new Error(`Failed to open ${DEFAULT_TITLE}`)
+    if (!popup) {
+      const err = new Error("Popup window is BLOCKED by the browser")
+      throw new UserRejectedRequestError(err)
+    }
 
     popup.focus()
-
     return popup
   }
 }
