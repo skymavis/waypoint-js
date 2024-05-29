@@ -42,7 +42,7 @@ class MavisIdConnector extends BaseConnector<MavisIdProvider> {
       chainId: chainId,
     })
 
-    const accounts = await newProvider.request({ method: "eth_requestAccounts" })
+    const accounts = await newProvider.request<string[]>({ method: "eth_requestAccounts" })
 
     if (accounts.length) {
       this.provider = newProvider
