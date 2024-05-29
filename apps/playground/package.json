@@ -20,7 +20,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.5",
     "@roninnetwork/walletgo": "0.5.10",
-    "@sky-mavis/mavis-id-sdk": "*",
+    "@sky-mavis/mavis-id-sdk": "workspace:*",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "ethers": "5.7.2",
@@ -34,7 +34,7 @@
   "devDependencies": {
     "@next/bundle-analyzer": "13.1.6",
     "@next/eslint-plugin-next": "14.2.3",
-    "@sky-mavis/eslint-config-default": "*",
+    "@sky-mavis/eslint-config-default": "workspace:*",
     "@typechain/ethers-v5": "10.0.0",
     "@types/node": "20.12.11",
     "@types/react": "18.2.38",
