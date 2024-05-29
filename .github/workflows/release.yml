@@ -44,6 +44,6 @@ jobs:
       - name: Publish to npm
         run: |
           cd packages/${{ env.PACKAGE_NAME }}
-          pnpm publish --tag $(echo "${{ github.ref_name }}" | cut -d'@' -f2 | sed 's/v//')
+          pnpm publish --tag $(echo "${{ github.ref_name }}" | cut -d'@' -f2 | sed 's/v//') --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_WRITE_TOKEN }}
