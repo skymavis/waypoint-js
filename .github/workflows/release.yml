@@ -3,13 +3,11 @@ name: Release
 on:
   push:
     tags:
-      - 'mavis-id-sdk@v**'
+      - "mavis-id-sdk@v**"
   workflow_dispatch:
 
 jobs:
-  scan:
-    uses: axieinfinity/workflows-samples/.github/workflows/security-basic-scan.yml@main
-  release: 
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,7 +16,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.12.1
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
       - name: Setup pnpm
         shell: bash
         run: corepack enable pnpm && corepack use pnpm@9.1.1
