@@ -9,10 +9,6 @@ permissions:
   id-token: write
 
 jobs:
-  scan:
-    if: github.event_name == 'pull_request'
-    uses: axieinfinity/workflows-samples/.github/workflows/security-basic-scan.yml@main
-
   build:
     name: Build for PR
     runs-on: ubuntu-latest
