@@ -31,7 +31,7 @@ The Mavis ID SDK lets developers integrate with Mavis ID seamlessly & easily.
 - Request permission to use Mavis ID
 - Go to Developer Console > your app > App Permission > Mavis ID > Request Access
 
-[Head to the detail guide](https://docs.skymavis.com/placeholder) to acquired `YOUR_APP_ID`
+**Coming soon:** [Head to the detail guide](https://docs.skymavis.com/placeholder) to acquired `YOUR_APP_ID`
 
 ## Installation
 
@@ -64,7 +64,9 @@ const IdProvider = MavisIdProvider.create({
 })
 ```
 
-Usage with ethers.js (v5):
+## Interact with wallet
+
+**Usage with ethers.js (v5):**
 
 ```js
 import * as ethers from "ethers"
@@ -72,7 +74,7 @@ import * as ethers from "ethers"
 const provider = new ethers.providers.Web3Provider(IdProvider)
 ```
 
-Usage with web3.js
+**Usage with web3.js**
 
 ```js
 import Web3 from "web3"
@@ -80,13 +82,35 @@ import Web3 from "web3"
 const web3 = new Web3(IdProvider)
 ```
 
-Usage with viem
+**Usage with viem**
 
 ```js
 import { createWalletClient, custom } from "viem"
 import { saigon } from "viem/chains"
 
 const viemClient = createWalletClient({ chain, transport: custom(mavisIdProvider) })
+```
+
+**Standalone usage**
+
+```js
+const accounts = await mavisIdProvider.request<string[]>({ method: "eth_requestAccounts" })
+
+if (accounts.length) {
+  mavisIdProvider.request<string>({ method: "eth_getBalance", params: [accounts[0], "latest"] })
+}
+```
+
+## Authenticate user
+
+```js
+import { MavisIdAuth } from "@sky-mavis/mavis-id-sdk"
+
+const auth = await MavisIdAuth.create({
+  clientId: process.env.YOUR_APP_ID,
+}).connect()
+
+console.debug("🚀 | result:", auth)
 ```
 
 ## Example

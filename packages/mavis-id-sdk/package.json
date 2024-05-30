@@ -1,6 +1,9 @@
 {
   "name": "@sky-mavis/mavis-id-sdk",
-  "version": "0.0.1",
+  "repository": {
+    "url": "https://github.com/skymavis"
+  },
+  "version": "0.0.2",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

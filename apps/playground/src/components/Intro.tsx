@@ -1,11 +1,23 @@
 "use client"
 
+import { MavisIdAuth } from "@sky-mavis/mavis-id-sdk"
 import { Button } from "src/@/components/ui/button"
 import { MavisLogo } from "src/connectors/MavisLogo"
 import { useWalletgoDialog } from "src/hooks/useWalletgoDialog"
+import { useWrapToast } from "src/hooks/useWrapToast"
 
 export const Intro = () => {
   const { setOpen } = useWalletgoDialog()
+  const { toastSuccess } = useWrapToast()
+
+  const handleAuth = async () => {
+    const auth = await MavisIdAuth.create({
+      clientId: "xdemo",
+    }).connect()
+
+    console.debug("🚀 | Auth result:", auth)
+    toastSuccess("Check your console for auth result!")
+  }
 
   return (
     <>
@@ -21,6 +33,10 @@ export const Intro = () => {
       </div>
 
       <div className="mt-44 font-bold text-2xl">Get started</div>
+
+      <Button className="mt-4 w-[247px]" onClick={handleAuth}>
+        Authen
+      </Button>
 
       <Button className="mt-4 w-[247px]" onClick={() => setOpen(true)}>
         Connect your wallet

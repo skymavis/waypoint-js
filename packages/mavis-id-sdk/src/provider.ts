@@ -5,24 +5,24 @@ import {
   Client,
   createClient,
   EIP1193Parameters,
-  getAddress,
   http,
   ProviderDisconnectedError,
   toHex,
+  UnauthorizedProviderError,
 } from "viem"
 
+import { DecodedTokenInfo, IdAuthResponse, ProviderSavedProfile } from "./common/auth"
 import { VIEM_CHAIN_MAPPING } from "./common/chain"
 import { Eip1193EventName, Eip1193Provider, MavisIdRequestSchema } from "./common/eip1193"
 import { GATE_ORIGIN_PROD } from "./common/gate"
-import { Profile, RawProfile } from "./common/profile"
 import { CommunicateHelper } from "./core/communicate"
 import { personalSign } from "./core/personal-sign"
 import { sendTransaction } from "./core/send-tx"
 import { signTypedDataV4 } from "./core/sign-data"
-import { convertToZeroAddress } from "./utils/address"
 import { openPopup } from "./utils/popup"
 import { getStorage, removeStorage, setStorage, STORAGE_PROFILE_KEY } from "./utils/storage"
 import type { Requires } from "./utils/types"
+import { validateIdAddress } from "./utils/validate-address"
 
 export type MavisIdProviderOpts = {
   clientId: string
@@ -39,7 +39,7 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
 
   readonly chainId: number
 
-  private profile?: Profile
+  private profile?: ProviderSavedProfile
   private idAddress?: Address
 
   private readonly viemClient: Client
@@ -73,27 +73,30 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
       rpcUrl = VIEM_CHAIN_MAPPING[chainId].rpcUrls.default.http[0],
     } = options
 
-    const provider = new MavisIdProvider({
+    return new MavisIdProvider({
       clientId,
       chainId,
       gateOrigin: gateOrigin,
       rpcUrl: rpcUrl,
     })
-
-    provider.getStorageProfile()
-    return provider
   }
 
-  private getStorageProfile = () => {
+  private restoreProfile = () => {
     if (this.profile) return this.profile
 
-    const profileJSON = getStorage(STORAGE_PROFILE_KEY)
+    try {
+      const profileJSON = getStorage(STORAGE_PROFILE_KEY)
 
-    if (profileJSON) {
-      const profile = JSON.parse(profileJSON) as Profile
-      this.profile = profile
-      this.idAddress = getAddress(profile.mpcAddress)
-    }
+      if (profileJSON) {
+        const profile = JSON.parse(profileJSON) as ProviderSavedProfile
+
+        this.profile = profile
+        this.idAddress = profile.address
+
+        return profile
+      }
+      // eslint-disable-next-line no-empty
+    } catch (error) {}
 
     return undefined
   }
@@ -101,10 +104,7 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
   connect = async () => {
     const { gateOrigin, clientId } = this
 
-    const authData = await this.communicateHelper.sendRequest<{
-      id_token: string
-      address: string
-    }>(requestId =>
+    const authData = await this.communicateHelper.sendRequest<IdAuthResponse>(requestId =>
       openPopup(`${gateOrigin}/client/${clientId}/authorize`, {
         state: requestId,
         redirect: this.redirectUri ?? window.location.origin,
@@ -113,28 +113,41 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
       }),
     )
 
-    const { id_token: token, address } = authData
+    const { id_token: accessToken, address } = authData
+    const decodedInfo = jwtDecode<DecodedTokenInfo>(accessToken)
+    const idAddress = validateIdAddress(address)
 
-    const rawProfile = jwtDecode<RawProfile>(token)
-    const profile: Profile = {
-      sub: rawProfile.sub ?? "",
-      name: rawProfile.name ?? "",
-      email: rawProfile.email ?? "",
-      avatar_url: rawProfile.avatar_url ?? "",
-      mpcAddress: convertToZeroAddress(address),
+    if (!idAddress) {
+      const err = new Error("ID do NOT return valid address")
+      throw new UnauthorizedProviderError(err)
     }
 
-    this.profile = profile
-    this.idAddress = getAddress(profile.mpcAddress)
+    // * remove old linked address from token
+    delete decodedInfo.ronin_address
+
+    // * set profile in localstorage for reconnect & caching
+    const profile: ProviderSavedProfile = {
+      address: idAddress,
+      email: decodedInfo.email,
+      exp: decodedInfo.exp,
+      iat: decodedInfo.iat,
+      sub: decodedInfo.sub,
+    }
 
     setStorage(STORAGE_PROFILE_KEY, JSON.stringify(profile))
+    this.profile = profile
+    this.idAddress = idAddress
 
-    const addresses = [this.idAddress]
-
+    // * emit connected event
+    const addresses = [idAddress]
     this.emit(Eip1193EventName.accountsChanged, addresses)
     this.emit(Eip1193EventName.connect, { chainId: this.chainId })
 
-    return addresses
+    return {
+      accessToken: accessToken,
+      decodedInfo,
+      idAddress,
+    }
   }
 
   disconnect = () => {
@@ -154,9 +167,13 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
   }
 
   private getAccounts = () => {
-    this.getStorageProfile()
+    const { idAddress, restoreProfile } = this
 
-    const address = this.idAddress
+    if (idAddress) {
+      return [idAddress]
+    }
+
+    const { address } = restoreProfile() ?? {}
 
     return address ? [address] : []
   }
@@ -166,7 +183,9 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
 
     if (addresses.length) return addresses
 
-    return await this.connect()
+    const result = await this.connect()
+
+    return [result.idAddress]
   }
 
   request = async <ReturnType = unknown>(args: EIP1193Parameters<MavisIdRequestSchema>) => {
