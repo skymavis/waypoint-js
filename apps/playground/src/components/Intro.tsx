@@ -12,7 +12,7 @@ export const Intro = () => {
 
   const handleAuth = async () => {
     const auth = await MavisIdAuth.create({
-      clientId: "xdemo",
+      clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
     }).connect()
 
     console.debug("🚀 | Auth result:", auth)
