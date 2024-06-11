@@ -27,11 +27,10 @@ The Mavis ID SDK lets developers integrate with Mavis ID seamlessly & easily.
 
 ## Prerequisites
 
-- Register your application with Sky Mavis to get `YOUR_APP_ID`
-- Request permission to use Mavis ID
-- Go to Developer Console > your app > App Permission > Mavis ID > Request Access
+- Create an app in the Developer Console to get your app ID.
+- Request permission to use the Mavis ID service at Developer Console > your app > App Permission > Mavis ID > Request Access.
 
-**Coming soon:** [Head to the detail guide](https://docs.skymavis.com/placeholder) to acquired `YOUR_APP_ID`
+For more information, see the [documentation](https://docs.skymavis.com/mavis/mavis-id/guides/get-started).
 
 ## Installation
 
