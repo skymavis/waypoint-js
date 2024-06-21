@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update changelog for v0.0.1 & v0.0.2
 - Update client_id of playground
+- Add authorize & redirectAuthorize function
+- Allow custom scope on authorize flow
 
 ### Fixed
 
@@ -20,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - jwt-decode & decode result => since address no longer return in token
 - profile from return result
+- MavisIdAuth class
 
 ## [0.0.2] - 2024-05-30 - BREAKING CHANGE
 
