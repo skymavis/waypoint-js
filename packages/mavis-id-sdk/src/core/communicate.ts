@@ -40,7 +40,7 @@ export class CommunicateHelper {
     }
 
     window.addEventListener("message", eventHandler)
-    window.addEventListener("unload", () => {
+    window.addEventListener("beforeunload", () => {
       window.removeEventListener("message", eventHandler)
     })
   }

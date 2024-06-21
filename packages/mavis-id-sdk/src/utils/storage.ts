@@ -1,4 +1,4 @@
-export const STORAGE_PROFILE_KEY = "PROFILE"
+export const STORAGE_ADDRESS_KEY = "ADDRESS"
 export const STORAGE_PREFIX = "MAVIS.ID"
 
 const isStorageAvailable = () => typeof window !== "undefined" && "localStorage" in window
