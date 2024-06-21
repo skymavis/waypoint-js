@@ -1,6 +1,6 @@
 "use client"
 
-import { MavisIdAuth } from "@sky-mavis/mavis-id-sdk"
+import { authorize, redirectAuthorize } from "@sky-mavis/mavis-id-sdk"
 import { Button } from "src/@/components/ui/button"
 import { MavisLogo } from "src/connectors/MavisLogo"
 import { useWalletgoDialog } from "src/hooks/useWalletgoDialog"
@@ -10,13 +10,20 @@ export const Intro = () => {
   const { setOpen } = useWalletgoDialog()
   const { toastSuccess } = useWrapToast()
 
-  const handleAuth = async () => {
-    const auth = await MavisIdAuth.create({
+  const handleAuthorize = async () => {
+    const result = await authorize({
       clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
-    }).connect()
+    })
 
-    console.debug("🚀 | Auth result:", auth)
-    toastSuccess("Check your console for auth result!")
+    console.debug("🚀 | Authorize result:", result)
+    toastSuccess("Check your console for authorize result!")
+  }
+
+  const handleRedirectAuthorize = async () => {
+    redirectAuthorize({
+      clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
+      redirectUrl: "https://mavis-id-playground.vercel.app",
+    })
   }
 
   return (
@@ -34,8 +41,12 @@ export const Intro = () => {
 
       <div className="mt-44 font-bold text-2xl">Get started</div>
 
-      <Button className="mt-4 w-[247px]" onClick={handleAuth}>
-        Authen
+      <Button className="mt-4 w-[247px]" onClick={handleAuthorize}>
+        Authorize
+      </Button>
+
+      <Button className="mt-4 w-[247px]" onClick={handleRedirectAuthorize}>
+        Redirect Authorize
       </Button>
 
       <Button className="mt-4 w-[247px]" onClick={() => setOpen(true)}>

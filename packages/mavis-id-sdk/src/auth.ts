@@ -1,59 +1,53 @@
-import { GATE_ORIGIN_PROD } from "./common/gate"
+import { ID_ORIGIN_PROD } from "./common/gate"
 import { IdResponse } from "./common/id-response"
+import { getScopesParams, Scope } from "./common/scope"
 import { CommunicateHelper } from "./core/communicate"
-import { openPopup } from "./utils/popup"
-import type { Requires } from "./utils/types"
+import { openPopup, replaceUrl } from "./utils/popup"
 import { validateIdAddress } from "./utils/validate-address"
 
-export type MavisIdAuthOpts = {
+type AuthorizeOpts = {
   clientId: string
-  redirectUri?: string
-  gateOrigin?: string
+  idOrigin?: string
+  scopes?: Scope[]
+  redirectUrl?: string
 }
 
-export class MavisIdAuth {
-  private readonly clientId: string
-  private readonly gateOrigin: string
-  private readonly redirectUri?: string
+export const authorize = async (opts: AuthorizeOpts) => {
+  const { clientId, idOrigin = ID_ORIGIN_PROD, scopes, redirectUrl = window.location.origin } = opts
+  const helper = new CommunicateHelper(idOrigin)
 
-  private readonly communicateHelper: CommunicateHelper
+  const authData = await helper.sendRequest<IdResponse>(state =>
+    openPopup(`${idOrigin}/client/${clientId}/authorize`, {
+      state,
+      redirect: redirectUrl,
+      origin: window.location.origin,
+      scope: getScopesParams(scopes),
+    }),
+  )
+  const { id_token: accessToken, address: rawAddress } = authData ?? {}
 
-  protected constructor(options: Requires<MavisIdAuthOpts, "gateOrigin">) {
-    const { clientId, gateOrigin, redirectUri } = options
-
-    this.clientId = clientId
-    this.gateOrigin = gateOrigin
-    this.redirectUri = redirectUri
-
-    this.communicateHelper = new CommunicateHelper(gateOrigin)
+  return {
+    accessToken: accessToken,
+    address: validateIdAddress(rawAddress),
   }
+}
 
-  public static create = (options: MavisIdAuthOpts) => {
-    const { clientId, gateOrigin = GATE_ORIGIN_PROD } = options
+type RedirectAuthorizeOpts = AuthorizeOpts & {
+  state?: string
+}
 
-    return new MavisIdAuth({
-      clientId,
-      gateOrigin: gateOrigin,
-    })
-  }
+export const redirectAuthorize = async (opts: RedirectAuthorizeOpts) => {
+  const {
+    clientId,
+    redirectUrl = window.location.origin,
+    state = crypto.randomUUID(),
+    idOrigin = ID_ORIGIN_PROD,
+    scopes,
+  } = opts
 
-  connect = async () => {
-    const { gateOrigin, clientId } = this
-
-    const authData = await this.communicateHelper.sendRequest<IdResponse>(requestId =>
-      openPopup(`${gateOrigin}/client/${clientId}/authorize`, {
-        state: requestId,
-        redirect: this.redirectUri ?? window.location.origin,
-        origin: window.location.origin,
-        scope: ["openid", "profile", "email"].join(" "),
-      }),
-    )
-
-    const { id_token: accessToken, address: rawAddress } = authData ?? {}
-
-    return {
-      accessToken: accessToken,
-      address: validateIdAddress(rawAddress),
-    }
-  }
+  replaceUrl(`${idOrigin}/client/${clientId}/authorize`, {
+    state,
+    redirect: redirectUrl,
+    scope: getScopesParams(scopes),
+  })
 }

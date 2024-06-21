@@ -40,3 +40,15 @@ export const openPopup = (inputUrl: string, query?: Record<string, UrlParams>) =
     return popup
   }
 }
+
+export const replaceUrl = (inputUrl: string, query?: Record<string, UrlParams>) => {
+  const url = new URL(inputUrl)
+
+  if (query) {
+    Object.entries(query).forEach(([key, value]) => {
+      value !== undefined && value !== null && url.searchParams.set(key, value.toString())
+    })
+  }
+
+  window.location.assign(url)
+}
