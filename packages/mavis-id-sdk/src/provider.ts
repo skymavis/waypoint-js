@@ -12,7 +12,7 @@ import {
 
 import { VIEM_CHAIN_MAPPING } from "./common/chain"
 import { Eip1193EventName, Eip1193Provider, MavisIdRequestSchema } from "./common/eip1193"
-import { GATE_ORIGIN_PROD } from "./common/gate"
+import { ID_ORIGIN_PROD } from "./common/gate"
 import { IdResponse } from "./common/id-response"
 import { CommunicateHelper } from "./core/communicate"
 import { personalSign } from "./core/personal-sign"
@@ -66,7 +66,7 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
     const {
       clientId,
       chainId,
-      gateOrigin = GATE_ORIGIN_PROD,
+      gateOrigin = ID_ORIGIN_PROD,
       rpcUrl = VIEM_CHAIN_MAPPING[chainId].rpcUrls.default.http[0],
     } = options
 
