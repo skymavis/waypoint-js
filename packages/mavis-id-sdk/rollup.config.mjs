@@ -47,7 +47,7 @@ const mainConfig = defineConfig({
       preserveModulesRoot: "src",
     },
   ],
-  external: ["jwt-decode", "viem"],
+  external: ["viem"],
   plugins: [
     // JS build
     peerDepsExternal(),

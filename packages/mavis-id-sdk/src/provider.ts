@@ -1,5 +1,4 @@
 import { EventEmitter } from "events"
-import { jwtDecode } from "jwt-decode"
 import {
   Address,
   Client,
@@ -11,16 +10,16 @@ import {
   UnauthorizedProviderError,
 } from "viem"
 
-import { DecodedTokenInfo, IdAuthResponse, ProviderSavedProfile } from "./common/auth"
 import { VIEM_CHAIN_MAPPING } from "./common/chain"
 import { Eip1193EventName, Eip1193Provider, MavisIdRequestSchema } from "./common/eip1193"
 import { GATE_ORIGIN_PROD } from "./common/gate"
+import { IdResponse } from "./common/id-response"
 import { CommunicateHelper } from "./core/communicate"
 import { personalSign } from "./core/personal-sign"
 import { sendTransaction } from "./core/send-tx"
 import { signTypedDataV4 } from "./core/sign-data"
 import { openPopup } from "./utils/popup"
-import { getStorage, removeStorage, setStorage, STORAGE_PROFILE_KEY } from "./utils/storage"
+import { getStorage, removeStorage, setStorage, STORAGE_ADDRESS_KEY } from "./utils/storage"
 import type { Requires } from "./utils/types"
 import { validateIdAddress } from "./utils/validate-address"
 
@@ -38,9 +37,7 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
   private readonly redirectUri?: string
 
   readonly chainId: number
-
-  private profile?: ProviderSavedProfile
-  private idAddress?: Address
+  private address?: Address
 
   private readonly viemClient: Client
   private readonly communicateHelper: CommunicateHelper
@@ -81,30 +78,17 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
     })
   }
 
-  private restoreProfile = () => {
-    if (this.profile) return this.profile
+  private getIdAddress = () => {
+    if (this.address) return this.address
 
-    try {
-      const profileJSON = getStorage(STORAGE_PROFILE_KEY)
-
-      if (profileJSON) {
-        const profile = JSON.parse(profileJSON) as ProviderSavedProfile
-
-        this.profile = profile
-        this.idAddress = profile.address
-
-        return profile
-      }
-      // eslint-disable-next-line no-empty
-    } catch (error) {}
-
-    return undefined
+    const storedAddress = getStorage(STORAGE_ADDRESS_KEY) || ""
+    return validateIdAddress(storedAddress)
   }
 
   connect = async () => {
     const { gateOrigin, clientId } = this
 
-    const authData = await this.communicateHelper.sendRequest<IdAuthResponse>(requestId =>
+    const authData = await this.communicateHelper.sendRequest<IdResponse>(requestId =>
       openPopup(`${gateOrigin}/client/${clientId}/authorize`, {
         state: requestId,
         redirect: this.redirectUri ?? window.location.origin,
@@ -113,49 +97,34 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
       }),
     )
 
-    const { id_token: accessToken, address } = authData
-    const decodedInfo = jwtDecode<DecodedTokenInfo>(accessToken)
-    const idAddress = validateIdAddress(address)
+    const { id_token: accessToken, address: rawAddress } = authData
+    const address = validateIdAddress(rawAddress)
 
-    if (!idAddress) {
+    if (!address) {
       const err = new Error("ID do NOT return valid address")
       throw new UnauthorizedProviderError(err)
     }
 
-    // * remove old linked address from token
-    delete decodedInfo.ronin_address
-
-    // * set profile in localstorage for reconnect & caching
-    const profile: ProviderSavedProfile = {
-      address: idAddress,
-      email: decodedInfo.email,
-      exp: decodedInfo.exp,
-      iat: decodedInfo.iat,
-      sub: decodedInfo.sub,
-    }
-
-    setStorage(STORAGE_PROFILE_KEY, JSON.stringify(profile))
-    this.profile = profile
-    this.idAddress = idAddress
+    // * set address in localstorage for reconnect & caching
+    setStorage(STORAGE_ADDRESS_KEY, address)
+    this.address = address
 
     // * emit connected event
-    const addresses = [idAddress]
+    const addresses = [address]
     this.emit(Eip1193EventName.accountsChanged, addresses)
     this.emit(Eip1193EventName.connect, { chainId: this.chainId })
 
     return {
-      accessToken: accessToken,
-      decodedInfo,
-      idAddress,
+      accessToken,
+      address,
     }
   }
 
   disconnect = () => {
-    const shouldEmitDisconnectEvent = !!this.idAddress
+    const shouldEmitDisconnectEvent = !!this.address
 
-    this.profile = undefined
-    this.idAddress = undefined
-    removeStorage(STORAGE_PROFILE_KEY)
+    removeStorage(STORAGE_ADDRESS_KEY)
+    this.address = undefined
 
     if (shouldEmitDisconnectEvent) {
       const err = new Error("The provider is disconnected from all chains.")
@@ -167,25 +136,18 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
   }
 
   private getAccounts = () => {
-    const { idAddress, restoreProfile } = this
-
-    if (idAddress) {
-      return [idAddress]
-    }
-
-    const { address } = restoreProfile() ?? {}
+    const address = this.getIdAddress()
 
     return address ? [address] : []
   }
 
   private requestAccounts = async () => {
     const addresses = this.getAccounts()
-
     if (addresses.length) return addresses
 
     const result = await this.connect()
 
-    return [result.idAddress]
+    return [result.address]
   }
 
   request = async <ReturnType = unknown>(args: EIP1193Parameters<MavisIdRequestSchema>) => {

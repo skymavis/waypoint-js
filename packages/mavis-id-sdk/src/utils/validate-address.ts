@@ -1,8 +1,8 @@
-import { getAddress, isHex } from "viem"
+import { getAddress, isAddress } from "viem"
 
-export const validateIdAddress = (responseAddress: string | undefined) => {
+export const validateIdAddress = (responseAddress = "") => {
   try {
-    return isHex(responseAddress) ? getAddress(responseAddress) : undefined
+    return isAddress(responseAddress) ? getAddress(responseAddress) : undefined
   } catch (error) {
     return undefined
   }

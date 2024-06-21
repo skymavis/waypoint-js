@@ -1,7 +1,5 @@
-import { jwtDecode } from "jwt-decode"
-
-import { DecodedTokenInfo, IdAuthResponse } from "./common/auth"
 import { GATE_ORIGIN_PROD } from "./common/gate"
+import { IdResponse } from "./common/id-response"
 import { CommunicateHelper } from "./core/communicate"
 import { openPopup } from "./utils/popup"
 import type { Requires } from "./utils/types"
@@ -42,7 +40,7 @@ export class MavisIdAuth {
   connect = async () => {
     const { gateOrigin, clientId } = this
 
-    const authData = await this.communicateHelper.sendRequest<IdAuthResponse>(requestId =>
+    const authData = await this.communicateHelper.sendRequest<IdResponse>(requestId =>
       openPopup(`${gateOrigin}/client/${clientId}/authorize`, {
         state: requestId,
         redirect: this.redirectUri ?? window.location.origin,
@@ -51,15 +49,11 @@ export class MavisIdAuth {
       }),
     )
 
-    const { id_token: accessToken, address } = authData ?? {}
-
-    const decodedInfo = jwtDecode<DecodedTokenInfo>(accessToken)
-    delete decodedInfo.ronin_address
+    const { id_token: accessToken, address: rawAddress } = authData ?? {}
 
     return {
       accessToken: accessToken,
-      decodedInfo,
-      idAddress: validateIdAddress(address),
+      address: validateIdAddress(rawAddress),
     }
   }
 }

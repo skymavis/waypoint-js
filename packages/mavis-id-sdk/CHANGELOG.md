@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update changelog for v0.0.1 & v0.0.2
 - Update client_id of playground
 
+### Fixed
+
+- window event `unload` is deprecated => change to `beforeunload`
+
+### Removed
+
+- jwt-decode & decode result => since address no longer return in token
+- profile from return result
+
 ## [0.0.2] - 2024-05-30 - BREAKING CHANGE
 
 ### Added
