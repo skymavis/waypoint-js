@@ -5,7 +5,7 @@ import { CommunicateHelper } from "./core/communicate"
 import { openPopup, replaceUrl } from "./utils/popup"
 import { validateIdAddress } from "./utils/validate-address"
 
-type AuthorizeOpts = {
+export type AuthorizeOpts = {
   clientId: string
   idOrigin?: string
   scopes?: Scope[]
@@ -32,7 +32,7 @@ export const authorize = async (opts: AuthorizeOpts) => {
   }
 }
 
-type RedirectAuthorizeOpts = AuthorizeOpts & {
+export type RedirectAuthorizeOpts = AuthorizeOpts & {
   state?: string
 }
 

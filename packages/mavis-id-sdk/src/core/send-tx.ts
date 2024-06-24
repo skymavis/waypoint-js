@@ -1,4 +1,4 @@
-import { type Address, type Hex, isHex } from "viem"
+import { type Address } from "viem"
 
 import { GenericTransaction } from "../common/tx"
 import { openPopup } from "../utils/popup"
@@ -11,12 +11,9 @@ export type SendTransactionParams = {
   expectAddress: Address
 
   clientId: string
-  gateOrigin: string
+  idOrigin: string
   communicateHelper: CommunicateHelper
 }
-
-const isContractInteract = (data: Hex | undefined) =>
-  data !== undefined && isHex(data) && data !== "0x"
 
 export const sendTransaction = async ({
   params,
@@ -25,36 +22,19 @@ export const sendTransaction = async ({
   expectAddress,
 
   clientId,
-  gateOrigin,
+  idOrigin,
   communicateHelper,
 }: SendTransactionParams): Promise<string> => {
   const [transaction] = params
-  const { data = transaction.input } = transaction
 
-  if (isContractInteract(data)) {
-    const txHash = await communicateHelper.sendRequest<string>(requestId =>
-      openPopup(`${gateOrigin}/wallet/call`, {
-        clientId,
-        state: requestId,
-        origin: window.location.origin,
-
-        expectAddress,
-        chainId,
-
-        ...transaction,
-      }),
-    )
-    return txHash
-  }
-
-  const txHash = await communicateHelper.sendRequest<string>(requestId =>
-    openPopup(`${gateOrigin}/wallet/send`, {
+  const txHash = await communicateHelper.sendRequest<string>(state =>
+    openPopup(`${idOrigin}/wallet/send`, {
+      state,
       clientId,
-      state: requestId,
       origin: window.location.origin,
 
-      expectAddress,
       chainId,
+      expectAddress,
 
       ...transaction,
     }),
