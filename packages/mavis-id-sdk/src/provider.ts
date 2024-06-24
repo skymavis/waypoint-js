@@ -65,10 +65,10 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
 
     // * add default scopes
     const newScopes = [...scopes]
-    if (scopes.findIndex(s => s === "openid") === -1) {
+    if (!newScopes.includes("openid")) {
       newScopes.push("openid")
     }
-    if (scopes.findIndex(s => s === "wallet") === -1) {
+    if (!newScopes.includes("wallet")) {
       newScopes.push("wallet")
     }
 
