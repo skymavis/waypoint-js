@@ -17,7 +17,7 @@ type PersonalSignParams = {
   expectAddress: Address
 
   clientId: string
-  gateOrigin: string
+  idOrigin: string
   communicateHelper: CommunicateHelper
 }
 
@@ -26,7 +26,7 @@ export const personalSign = async ({
   expectAddress,
 
   clientId,
-  gateOrigin,
+  idOrigin,
   communicateHelper,
 }: PersonalSignParams) => {
   const [data, address] = params
@@ -44,13 +44,14 @@ export const personalSign = async ({
     throw new InvalidParamsRpcError(err)
   }
 
-  const signature = await communicateHelper.sendRequest<string>(requestId =>
-    openPopup(`${gateOrigin}/wallet/sign`, {
+  const signature = await communicateHelper.sendRequest<string>(state =>
+    openPopup(`${idOrigin}/wallet/sign`, {
+      state,
       clientId,
-      state: requestId,
       origin: window.location.origin,
-      message,
+
       expectAddress,
+      message,
     }),
   )
 

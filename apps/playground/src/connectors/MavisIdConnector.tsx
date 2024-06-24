@@ -4,23 +4,23 @@ import {
   ConnectorError,
   IConnectResult,
 } from "@roninnetwork/walletgo"
-import { MavisIdProvider } from "@sky-mavis/mavis-id-sdk"
+import { MavisIdWallet } from "@sky-mavis/mavis-id-sdk"
 
 import { MavisLogo } from "./MavisLogo"
 
 export const ID_URL = "https://id.skymavis.com"
-const STORAGE_KEY = "MAVIS.ID:PROFILE"
+const STORAGE_KEY = "MAVIS.ID:ADDRESS"
 
 const mavisIdLogo = <MavisLogo />
 
-class MavisIdConnector extends BaseConnector<MavisIdProvider> {
+class MavisIdConnector extends BaseConnector<MavisIdWallet> {
   switchable: false
   scannable: false
   autoPriority = AutoConnectPriority.WalletConnect
 
   hidden = false
 
-  provider?: MavisIdProvider
+  provider?: MavisIdWallet
 
   constructor() {
     super(
@@ -36,8 +36,8 @@ class MavisIdConnector extends BaseConnector<MavisIdProvider> {
     return localStorage.getItem(STORAGE_KEY) !== null
   }
 
-  async connect(chainId: number): Promise<IConnectResult<MavisIdProvider>> {
-    const newProvider = MavisIdProvider.create({
+  async connect(chainId: number): Promise<IConnectResult<MavisIdWallet>> {
+    const newProvider = MavisIdWallet.create({
       clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
       chainId: chainId,
     })

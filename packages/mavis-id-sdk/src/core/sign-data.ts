@@ -18,7 +18,7 @@ export type SignTypedDataV4Params = {
 
   clientId: string
   chainId: number
-  gateOrigin: string
+  idOrigin: string
   communicateHelper: CommunicateHelper
 }
 
@@ -45,22 +45,26 @@ const transformTypedData = (
   }
 
   if (!isValidTypedData(typedData)) {
-    const typeError = new Error("eth_signTypedData_v4: invalid typed data")
-    throw new InvalidParamsRpcError(typeError)
+    const err = new Error(
+      `eth_signTypedData_v4: invalid typed data - required ${REQUIRED_PROPERTIES.join(", ")}`,
+    )
+    throw new InvalidParamsRpcError(err)
   }
 
   const rawChainId = typedData.domain?.chainId
-  const requestChainId = isHex(rawChainId) ? hexToNumber(rawChainId) : +(rawChainId ?? chainId)
+  if (rawChainId === undefined) {
+    const chainIdError = new Error(
+      `eth_signTypedData_v4: chainId is NOT defined - expected ${chainId}`,
+    )
+    throw new InvalidParamsRpcError(chainIdError)
+  }
 
+  const requestChainId = isHex(rawChainId) ? hexToNumber(rawChainId) : +rawChainId
   if (chainId !== requestChainId) {
     const chainIdError = new Error(
       `eth_signTypedData_v4: chainId is NOT valid - expected ${chainId}`,
     )
     throw new InvalidParamsRpcError(chainIdError)
-  }
-
-  if (typedData.domain) {
-    typedData.domain.chainId = requestChainId
   }
 
   return typedData
@@ -72,7 +76,7 @@ export const signTypedDataV4 = async ({
 
   clientId,
   chainId,
-  gateOrigin,
+  idOrigin,
   communicateHelper,
 }: SignTypedDataV4Params) => {
   const [address, data] = params
@@ -88,15 +92,16 @@ export const signTypedDataV4 = async ({
   const typedData = transformTypedData(data, chainId)
 
   try {
-    const signature = await communicateHelper.sendRequest<string>(requestId =>
-      openPopup(`${gateOrigin}/wallet/sign`, {
+    const signature = await communicateHelper.sendRequest<string>(state =>
+      openPopup(`${idOrigin}/wallet/sign`, {
+        state,
+
         clientId,
+        origin: window.location.origin,
 
         chainId,
         expectAddress,
 
-        state: requestId,
-        origin: window.location.origin,
         typedData: JSON.stringify(typedData),
       }),
     )

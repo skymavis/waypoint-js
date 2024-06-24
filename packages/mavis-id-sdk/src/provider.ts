@@ -1,6 +1,7 @@
 import { EventEmitter } from "events"
 import {
   Address,
+  ChainDisconnectedError,
   Client,
   createClient,
   EIP1193Parameters,
@@ -10,31 +11,29 @@ import {
   UnauthorizedProviderError,
 } from "viem"
 
+import { AuthorizeOpts } from "./auth"
 import { VIEM_CHAIN_MAPPING } from "./common/chain"
 import { Eip1193EventName, Eip1193Provider, MavisIdRequestSchema } from "./common/eip1193"
 import { ID_ORIGIN_PROD } from "./common/gate"
 import { IdResponse } from "./common/id-response"
+import { getScopesParams, Scope } from "./common/scope"
 import { CommunicateHelper } from "./core/communicate"
 import { personalSign } from "./core/personal-sign"
 import { sendTransaction } from "./core/send-tx"
 import { signTypedDataV4 } from "./core/sign-data"
 import { openPopup } from "./utils/popup"
 import { getStorage, removeStorage, setStorage, STORAGE_ADDRESS_KEY } from "./utils/storage"
-import type { Requires } from "./utils/types"
 import { validateIdAddress } from "./utils/validate-address"
 
-export type MavisIdProviderOpts = {
-  clientId: string
+export type MavisIdWalletOpts = AuthorizeOpts & {
   chainId: number
-  redirectUri?: string
-  gateOrigin?: string
-  rpcUrl?: string
 }
 
-export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
+export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
   private readonly clientId: string
-  private readonly gateOrigin: string
-  private readonly redirectUri?: string
+  private readonly idOrigin: string
+  private readonly redirectUrl: string
+  private readonly scopes: Scope[]
 
   readonly chainId: number
   private address?: Address
@@ -42,40 +41,48 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
   private readonly viemClient: Client
   private readonly communicateHelper: CommunicateHelper
 
-  protected constructor(
-    options: Requires<MavisIdProviderOpts, "chainId" | "gateOrigin" | "rpcUrl">,
-  ) {
+  protected constructor(options: MavisIdWalletOpts) {
     super()
 
-    const { clientId, chainId, gateOrigin, rpcUrl, redirectUri } = options
-
-    this.clientId = clientId
-    this.chainId = chainId
-    this.gateOrigin = gateOrigin
-    this.redirectUri = redirectUri
-
-    this.viemClient = createClient({
-      chain: VIEM_CHAIN_MAPPING[chainId],
-      transport: http(rpcUrl),
-    })
-
-    this.communicateHelper = new CommunicateHelper(gateOrigin)
-  }
-
-  public static create = (options: MavisIdProviderOpts) => {
     const {
       clientId,
-      chainId,
-      gateOrigin = ID_ORIGIN_PROD,
-      rpcUrl = VIEM_CHAIN_MAPPING[chainId].rpcUrls.default.http[0],
-    } = options
+      idOrigin = ID_ORIGIN_PROD,
+      redirectUrl = window.location.origin,
+      scopes = [],
 
-    return new MavisIdProvider({
-      clientId,
       chainId,
-      gateOrigin: gateOrigin,
-      rpcUrl: rpcUrl,
+    } = options
+    const chain = VIEM_CHAIN_MAPPING[chainId]
+
+    if (!chain) {
+      const err = new Error(`Chain ${chainId} is not supported.`)
+      throw new ChainDisconnectedError(err)
+    }
+    this.viemClient = createClient({
+      chain: VIEM_CHAIN_MAPPING[chainId],
+      transport: http(),
     })
+
+    // * add default scopes
+    const newScopes = [...scopes]
+    if (scopes.findIndex(s => s === "openid") === -1) {
+      newScopes.push("openid")
+    }
+    if (scopes.findIndex(s => s === "wallet") === -1) {
+      newScopes.push("wallet")
+    }
+
+    this.scopes = newScopes
+
+    this.clientId = clientId
+    this.idOrigin = idOrigin
+    this.redirectUrl = redirectUrl
+    this.chainId = chainId
+    this.communicateHelper = new CommunicateHelper(idOrigin)
+  }
+
+  public static create = (options: MavisIdWalletOpts) => {
+    return new MavisIdWallet(options)
   }
 
   private getIdAddress = () => {
@@ -86,14 +93,14 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
   }
 
   connect = async () => {
-    const { gateOrigin, clientId } = this
+    const { idOrigin, clientId, redirectUrl, scopes, communicateHelper, chainId } = this
 
-    const authData = await this.communicateHelper.sendRequest<IdResponse>(requestId =>
-      openPopup(`${gateOrigin}/client/${clientId}/authorize`, {
-        state: requestId,
-        redirect: this.redirectUri ?? window.location.origin,
+    const authData = await communicateHelper.sendRequest<IdResponse>(state =>
+      openPopup(`${idOrigin}/client/${clientId}/authorize`, {
+        state,
+        redirect: redirectUrl,
         origin: window.location.origin,
-        scope: ["openid", "profile", "wallet", "email"].join(" "),
+        scope: getScopesParams(scopes),
       }),
     )
 
@@ -112,7 +119,7 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
     // * emit connected event
     const addresses = [address]
     this.emit(Eip1193EventName.accountsChanged, addresses)
-    this.emit(Eip1193EventName.connect, { chainId: this.chainId })
+    this.emit(Eip1193EventName.connect, { chainId: chainId })
 
     return {
       accessToken,
@@ -151,7 +158,15 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
   }
 
   request = async <ReturnType = unknown>(args: EIP1193Parameters<MavisIdRequestSchema>) => {
-    const { clientId, gateOrigin, communicateHelper, requestAccounts, chainId, getAccounts } = this
+    const {
+      clientId,
+      idOrigin,
+      communicateHelper,
+      requestAccounts,
+      chainId,
+      getAccounts,
+      viemClient,
+    } = this
     const { method, params } = args
 
     switch (method) {
@@ -172,7 +187,7 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
           expectAddress,
 
           clientId,
-          gateOrigin,
+          idOrigin,
           communicateHelper,
         })
 
@@ -189,7 +204,7 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
           expectAddress,
 
           clientId,
-          gateOrigin,
+          idOrigin,
           communicateHelper,
         })
 
@@ -206,13 +221,13 @@ export class MavisIdProvider extends EventEmitter implements Eip1193Provider {
           expectAddress,
 
           clientId,
-          gateOrigin,
+          idOrigin,
           communicateHelper,
         }) as ReturnType
       }
 
       default: {
-        const result = await this.viemClient.request(args)
+        const result = await viemClient.request(args)
 
         return result as ReturnType
       }

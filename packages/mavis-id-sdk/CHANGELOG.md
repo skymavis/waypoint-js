@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [Unreleased] - BREAKING CHANGE
 
 ### Added
 
@@ -14,15 +14,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add authorize & redirectAuthorize function
 - Allow custom scope on authorize flow
 
+### Changed
+
+- Rename `MavisIdProvider` to `MavisIdWallet`
+- Rename `gateOrigin` params to `idOrigin`
+- Send transaction - switch to consume `send` endpoint from Mavis ID
+- Sign data v4 - no longer modify `chainId`
+
 ### Fixed
 
-- window event `unload` is deprecated => change to `beforeunload`
+- Fix window event `unload` is deprecated => change to `beforeunload`
 
 ### Removed
 
-- jwt-decode & decode result => since address no longer return in token
-- profile from return result
-- MavisIdAuth class
+- Remove jwt-decode & decode result => since address no longer return in token
+- Remove decoded profile from return result
+- Remove `MavisIdAuth` class
+- Remove `MavisIdProvider` class
 
 ## [0.0.2] - 2024-05-30 - BREAKING CHANGE
 
