@@ -1,5 +1,6 @@
 import "./globals.css"
 
+import { Provider } from "jotai"
 import type { Metadata } from "next"
 import { Inter as FontSans } from "next/font/google"
 import { Toaster } from "src/@/components/ui/toaster"
@@ -25,7 +26,9 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
     <html lang="en">
       <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
         <main>
-          <WalletContext>{children}</WalletContext>
+          <Provider>
+            <WalletContext>{children}</WalletContext>
+          </Provider>
         </main>
         <Toaster />
       </body>
