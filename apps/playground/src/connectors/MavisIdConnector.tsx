@@ -13,7 +13,10 @@ const STORAGE_KEY = "MAVIS.ID:ADDRESS"
 
 const mavisIdLogo = <MavisLogo />
 
-class MavisIdConnector extends BaseConnector<MavisIdWallet> {
+export class MavisIdConnector extends BaseConnector<MavisIdWallet> {
+  clientId: string
+  idOrigin: string
+
   switchable: false
   scannable: false
   autoPriority = AutoConnectPriority.WalletConnect
@@ -22,7 +25,7 @@ class MavisIdConnector extends BaseConnector<MavisIdWallet> {
 
   provider?: MavisIdWallet
 
-  constructor() {
+  constructor(clientId: string, idOrigin: string) {
     super(
       "MAVIS_ID_CONNECTOR",
       "Mavis ID",
@@ -30,6 +33,9 @@ class MavisIdConnector extends BaseConnector<MavisIdWallet> {
       mavisIdLogo,
       false,
     )
+
+    this.clientId = clientId
+    this.idOrigin = idOrigin
   }
 
   async shouldAutoConnect(): Promise<boolean> {
@@ -38,7 +44,8 @@ class MavisIdConnector extends BaseConnector<MavisIdWallet> {
 
   async connect(chainId: number): Promise<IConnectResult<MavisIdWallet>> {
     const newProvider = MavisIdWallet.create({
-      clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
+      idOrigin: this.idOrigin,
+      clientId: this.clientId,
       chainId: chainId,
     })
 
@@ -70,5 +77,3 @@ class MavisIdConnector extends BaseConnector<MavisIdWallet> {
     throw new Error("Method not implemented.")
   }
 }
-
-export const mavisIdConnector = new MavisIdConnector()

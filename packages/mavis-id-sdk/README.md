@@ -20,7 +20,8 @@ The Mavis ID SDK lets developers integrate with Mavis ID seamlessly & easily.
 
 #### Features:
 
-- `MavisIdProvider` is [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) Compatible Ethereum JavaScript Provider
+- Authorize user with Mavis ID
+- `MavisIdWallet` is [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) Compatible Ethereum JavaScript Provider
 - Interact with any Javascript Ethereum Interface such as `viem`, `ether.js`, `web3js`
 - `WagmiConnector` | `WalletgoConnector` is coming soon
 - Standalone utilities for game developers (nfts, token balance, token approval, katana swap, ...) is coming soon
@@ -55,12 +56,24 @@ pnpm install @sky-mavis/mavis-id-sdk
 ## Initialization
 
 ```js
-import { MavisIdProvider } from "mavis-id-sdk"
+import { MavisIdWallet } from "@sky-mavis/mavis-id-sdk"
 
-const IdProvider = MavisIdProvider.create({
+const idWalletProvider = MavisIdWallet.create({
   clientId: process.env.YOUR_APP_ID,
   chainId: chainId,
 })
+```
+
+## Authorize user
+
+```js
+import { authorize } from "@sky-mavis/mavis-id-sdk"
+
+const result = await authorize({
+  clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
+})
+
+console.debug("🚀 | Authorize Result:", result)
 ```
 
 ## Interact with wallet
@@ -70,7 +83,7 @@ const IdProvider = MavisIdProvider.create({
 ```js
 import * as ethers from "ethers"
 
-const provider = new ethers.providers.Web3Provider(IdProvider)
+const provider = new ethers.providers.Web3Provider(idWalletProvider)
 ```
 
 **Usage with web3.js**
@@ -78,7 +91,7 @@ const provider = new ethers.providers.Web3Provider(IdProvider)
 ```js
 import Web3 from "web3"
 
-const web3 = new Web3(IdProvider)
+const web3 = new Web3(idWalletProvider)
 ```
 
 **Usage with viem**
@@ -87,29 +100,17 @@ const web3 = new Web3(IdProvider)
 import { createWalletClient, custom } from "viem"
 import { saigon } from "viem/chains"
 
-const viemClient = createWalletClient({ chain, transport: custom(mavisIdProvider) })
+const walletClient = createWalletClient({ chain, transport: custom(idWalletProvider) })
 ```
 
 **Standalone usage**
 
 ```js
-const accounts = await mavisIdProvider.request<string[]>({ method: "eth_requestAccounts" })
+const accounts = await idWalletProvider.request<string[]>({ method: "eth_requestAccounts" })
 
 if (accounts.length) {
   mavisIdProvider.request<string>({ method: "eth_getBalance", params: [accounts[0], "latest"] })
 }
-```
-
-## Authenticate user
-
-```js
-import { MavisIdAuth } from "@sky-mavis/mavis-id-sdk"
-
-const auth = await MavisIdAuth.create({
-  clientId: process.env.YOUR_APP_ID,
-}).connect()
-
-console.debug("🚀 | result:", auth)
 ```
 
 ## Example

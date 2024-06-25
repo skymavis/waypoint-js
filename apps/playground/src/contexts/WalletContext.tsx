@@ -6,9 +6,10 @@ import {
   WalletgoProvider,
   WalletWidget,
 } from "@roninnetwork/walletgo"
+import { useAtomValue } from "jotai"
 import { createContext, FC, ReactNode, useCallback, useState } from "react"
-
-import { mavisIdConnector } from "../connectors/MavisIdConnector"
+import { idConfigAtom } from "src/atom/env-config"
+import { MavisIdConnector } from "src/connectors/MavisIdConnector"
 
 export const EXPLORER_DOMAIN = "https://app.roninchain.com"
 export const EXPLORER_CDN_URL = "https://cdn.skymavis.com/explorer-cdn"
@@ -28,8 +29,8 @@ export const WalletgoDialogContext = createContext<IDialogContext>({
 const DEFAULT_WALLETS = createRoninWallets({
   projectId: WC_PROJECT_ID,
   clientMeta: {
-    name: "App.Ronin",
-    description: "App.Ronin",
+    name: "ID Playground",
+    description: "ID Playground",
     icons: [`${EXPLORER_CDN_URL}/asset/favicon/apple-touch-icon.png`],
     url: EXPLORER_DOMAIN,
     redirect: {
@@ -41,13 +42,14 @@ const DEFAULT_WALLETS = createRoninWallets({
   noGnosisSafe: true,
 })
 
-const WITH_ID_WALLETS = [mavisIdConnector, ...DEFAULT_WALLETS]
-
 interface IProviderProps {
   children: ReactNode
 }
 
 export const WalletContext: FC<IProviderProps> = ({ children }) => {
+  const { clientId, origin } = useAtomValue(idConfigAtom)
+  const idConnector = new MavisIdConnector(clientId, origin)
+
   const [open, setOpen] = useState(false)
 
   const handleOpen = useCallback(() => {
@@ -62,7 +64,7 @@ export const WalletContext: FC<IProviderProps> = ({ children }) => {
     <WalletgoProvider defaultChainId={SupportedChainIds.RoninTestnet}>
       <WalletgoDialogContext.Provider value={{ open, setOpen }}>
         <WalletWidget
-          wallets={WITH_ID_WALLETS}
+          wallets={[idConnector, ...DEFAULT_WALLETS]}
           isOpen={open}
           onOpen={handleOpen}
           onClose={handleClose}

@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "src/@/components/ui/card"
 import { Input } from "src/@/components/ui/input"
-import { addressConfig } from "src/config/address"
+import { ADDRESS_CONFIG } from "src/config/address"
 import { AXS__factory } from "src/contracts"
 import { useWrapToast } from "src/hooks/useWrapToast"
 import { HARDCODE_ADDRESS } from "src/utils/address"
@@ -41,7 +41,7 @@ export const TransferAxs = () => {
 
     try {
       const rawAmount = fromFracAmount(axsAmount, 18)
-      const contract = AXS__factory.connect(addressConfig.axs, walletProvider.getSigner())
+      const contract = AXS__factory.connect(ADDRESS_CONFIG.AXS, walletProvider.getSigner())
       const txData = await contract.transfer(toAddress, rawAmount)
 
       setTxHash(txData.hash)

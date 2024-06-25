@@ -51,3 +51,27 @@ export const redirectAuthorize = async (opts: RedirectAuthorizeOpts) => {
     scope: getScopesParams(scopes),
   })
 }
+
+export const parseRedirectUrl = () => {
+  const url = new URL(window.location.href)
+
+  const method = url.searchParams.get("method")
+  if (method !== "auth") {
+    throw "parseRedirectUrl: invalid method"
+  }
+
+  const type = url.searchParams.get("type")
+  if (type !== "success") {
+    throw "parseRedirectUrl: authorization failed"
+  }
+
+  const state = url.searchParams.get("state")
+  const rawToken = url.searchParams.get("data")
+  const rawAddress = url.searchParams.get("address") ?? undefined
+
+  return {
+    state,
+    accessToken: rawToken,
+    address: validateIdAddress(rawAddress),
+  }
+}

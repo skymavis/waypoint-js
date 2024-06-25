@@ -13,7 +13,7 @@ import {
 } from "src/@/components/ui/card"
 import { Input } from "src/@/components/ui/input"
 import { Label } from "src/@/components/ui/label"
-import { addressConfig } from "src/config/address"
+import { ADDRESS_CONFIG } from "src/config/address"
 import { AXS__factory } from "src/contracts"
 import { useWrapToast } from "src/hooks/useWrapToast"
 import { fromFracAmount } from "src/utils/currency"
@@ -26,7 +26,7 @@ export const ApproveAxs = () => {
   const { toastError, toastSuccess, toastConsoleError } = useWrapToast()
 
   const [loading, setLoading] = useState<boolean>(false)
-  const [spender, setSpender] = useState<string>(addressConfig.katana)
+  const [spender, setSpender] = useState<string>(ADDRESS_CONFIG.KATANA)
   const [axsAmount, setAxsAmount] = useState<string>("0.1")
   const [txHash, setTxHash] = useState<string>()
 
@@ -40,7 +40,7 @@ export const ApproveAxs = () => {
 
     try {
       const rawAmount = fromFracAmount(axsAmount, 18)
-      const contract = AXS__factory.connect(addressConfig.axs, walletProvider.getSigner())
+      const contract = AXS__factory.connect(ADDRESS_CONFIG.AXS, walletProvider.getSigner())
       const txData = await contract.approve(spender, rawAmount)
 
       setTxHash(txData.hash)
