@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from "src/@/components/ui/card"
 import { Input } from "src/@/components/ui/input"
-import { addressConfig } from "src/config/address"
+import { ADDRESS_CONFIG } from "src/config/address"
 import { KatanaRouter__factory } from "src/contracts"
 import { useWrapToast } from "src/hooks/useWrapToast"
 import { debugError } from "src/utils/debug"
@@ -40,7 +40,7 @@ export const SwapAxsOnKatana = () => {
 
     try {
       const katanaRouter = KatanaRouter__factory.connect(
-        addressConfig.katana,
+        ADDRESS_CONFIG.KATANA,
         walletProvider.getSigner(),
       )
 
@@ -58,7 +58,7 @@ export const SwapAxsOnKatana = () => {
 
       const deadline = Math.floor(Date.now() / 1000) + 60 * 10 // 10 minutes from now
 
-      const path = [addressConfig.axs, addressConfig.WRON]
+      const path = [ADDRESS_CONFIG.AXS, ADDRESS_CONFIG.WRON]
 
       const swapTX = await katanaRouter.swapExactTokensForRON(
         amountToSwap,
@@ -90,7 +90,7 @@ export const SwapAxsOnKatana = () => {
 
     try {
       const katanaRouter = KatanaRouter__factory.connect(
-        addressConfig.katana,
+        ADDRESS_CONFIG.KATANA,
         walletProvider.getSigner(),
       )
 
@@ -105,7 +105,7 @@ export const SwapAxsOnKatana = () => {
         amountOutMin = BigNumber.from(0)
       }
       const deadline = Math.floor(Date.now() / 1000) + 60 * 10 // 10 minutes from now
-      const path = [addressConfig.WRON, addressConfig.axs]
+      const path = [ADDRESS_CONFIG.WRON, ADDRESS_CONFIG.AXS]
       const swapTX = await katanaRouter.swapExactRONForTokens(
         amountOutMin,
         path,
