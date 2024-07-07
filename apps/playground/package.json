@@ -7,7 +7,7 @@
     "build": "pnpm gen:contracts && next build",
     "start": "next start",
     "gen:contracts": "typechain --target ethers-v5 --out-dir ./src/contracts './src/abis/**.json'",
-    "lint": "eslint . --ext .js,.tsx,.ts",
+    "lint": "eslint . --ext .js,.tsx,.ts --max-warnings=0",
     "clean": "rm -rf .turbo .next node_modules"
   },
   "dependencies": {
@@ -35,7 +35,7 @@
   "devDependencies": {
     "@next/bundle-analyzer": "13.1.6",
     "@next/eslint-plugin-next": "14.2.3",
-    "@sky-mavis/eslint-config-default": "workspace:*",
+    "@sky-mavis/eslint-config-next": "workspace:*",
     "@typechain/ethers-v5": "10.0.0",
     "@types/node": "20.12.11",
     "@types/react": "18.2.38",

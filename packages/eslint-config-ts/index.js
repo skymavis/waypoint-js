@@ -1,14 +1,6 @@
-const prettierConfig = require("./prettier.cjs")
-
+/** @type {import('eslint').Linter.BaseConfig} **/
 module.exports = {
-  extends: [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:import/typescript",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:prettier/recommended",
-  ],
+  root: true,
 
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -18,9 +10,16 @@ module.exports = {
     warnOnUnsupportedTypeScriptVersion: true,
   },
 
+  plugins: ["simple-import-sort", "import"],
+
+  extends: [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/typescript",
+    "plugin:prettier/recommended",
+  ],
   ignorePatterns: ["dist/", "node_modules/"],
 
-  plugins: ["simple-import-sort", "import"],
   rules: {
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "warn",
@@ -38,12 +37,6 @@ module.exports = {
       },
     ],
 
-    "react/prop-types": "off",
-    "react/require-default-props": "off",
-    "react/jsx-key": "warn",
-    "react/no-direct-mutation-state": "warn",
-    "react/react-in-jsx-scope": "off",
-
     "sort-imports": "off",
     "import/order": "off",
     "import/first": "error",
@@ -52,14 +45,21 @@ module.exports = {
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
 
-    "prettier/prettier": ["error", prettierConfig],
+    "prettier/prettier": [
+      "error",
+      {
+        printWidth: 100,
+        tabWidth: 2,
+        useTabs: false,
+        semi: false,
+        singleQuote: false,
+        trailingComma: "all",
+        arrowParens: "avoid",
+        endOfLine: "lf",
+      },
+    ],
   },
 
-  settings: {
-    react: {
-      version: "detect",
-    },
-  },
   env: {
     browser: true,
     node: true,
