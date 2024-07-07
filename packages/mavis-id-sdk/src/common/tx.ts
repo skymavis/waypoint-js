@@ -1,6 +1,6 @@
 import type { AccessList, Address, Hex } from "viem"
 
-export interface GenericTransaction {
+export type GenericTransaction = {
   // "0x64" for ronin gas sponsor
   type?: "0x0" | "0x1" | "0x2" | "0x64"
 
@@ -28,7 +28,7 @@ export interface GenericTransaction {
   chainId?: Hex
 }
 
-export interface FilledTransaction {
+export type FilledTransaction = {
   // "0x64" for ronin gas sponsor
   type: "0x0" | "0x1" | "0x2" | "0x64"
 

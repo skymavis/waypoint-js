@@ -18,7 +18,6 @@ export interface Eip1193Provider extends EIP1193Events {
 
 export type MavisIdRequestSchema = [
   ...PublicRpcSchema,
-
   {
     Method: "eth_accounts"
     Parameters?: undefined

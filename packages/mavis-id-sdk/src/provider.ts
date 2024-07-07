@@ -46,39 +46,47 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
 
     const {
       clientId,
+      chainId,
+      scopes = [],
       idOrigin = ID_ORIGIN_PROD,
       redirectUrl = window.location.origin,
-      scopes = [],
-
-      chainId,
     } = options
+
+    this.clientId = clientId
+    this.idOrigin = idOrigin
+    this.redirectUrl = redirectUrl
+    this.chainId = chainId
+    this.scopes = this.addDefaultScopes(scopes)
+    this.communicateHelper = new CommunicateHelper(idOrigin)
+    this.viemClient = this.createViemClient(chainId)
+  }
+
+  private createViemClient(chainId: number) {
     const chain = VIEM_CHAIN_MAPPING[chainId]
 
     if (!chain) {
       const err = new Error(`Chain ${chainId} is not supported.`)
       throw new ChainDisconnectedError(err)
     }
-    this.viemClient = createClient({
+
+    return createClient({
       chain: VIEM_CHAIN_MAPPING[chainId],
       transport: http(),
     })
+  }
 
-    // * add default scopes
+  private addDefaultScopes(scopes: Scope[]): Scope[] {
     const newScopes = [...scopes]
+
     if (!newScopes.includes("openid")) {
       newScopes.push("openid")
     }
+
     if (!newScopes.includes("wallet")) {
       newScopes.push("wallet")
     }
 
-    this.scopes = newScopes
-
-    this.clientId = clientId
-    this.idOrigin = idOrigin
-    this.redirectUrl = redirectUrl
-    this.chainId = chainId
-    this.communicateHelper = new CommunicateHelper(idOrigin)
+    return newScopes
   }
 
   public static create = (options: MavisIdWalletOpts) => {
@@ -174,52 +182,40 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
         return getAccounts() as ReturnType
 
       case "eth_requestAccounts":
-        return (await requestAccounts()) as ReturnType
+        return requestAccounts() as ReturnType
 
       case "eth_chainId":
         return toHex(chainId) as ReturnType
 
       case "personal_sign": {
         const [expectAddress] = await requestAccounts()
-        const sig = await personalSign({
+        return personalSign({
           params,
-
           expectAddress,
-
           clientId,
           idOrigin,
           communicateHelper,
-        })
-
-        return sig as ReturnType
+        }) as ReturnType
       }
 
       case "eth_signTypedData_v4": {
         const [expectAddress] = await requestAccounts()
-
-        const sig = await signTypedDataV4({
+        return signTypedDataV4({
           params,
-
           chainId,
           expectAddress,
-
           clientId,
           idOrigin,
           communicateHelper,
-        })
-
-        return sig as ReturnType
+        }) as ReturnType
       }
 
       case "eth_sendTransaction": {
         const [expectAddress] = await requestAccounts()
-
         return sendTransaction({
           params,
-
           chainId,
           expectAddress,
-
           clientId,
           idOrigin,
           communicateHelper,
@@ -227,9 +223,7 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
       }
 
       default: {
-        const result = await viemClient.request(args)
-
-        return result as ReturnType
+        return viemClient.request(args) as ReturnType
       }
     }
   }

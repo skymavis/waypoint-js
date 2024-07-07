@@ -167,6 +167,10 @@ importers:
         version: 3.2.5
 
   packages/mavis-id-sdk:
+    dependencies:
+      viem:
+        specifier: 2.9.2
+        version: 2.9.2(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
     devDependencies:
       '@babel/preset-env':
         specifier: 7.24.4
@@ -213,9 +217,6 @@ importers:
       typescript:
         specifier: 5.4.5
         version: 5.4.5
-      viem:
-        specifier: 2.9.2
-        version: 2.9.2(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
 
 packages:
 
@@ -4977,8 +4978,8 @@ packages:
       utf-8-validate:
         optional: true
 
-  ws@8.17.0:
-    resolution: {integrity: sha512-uJq6108EgZMAl20KagGkzCKfMEjxmKvZHG7Tlq0Z6nOky7YF7aq4mOx6xK8TJ/i1LeK4Qus7INktacctDgY8Ow==}
+  ws@8.17.1:
+    resolution: {integrity: sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -9958,7 +9959,7 @@ snapshots:
     dependencies:
       eventemitter3: 4.0.7
       uuid: 8.3.2
-      ws: 8.17.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      ws: 8.17.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     optionalDependencies:
       bufferutil: 4.0.8
       utf-8-validate: 5.0.10
@@ -10613,7 +10614,7 @@ snapshots:
       bufferutil: 4.0.8
       utf-8-validate: 5.0.10
 
-  ws@8.17.0(bufferutil@4.0.8)(utf-8-validate@5.0.10):
+  ws@8.17.1(bufferutil@4.0.8)(utf-8-validate@5.0.10):
     optionalDependencies:
       bufferutil: 4.0.8
       utf-8-validate: 5.0.10
