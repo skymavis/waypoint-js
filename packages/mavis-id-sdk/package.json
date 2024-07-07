@@ -29,7 +29,7 @@
   "scripts": {
     "build": "rm -rf dist && rollup -c",
     "dev": "rm -rf dist && rollup -c --watch",
-    "lint": "eslint . --ext .js,.tsx,.ts",
+    "lint": "eslint . --ext .js,.ts --max-warnings=0",
     "clean": "rm -rf .turbo node_modules dist"
   },
   "devDependencies": {
@@ -37,7 +37,7 @@
     "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-commonjs": "25.0.7",
     "@rollup/plugin-node-resolve": "15.2.3",
-    "@sky-mavis/eslint-config-default": "workspace:*",
+    "@sky-mavis/eslint-config-ts": "workspace:*",
     "@types/node": "20.12.11",
     "eslint": "8.57.0",
     "fs-extra": "11.2.0",

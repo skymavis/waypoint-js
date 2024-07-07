@@ -1,0 +1,21 @@
+{
+  "name": "@sky-mavis/eslint-config-next",
+  "version": "1.0.0",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "eslint-plugin-react": "7.34.1",
+    "eslint-plugin-react-hooks": "4.6.0",
+    "@sky-mavis/eslint-config-ts": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/eslint": "^8.4.7"
+  },
+  "peerDependencies": {
+    "eslint": ">=8.56.0",
+    "prettier": ">=3.1.1"
+  }
+}
