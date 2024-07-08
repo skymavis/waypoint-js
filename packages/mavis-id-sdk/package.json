@@ -47,9 +47,8 @@
     "rollup-plugin-postcss": "4.0.2",
     "rollup-plugin-typescript2": "0.36.0",
     "tslib": "2.6.2",
+    "viem": "2.9.2",
     "typescript": "5.4.5"
   },
-  "dependencies": {
-    "viem": "2.9.2"
-  }
+  "dependencies": {}
 }
