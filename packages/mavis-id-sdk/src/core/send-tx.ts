@@ -4,7 +4,7 @@ import { GenericTransaction } from "../common/tx"
 import { openPopup } from "../utils/popup"
 import { CommunicateHelper } from "./communicate"
 
-export type SendTransactionParams = {
+type SendTransactionParams = {
   params: [transaction: GenericTransaction]
 
   chainId: number

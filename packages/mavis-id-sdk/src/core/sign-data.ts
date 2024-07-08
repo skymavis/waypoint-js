@@ -12,7 +12,7 @@ import {
 import { openPopup } from "../utils/popup"
 import { CommunicateHelper } from "./communicate"
 
-export type SignTypedDataV4Params = {
+type SignTypedDataV4Params = {
   params: [address: Address, data: TypedDataDefinition | string]
   expectAddress: Address
 

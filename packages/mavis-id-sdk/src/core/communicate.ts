@@ -1,7 +1,7 @@
 import { Deferred } from "../utils/defer"
 import { normalizeIdError } from "../utils/error"
 
-export type CallbackMessage = {
+type CallbackMessage = {
   state: string
 } & (
   | {
