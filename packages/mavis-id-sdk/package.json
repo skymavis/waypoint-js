@@ -24,9 +24,7 @@
   ],
   "files": [
     "dist",
-    "src",
-    "README.md",
-    "CHANGELOG.md"
+    "README.md"
   ],
   "scripts": {
     "build": "rm -rf dist && rollup -c",
@@ -46,20 +44,10 @@
     "prettier": "3.2.5",
     "rollup": "4.14.1",
     "rollup-plugin-peer-deps-external": "2.2.4",
-    "rollup-plugin-postcss": "4.0.2",
     "rollup-plugin-typescript2": "0.36.0",
     "tslib": "2.6.2",
-    "typescript": "5.4.5",
-    "viem": "2.9.2"
+    "viem": "2.9.2",
+    "typescript": "5.4.5"
   },
-  "dependencies": {},
-  "peerDependencies": {
-    "typescript": ">=5.0.4",
-    "viem": ">=2.9.2"
-  },
-  "peerDependenciesMeta": {
-    "typescript": {
-      "optional": true
-    }
-  }
+  "dependencies": {}
 }

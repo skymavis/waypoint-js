@@ -6,6 +6,11 @@ import {
   UserRejectedRequestError,
 } from "viem"
 
+type IdError = {
+  code: number
+  message: string
+}
+
 /**
  * Dictionary Errors:
  * - User Error: 1xxx
@@ -51,11 +56,6 @@ const IdErrorMap = Object.freeze({
     message: "Can't simulate contract request",
   },
 } as const)
-
-interface IdError {
-  code: number
-  message: string
-}
 
 export const normalizeIdError = (idErr: IdError) => {
   switch (idErr.code) {

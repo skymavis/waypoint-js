@@ -12,6 +12,10 @@ export type AuthorizeOpts = {
   redirectUrl?: string
 }
 
+export type RedirectAuthorizeOpts = AuthorizeOpts & {
+  state?: string
+}
+
 export const authorize = async (opts: AuthorizeOpts) => {
   const { clientId, idOrigin = ID_ORIGIN_PROD, scopes, redirectUrl = window.location.origin } = opts
   const helper = new CommunicateHelper(idOrigin)
@@ -27,16 +31,12 @@ export const authorize = async (opts: AuthorizeOpts) => {
   const { id_token: accessToken, address: rawAddress } = authData ?? {}
 
   return {
-    accessToken: accessToken,
+    accessToken,
     address: validateIdAddress(rawAddress),
   }
 }
 
-export type RedirectAuthorizeOpts = AuthorizeOpts & {
-  state?: string
-}
-
-export const redirectAuthorize = async (opts: RedirectAuthorizeOpts) => {
+export const redirectAuthorize = (opts: RedirectAuthorizeOpts) => {
   const {
     clientId,
     redirectUrl = window.location.origin,
