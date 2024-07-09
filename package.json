@@ -4,10 +4,16 @@
     "build": "turbo run build",
     "dev": "turbo run dev --no-cache --parallel --continue",
     "lint": "turbo run lint",
-    "clean": "turbo run clean && rm -rf node_modules .turbo"
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
+    "prepare": "husky install"
   },
   "devDependencies": {
-    "turbo": "1.13.3"
+    "turbo": "1.13.3",
+    "@commitlint/types": "19.0.3",
+    "@commitlint/cli": "19.2.1",
+    "@commitlint/config-conventional": "19.1.0",
+    "husky": "9.0.11",
+    "eslint": "8.57.0"
   },
   "engines": {
     "node": ">=20",
