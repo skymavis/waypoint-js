@@ -89,6 +89,12 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
     return newScopes
   }
 
+  /**
+   * Creates a new MavisIdWallet instance.
+   *
+   * @param options Options for MavisIdWallet.
+   * @returns MavisIdWallet instance.
+   */
   public static create = (options: MavisIdWalletOpts) => {
     return new MavisIdWallet(options)
   }
@@ -100,6 +106,11 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
     return validateIdAddress(storedAddress)
   }
 
+  /**
+   * Connects to Mavis ID provider and retrieves authorization data.
+   *
+   * @returns The access token and address.
+   */
   connect = async () => {
     const { idOrigin, clientId, redirectUrl, scopes, communicateHelper, chainId } = this
 
@@ -135,6 +146,9 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
     }
   }
 
+  /**
+   * Disconnects from Mavis ID provider and clears the stored address.
+   */
   disconnect = () => {
     const shouldEmitDisconnectEvent = !!this.address
 
