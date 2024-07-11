@@ -29,6 +29,21 @@ export type MavisIdWalletOpts = AuthorizeOpts & {
   chainId: number
 }
 
+/**
+ * A JavaScript Ethereum Provider API for consistency across clients and applications.
+ *
+ * This provider is designed to easily integrate with Mavis ID.
+ *
+ * Use `create` function to create a new instance.
+ *
+ * @example
+ * import { MavisIdWallet } from "@sky-mavis/mavis-id-sdk"
+ *
+ * const idWalletProvider = MavisIdWallet.create({
+ *  clientId: "YOUR_CLIENT_ID",
+ *  chainId: ronin.chainId,
+ * })
+ */
 export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
   private readonly clientId: string
   private readonly idOrigin: string
@@ -93,7 +108,16 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
    * Creates a new MavisIdWallet instance.
    *
    * @param options Options for MavisIdWallet.
+   *
    * @returns MavisIdWallet instance.
+   *
+   * @example
+   * import { MavisIdWallet } from "@sky-mavis/mavis-id-sdk"
+   *
+   * const idWalletProvider = MavisIdWallet.create({
+   *  clientId: "YOUR_CLIENT_ID",
+   *  chainId: ronin.chainId,
+   * })
    */
   public static create = (options: MavisIdWalletOpts) => {
     return new MavisIdWallet(options)
@@ -107,7 +131,7 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
   }
 
   /**
-   * Connects to Mavis ID provider and retrieves authorization data.
+   * Connects to Mavis ID provider and retrieves authorization data & user wallet address.
    *
    * @returns The access token and address.
    */
@@ -147,7 +171,7 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
   }
 
   /**
-   * Disconnects from Mavis ID provider and clears the stored address.
+   * Disconnect from Mavis ID provider and clear the cached address in localStorage.
    */
   disconnect = () => {
     const shouldEmitDisconnectEvent = !!this.address
@@ -179,6 +203,13 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
     return [result.address]
   }
 
+  /**
+   * A JavaScript Ethereum Provider API for consistency across clients and applications.
+   *
+   * Makes an Ethereum RPC method call.
+   *
+   * https://eips.ethereum.org/EIPS/eip-1193
+   */
   request = async <ReturnType = unknown>(args: EIP1193Parameters<MavisIdRequestSchema>) => {
     const {
       clientId,

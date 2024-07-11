@@ -5,27 +5,56 @@ import { CommunicateHelper } from "./core/communicate"
 import { openPopup, replaceUrl } from "./utils/popup"
 import { validateIdAddress } from "./utils/validate-address"
 
+/**
+ * Options for authorizing a client.
+ */
 export type AuthorizeOpts = {
+  /**
+   * Client ID are used to identify your application for this integration.
+   * You can find it in Developer Portal under ID Service settings.
+   */
   clientId: string
+
+  /**
+   * Mavis ID environment - for testing only.
+   * DO NOT override this value in production.
+   */
   idOrigin?: string
+
+  /**
+   * Scopes are used by an application during authentication to authorize access to a user’s details, like name and picture.
+   * openid (required; to indicate that the application intends to use OIDC to verify the user's identity)
+   * profile (so you can personalize the email with the user's name)
+   * email (so you know where to send the welcome email)
+   * wallet (so you can request signing & sending transaction from the user's wallet)
+   */
   scopes?: Scope[]
+
+  /**
+   * The URI of your application that users will be redirected to after authentication
+   */
   redirectUrl?: string
 }
 
 export type RedirectAuthorizeOpts = AuthorizeOpts & {
+  /**
+   * The unique state to identify the request & response.
+   */
   state?: string
 }
 
 /**
- * Authorizes a user via Mavis ID, returning an accessToken and user address.
+ * Authorize a user via Mavis ID, returning an accessToken and user address.
+ * This function will open a popup for authorization.
  *
  * @param opts Options for authorization.
  * @returns Authorization result including accessToken and user address.
  *
  * @example
  * import { authorize } from "@sky-mavis/mavis-id-sdk"
+ *
  * const { accessToken, address } = await authorize({
- *  clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
+ *  clientId: "YOUR_CLIENT_ID",
  * })
  */
 export const authorize = async (opts: AuthorizeOpts) => {
@@ -49,14 +78,16 @@ export const authorize = async (opts: AuthorizeOpts) => {
 }
 
 /**
- * Authorizes a user via Mavis ID in redirect mode, returning state, accessToken and user address.
+ * Authorize a user via Mavis ID in redirect mode, returning state, accessToken and user address.
+ * This function will redirect the user to Mavis ID for authorization.
  *
  * @param opts Options for redirect authorization.
  *
  * @example
  * import { redirectAuthorize } from "@sky-mavis/mavis-id-sdk"
+ *
  * const { state, accessToken, address } = await redirectAuthorize({
- *  clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
+ *  clientId: "YOUR_CLIENT_ID",
  * })
  */
 export const redirectAuthorize = (opts: RedirectAuthorizeOpts) => {
@@ -76,7 +107,8 @@ export const redirectAuthorize = (opts: RedirectAuthorizeOpts) => {
 }
 
 /**
- * Parses the redirect URL after authorization.
+ * Parse the redirect URL after authorization.
+ * This function should be called in the redirect URL page.
  *
  * @returns Parsed data from the redirect URL.
  *
