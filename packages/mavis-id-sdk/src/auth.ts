@@ -16,6 +16,18 @@ export type RedirectAuthorizeOpts = AuthorizeOpts & {
   state?: string
 }
 
+/**
+ * Authorizes a user via Mavis ID, returning an accessToken and user address.
+ *
+ * @param opts Options for authorization.
+ * @returns Authorization result including accessToken and user address.
+ *
+ * @example
+ * import { authorize } from "@sky-mavis/mavis-id-sdk"
+ * const { accessToken, address } = await authorize({
+ *  clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
+ * })
+ */
 export const authorize = async (opts: AuthorizeOpts) => {
   const { clientId, idOrigin = ID_ORIGIN_PROD, scopes, redirectUrl = window.location.origin } = opts
   const helper = new CommunicateHelper(idOrigin)
@@ -36,6 +48,17 @@ export const authorize = async (opts: AuthorizeOpts) => {
   }
 }
 
+/**
+ * Authorizes a user via Mavis ID in redirect mode, returning state, accessToken and user address.
+ *
+ * @param opts Options for redirect authorization.
+ *
+ * @example
+ * import { redirectAuthorize } from "@sky-mavis/mavis-id-sdk"
+ * const { state, accessToken, address } = await redirectAuthorize({
+ *  clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
+ * })
+ */
 export const redirectAuthorize = (opts: RedirectAuthorizeOpts) => {
   const {
     clientId,
@@ -52,6 +75,14 @@ export const redirectAuthorize = (opts: RedirectAuthorizeOpts) => {
   })
 }
 
+/**
+ * Parses the redirect URL after authorization.
+ *
+ * @returns Parsed data from the redirect URL.
+ *
+ * @example
+ * const { state, accessToken, address } = parseRedirectUrl()
+ */
 export const parseRedirectUrl = () => {
   const url = new URL(window.location.href)
 
