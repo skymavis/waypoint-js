@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - BREAKING CHANGE
+## [Unreleased]
+
+## [1.0.0] - BREAKING CHANGE
 
 ### Added
 
@@ -13,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update client_id of playground
 - Add authorize & redirectAuthorize function
 - Allow custom scope on authorize flow
+- typedoc for each function & MavisIdProvider
 
 ### Changed
 
@@ -57,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - refactor typing & error handling
 - authorize redirect url should configurable
 
-[unreleased]: https://github.com/skymavis/mavis-id-js/compare/mavis-id-sdk@v0.0.2...HEAD
+[unreleased]: https://github.com/skymavis/mavis-id-js/compare/mavis-id-sdk@v1.0.0...HEAD
+[1.0.0]: https://github.com/skymavis/mavis-id-js/compare/mavis-id-sdk@v0.0.2...mavis-id-sdk@v1.0.0
 [0.0.2]: https://github.com/skymavis/mavis-id-js/compare/mavis-id-sdk@v0.0.1...mavis-id-sdk@v0.0.2
 [0.0.1]: https://github.com/skymavis/mavis-id-js/releases/tag/mavis-id-sdk@v0.0.1
