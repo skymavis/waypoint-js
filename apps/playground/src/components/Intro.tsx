@@ -6,9 +6,6 @@ import { MavisLogo } from "src/connectors/MavisLogo"
 import { useWalletgoDialog } from "src/hooks/useWalletgoDialog"
 import { truncateAddress } from "src/utils/address"
 
-import { Authorize } from "./Authorize"
-import { RedirectAuthorize } from "./RedirectAuthorize"
-
 export const Intro = () => {
   const { account } = useWalletgo()
   const { setOpen } = useWalletgoDialog()
@@ -36,10 +33,10 @@ export const Intro = () => {
         </div>
       )}
 
-      <div className="mt-8 font-bold text-xl">Authorize User</div>
+      {/* <div className="mt-8 font-bold text-xl">Authorize User</div>
 
       <Authorize />
-      <RedirectAuthorize />
+      <RedirectAuthorize /> */}
     </>
   )
 }
