@@ -1,13 +1,16 @@
 "use client"
 
+import { useWalletgo } from "@roninnetwork/walletgo"
 import { Button } from "src/@/components/ui/button"
 import { MavisLogo } from "src/connectors/MavisLogo"
 import { useWalletgoDialog } from "src/hooks/useWalletgoDialog"
+import { truncateAddress } from "src/utils/address"
 
 import { Authorize } from "./Authorize"
 import { RedirectAuthorize } from "./RedirectAuthorize"
 
 export const Intro = () => {
+  const { account } = useWalletgo()
   const { setOpen } = useWalletgoDialog()
 
   return (
@@ -25,8 +28,13 @@ export const Intro = () => {
 
       <div className="mt-12 font-bold text-xl">Use ID Wallet</div>
       <Button className="mt-2 w-[247px]" onClick={() => setOpen(true)}>
-        Connect your wallet
+        {account ? truncateAddress(account) : "Connect your wallet"}
       </Button>
+      {account && (
+        <div className="mt-2 text-sm font-medium">
+          Connected! Now you could interact with wallet features.
+        </div>
+      )}
 
       <div className="mt-8 font-bold text-xl">Authorize User</div>
 

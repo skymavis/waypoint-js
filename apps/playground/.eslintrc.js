@@ -4,7 +4,7 @@ module.exports = {
   rules: {
     "@next/next/no-img-element": "off",
     "no-console": "off",
-    "prettier/prettier": 0,
+    "prettier/prettier": 1,
   },
   ignorePatterns: [".swc", ".next", "out", "node_modules", "contracts"],
 }
