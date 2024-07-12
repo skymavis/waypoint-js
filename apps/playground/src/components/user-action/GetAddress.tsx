@@ -13,15 +13,13 @@ import {
   CardTitle,
 } from "src/@/components/ui/card"
 import { Input } from "src/@/components/ui/input"
-import { ID_URL } from "src/connectors/MavisIdConnector"
 import { useWrapToast } from "src/hooks/useWrapToast"
 import { debugError } from "src/utils/debug"
-import { openPopup } from "src/utils/popup"
 
 import { LoadingSpinner } from "../LoadingSpinner"
 
 export const GetAddress = () => {
-  const { walletProvider, account, connector } = useWalletgo()
+  const { walletProvider, account } = useWalletgo()
   const { toastError, toastSuccess, toastConsoleError } = useWrapToast()
 
   const [address, setAddress] = useState<string>()
@@ -49,17 +47,6 @@ export const GetAddress = () => {
     }
   }
 
-  const handleViewAssets = async () => {
-    if (!account) {
-      toastError("Please connect your wallet first!")
-      return
-    }
-
-    openPopup(
-      `${ID_URL}/wallet/view?clientId=xdemo&redirect=${window.location.origin}&chainId=2021`,
-    )
-  }
-
   return (
     <Card>
       <CardHeader>
@@ -84,12 +71,6 @@ export const GetAddress = () => {
         </form>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">
-        {connector?.id === "MAVIS_ID_CONNECTOR" && (
-          <Button onClick={handleViewAssets} disabled={!account}>
-            View assets
-          </Button>
-        )}
-
         <Button onClick={handleGetAddress} disabled={!account || loading} className="gap-1">
           {loading && <LoadingSpinner />}
           Get address
