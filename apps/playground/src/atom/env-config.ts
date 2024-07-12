@@ -7,7 +7,7 @@ const CLIENT_ID_MAP: Record<IdOrigin, string> = {
   ["https://id.skymavis.one"]: "5cf4daa9-e7ff-478b-a96c-1a9d46c916ca",
 }
 
-const _idOriginAtom = atomWithStorage<IdOrigin>("ID_ORIGIN", "https://id.skymavis.com")
+const _idOriginAtom = atomWithStorage<IdOrigin>("ID_ORIGIN", "https://id.skymavis.one")
 
 export const idConfigAtom = atom(get => {
   const origin = get(_idOriginAtom)
