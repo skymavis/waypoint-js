@@ -130,15 +130,12 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
     return validateIdAddress(storedAddress)
   }
 
-  private getIdAddressOrThrow = (method: string) => {
+  private getIdAddressOrConnect = async () => {
     const address = this.getIdAddress()
+    if (address) return address
 
-    if (!address) {
-      const err = new Error(`${method}: provider is NOT connected`)
-      throw new UnauthorizedProviderError(err)
-    }
-
-    return address
+    const result = await this.connect()
+    return result.address
   }
 
   /**
@@ -215,7 +212,7 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
       viemClient,
       connect,
       getIdAddress,
-      getIdAddressOrThrow,
+      getIdAddressOrConnect,
     } = this
     const { method, params } = args
 
@@ -237,10 +234,8 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
         return [newAddress] as ReturnType
       }
 
-      // * all methods below need address to be executed
-      // * if provider is not connected, throw UnauthorizedProviderError
       case "personal_sign": {
-        const expectAddress = await getIdAddressOrThrow(method)
+        const expectAddress = await getIdAddressOrConnect()
 
         return personalSign({
           params,
@@ -252,7 +247,7 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
       }
 
       case "eth_signTypedData_v4": {
-        const expectAddress = await getIdAddressOrThrow(method)
+        const expectAddress = await getIdAddressOrConnect()
 
         return signTypedDataV4({
           params,
@@ -265,7 +260,7 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
       }
 
       case "eth_sendTransaction": {
-        const expectAddress = await getIdAddressOrThrow(method)
+        const expectAddress = await getIdAddressOrConnect()
 
         return sendTransaction({
           params,
