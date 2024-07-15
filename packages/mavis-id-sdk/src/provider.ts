@@ -130,6 +130,17 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
     return validateIdAddress(storedAddress)
   }
 
+  private getIdAddressOrThrow = (method: string) => {
+    const address = this.getIdAddress()
+
+    if (!address) {
+      const err = new Error(`${method}: provider is NOT connected`)
+      throw new UnauthorizedProviderError(err)
+    }
+
+    return address
+  }
+
   /**
    * Connects to Mavis ID provider and retrieves authorization data & user wallet address.
    *
@@ -188,21 +199,6 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
     }
   }
 
-  private getAccounts = () => {
-    const address = this.getIdAddress()
-
-    return address ? [address] : []
-  }
-
-  private requestAccounts = async () => {
-    const addresses = this.getAccounts()
-    if (addresses.length) return addresses
-
-    const result = await this.connect()
-
-    return [result.address]
-  }
-
   /**
    * A JavaScript Ethereum Provider API for consistency across clients and applications.
    *
@@ -215,25 +211,37 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
       clientId,
       idOrigin,
       communicateHelper,
-      requestAccounts,
       chainId,
-      getAccounts,
       viemClient,
+      connect,
+      getIdAddress,
+      getIdAddressOrThrow,
     } = this
     const { method, params } = args
 
     switch (method) {
-      case "eth_accounts":
-        return getAccounts() as ReturnType
-
-      case "eth_requestAccounts":
-        return requestAccounts() as ReturnType
-
       case "eth_chainId":
         return toHex(chainId) as ReturnType
 
+      case "eth_accounts": {
+        const address = getIdAddress()
+        const result = address ? [address] : []
+        return result as ReturnType
+      }
+
+      // * Mavis ID is not like other providers, it need open popup to authorize & get address
+      // * eth_requestAccounts should NOT get address from localStorage cache
+      // * if user change address in ID, it should get new address
+      case "eth_requestAccounts": {
+        const { address: newAddress } = await connect()
+        return [newAddress] as ReturnType
+      }
+
+      // * all methods below need address to be executed
+      // * if provider is not connected, throw UnauthorizedProviderError
       case "personal_sign": {
-        const [expectAddress] = await requestAccounts()
+        const expectAddress = await getIdAddressOrThrow(method)
+
         return personalSign({
           params,
           expectAddress,
@@ -244,7 +252,8 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
       }
 
       case "eth_signTypedData_v4": {
-        const [expectAddress] = await requestAccounts()
+        const expectAddress = await getIdAddressOrThrow(method)
+
         return signTypedDataV4({
           params,
           chainId,
@@ -256,7 +265,8 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
       }
 
       case "eth_sendTransaction": {
-        const [expectAddress] = await requestAccounts()
+        const expectAddress = await getIdAddressOrThrow(method)
+
         return sendTransaction({
           params,
           chainId,
