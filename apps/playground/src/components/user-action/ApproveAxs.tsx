@@ -26,7 +26,7 @@ export const ApproveAxs = () => {
   const { toastError, toastSuccess, toastConsoleError } = useWrapToast()
 
   const [loading, setLoading] = useState<boolean>(false)
-  const [spender, setSpender] = useState<string>(ADDRESS_CONFIG.KATANA)
+  const [spender, setSpender] = useState<string>("")
   const [axsAmount, setAxsAmount] = useState<string>("0.1")
   const [txHash, setTxHash] = useState<string>()
 
@@ -62,7 +62,7 @@ export const ApproveAxs = () => {
       </CardHeader>
       <CardContent>
         <form>
-          <div className="grid w-full items-center gap-4">
+          <div className="grid items-center w-full gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="axsAmount">Amount</Label>
               <Input

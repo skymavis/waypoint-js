@@ -16,7 +16,6 @@ import { Input } from "src/@/components/ui/input"
 import { ADDRESS_CONFIG } from "src/config/address"
 import { AXS__factory } from "src/contracts"
 import { useWrapToast } from "src/hooks/useWrapToast"
-import { HARDCODE_ADDRESS } from "src/utils/address"
 import { fromFracAmount } from "src/utils/currency"
 import { debugError } from "src/utils/debug"
 
@@ -26,7 +25,7 @@ export const TransferAxs = () => {
   const { walletProvider, account } = useWalletgo()
   const { toastError, toastSuccess, toastConsoleError } = useWrapToast()
 
-  const [toAddress, setToAddress] = useState<string>(HARDCODE_ADDRESS)
+  const [toAddress, setToAddress] = useState<string>("")
   const [axsAmount, setAxsAmount] = useState<string>("0.1")
   const [txHash, setTxHash] = useState<string>()
   const [loading, setLoading] = useState<boolean>(false)
@@ -63,7 +62,7 @@ export const TransferAxs = () => {
       </CardHeader>
       <CardContent>
         <form>
-          <div className="grid w-full items-center gap-4">
+          <div className="grid items-center w-full gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="axsAmount">Amount</Label>
               <Input
