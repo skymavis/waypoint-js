@@ -39,7 +39,7 @@ export const AtiaActivation = () => {
         ADDRESS_CONFIG.ATIA_SHRINE,
         walletProvider.getSigner(),
       )
-      const txData = await contract.activateStreak(account, { gasLimit: 300000 })
+      const txData = await contract.activateStreak(account)
 
       setTxHash(txData.hash)
       toastSuccess(`Atia has blessed you`)
