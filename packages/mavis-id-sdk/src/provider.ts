@@ -64,7 +64,7 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
       chainId,
       scopes = [],
       idOrigin = ID_ORIGIN_PROD,
-      redirectUrl = window.location.origin,
+      redirectUrl = typeof window !== "undefined" ? window.location.origin : "",
     } = options
 
     this.clientId = clientId

@@ -22,8 +22,10 @@ export const RedirectAuthorize = () => {
 
       console.debug("🚀 | Redirect - Authorization Result:", result)
       toastSuccess("Check your console for result!")
-    } catch (error) { /* empty */ }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    } catch (error) {
+      /* empty */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
