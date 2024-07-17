@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.1] - Unreleased
 
+- Fix default value of `redirectUrl` on MavisIdWallet's constructor
+
 ### Changed
 
 - `eth_requestAccounts` always open ID popup to get new address
