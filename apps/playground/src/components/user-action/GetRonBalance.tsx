@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "src/@/components/ui/card"
-import { Input } from "src/@/components/ui/input"
+import { Result } from "src/@/components/ui/result"
 import { useWrapToast } from "src/hooks/useWrapToast"
 import { formatBalance } from "src/utils/currency"
 import { debugError } from "src/utils/debug"
@@ -54,21 +54,17 @@ export const GetRonBalance = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Get Balance</CardTitle>
+        <CardTitle>eth_getBalance</CardTitle>
         <CardDescription>Get the RON balance of your current account.</CardDescription>
       </CardHeader>
       <CardContent>
         <form>
-          <div className="grid w-full items-center gap-4">
+          <div className="grid items-center w-full gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="result">Result</Label>
-              <Input
-                id="result"
-                tabIndex={-1}
+              <Result
                 placeholder="Your RON balance"
                 value={ronBalance ? formatBalance(ronBalance) : ""}
-                readOnly
-                type="string"
               />
             </div>
           </div>

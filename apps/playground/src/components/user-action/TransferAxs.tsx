@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "src/@/components/ui/card"
 import { Input } from "src/@/components/ui/input"
+import { Result } from "src/@/components/ui/result"
 import { ADDRESS_CONFIG } from "src/config/address"
 import { AXS__factory } from "src/contracts"
 import { useWrapToast } from "src/hooks/useWrapToast"
@@ -92,14 +93,7 @@ export const TransferAxs = () => {
 
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="result">Result</Label>
-              <Input
-                id="result"
-                tabIndex={-1}
-                placeholder="Your transaction hash"
-                value={txHash ?? ""}
-                readOnly
-                type="string"
-              />
+              <Result placeholder="Your transaction hash" value={txHash} type="transaction_hash" />
             </div>
           </div>
         </form>

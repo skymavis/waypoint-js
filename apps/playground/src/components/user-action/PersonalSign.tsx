@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "src/@/components/ui/card"
 import { Input } from "src/@/components/ui/input"
+import { Result } from "src/@/components/ui/result"
 import { useWrapToast } from "src/hooks/useWrapToast"
 import { debugError } from "src/utils/debug"
 
@@ -65,7 +66,7 @@ export const PersonalSign = () => {
       </CardHeader>
       <CardContent>
         <form>
-          <div className="grid w-full items-center gap-4">
+          <div className="grid items-center w-full gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="signMessage">Message</Label>
               <Input
@@ -81,14 +82,7 @@ export const PersonalSign = () => {
 
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="result">Result</Label>
-              <Input
-                id="result"
-                tabIndex={-1}
-                placeholder="Your signature"
-                value={signResult ?? ""}
-                readOnly
-                type="string"
-              />
+              <Result placeholder="Your signature" value={signResult} />
             </div>
           </div>
         </form>

@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "src/@/components/ui/card"
-import { Input } from "src/@/components/ui/input"
+import { Result } from "src/@/components/ui/result"
 import { useWrapToast } from "src/hooks/useWrapToast"
 import { debugError } from "src/utils/debug"
 
@@ -50,22 +50,15 @@ export const GetAddress = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Get Address</CardTitle>
+        <CardTitle>eth_requestAccounts</CardTitle>
         <CardDescription>Get the address from your current wallet.</CardDescription>
       </CardHeader>
       <CardContent>
         <form>
-          <div className="grid w-full items-center gap-4">
+          <div className="grid items-center w-full gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="result">Result</Label>
-              <Input
-                id="result"
-                tabIndex={-1}
-                placeholder="Your current address"
-                value={address ?? ""}
-                readOnly
-                type="string"
-              />
+              <Result placeholder="Your current address" value={address} />
             </div>
           </div>
         </form>

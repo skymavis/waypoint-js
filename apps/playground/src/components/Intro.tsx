@@ -14,26 +14,26 @@ export const Intro = () => {
     <>
       <MavisLogo width={88} />
 
-      <div className="mt-4 text-4xl font-bold lg:text-5xl tracking-wide">Mavis ID</div>
-      <div className="mt-0 italic text-sm font-medium">by Ronin</div>
+      <div className="mt-4 text-4xl font-bold tracking-wide lg:text-5xl">Mavis ID</div>
+      <div className="mt-0 text-sm italic font-medium">by Ronin</div>
 
-      <div className="mt-8 font-semibold">Welcome to Mavis ID Demo</div>
+      <div className="mt-2 font-semibold lg:mt-8">Welcome to Mavis ID Demo</div>
       <div className="mt-1 max-w-[400px] text-sm font-medium italic">
         With this sample app, you can explore the various features of basic Mavis ID wallet and get
         a feel for how it can benefit your own project.
       </div>
 
-      <div className="mt-12 font-bold text-xl">Use ID Wallet</div>
+      <div className="mt-6 text-xl font-bold lg:mt-12">Use ID Wallet</div>
       <Button className="mt-2 w-[247px]" onClick={() => setOpen(true)}>
         {account ? truncateAddress(account) : "Connect your wallet"}
       </Button>
       {account && (
-        <div className="mt-2 text-sm font-medium">
+        <div className="mt-2 text-sm font-medium text-destructive">
           Connected! Now you could interact with wallet features.
         </div>
       )}
 
-      {/* <div className="mt-8 font-bold text-xl">Authorize User</div>
+      {/* <div className="mt-8 text-xl font-bold">Authorize User</div>
 
       <Authorize />
       <RedirectAuthorize /> */}
