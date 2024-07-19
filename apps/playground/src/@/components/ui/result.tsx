@@ -6,28 +6,33 @@ import { Input } from "./input"
 
 type ResultType = "text" | "transaction_hash"
 
-const Result = ({
-  value = "",
-  placeholder,
-  type = "text",
-  ...props
-}: {
+type WrapperProps = {
+  value?: string
+  type: ResultType
+  children?: React.ReactNode
+}
+
+const Wrapper = ({ value, type, children }: WrapperProps) => {
+  if (type === "transaction_hash" && value !== "") {
+    return (
+      <Link href={`${EXPLORER_DOMAIN}/tx/${value}`} target="_blank" tabIndex={-1}>
+        {children}
+      </Link>
+    )
+  }
+
+  return children
+}
+
+type ResultProps = {
   value?: string
   placeholder?: string
   type?: ResultType
-}) => {
-  const isTransactionHash = type === "transaction_hash" && value !== ""
-  const Wrapper = isTransactionHash ? Link : React.Fragment
-  const wrapperProps = isTransactionHash
-    ? {
-        href: `${EXPLORER_DOMAIN}/tx/${value}`,
-        target: "_blank",
-        tabIndex: -1,
-      }
-    : {}
+}
 
+const Result = ({ value = "", placeholder, type = "text" }: ResultProps) => {
   return (
-    <Wrapper {...wrapperProps} {...props}>
+    <Wrapper value={value} type={type}>
       <Input tabIndex={-1} placeholder={placeholder} value={value} readOnly type="string" />
     </Wrapper>
   )
