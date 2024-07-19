@@ -4,10 +4,7 @@ import { saigon } from "viem/chains"
 
 const idWalletProvider = MavisIdWallet.create({
   chainId: saigon.id,
-  // clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
-
-  idOrigin: "https://id.skymavis.one",
-  clientId: "5cf4daa9-e7ff-478b-a96c-1a9d46c916ca",
+  clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
 })
 
 export const web3WalletClient = createWalletClient({
