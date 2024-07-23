@@ -1,0 +1,860 @@
+[
+  { "inputs": [], "name": "ErrActivateBeforeStartingBlock", "type": "error" },
+  { "inputs": [], "name": "ErrAlreadyActivatedStreak", "type": "error" },
+  { "inputs": [], "name": "ErrCallerNotDelegated", "type": "error" },
+  {
+    "inputs": [
+      { "internalType": "int32", "name": "expo1", "type": "int32" },
+      { "internalType": "int32", "name": "expo2", "type": "int32" },
+      { "internalType": "int64", "name": "price1", "type": "int64" }
+    ],
+    "name": "ErrComputedPriceTooLarge",
+    "type": "error"
+  },
+  { "inputs": [], "name": "ErrExceedDailyPrayThreshold", "type": "error" },
+  {
+    "inputs": [{ "internalType": "int32", "name": "expo", "type": "int32" }],
+    "name": "ErrExponentTooLarge",
+    "type": "error"
+  },
+  { "inputs": [], "name": "ErrFreezeTimeEnded", "type": "error" },
+  { "inputs": [], "name": "ErrInsufficientPayment", "type": "error" },
+  { "inputs": [], "name": "ErrInvalidActiveStreakLifeTime", "type": "error" },
+  { "inputs": [], "name": "ErrInvalidLength", "type": "error" },
+  {
+    "inputs": [],
+    "name": "ErrInvalidOrderOfRestorationCosts",
+    "type": "error"
+  },
+  { "inputs": [], "name": "ErrInvalidResetDuration", "type": "error" },
+  { "inputs": [], "name": "ErrNoLostStreak", "type": "error" },
+  { "inputs": [], "name": "ErrStartNewStreakByDelegatee", "type": "error" },
+  { "inputs": [], "name": "ErrZeroLostStreakCount", "type": "error" },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "streakLifeTime",
+        "type": "uint256"
+      }
+    ],
+    "name": "ActiveStreakLifeTimeChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "dailyPrayerThreshold",
+        "type": "uint256"
+      }
+    ],
+    "name": "DailyPrayerThresholdUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newFreezePeriod",
+        "type": "uint256"
+      }
+    ],
+    "name": "FreezePeriodUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
+      }
+    ],
+    "name": "Initialized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newPaymentToken",
+        "type": "address"
+      }
+    ],
+    "name": "PaymentTokenUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "prayer",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint64",
+            "name": "syncedDayIndex",
+            "type": "uint64"
+          },
+          { "internalType": "uint64", "name": "countPerDay", "type": "uint64" }
+        ],
+        "indexed": false,
+        "internalType": "struct IAtiaShrine.PrayerCountInfo",
+        "name": "prayerCountInfo",
+        "type": "tuple"
+      }
+    ],
+    "name": "PrayerCountSynced",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "tokenInDecimal",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "tokenOutDecimal",
+            "type": "uint8"
+          },
+          {
+            "internalType": "contract IPyth",
+            "name": "pyth",
+            "type": "address"
+          },
+          { "internalType": "bytes32", "name": "priceId", "type": "bytes32" },
+          {
+            "internalType": "uint256",
+            "name": "maxAcceptableAge",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct PythConverter",
+        "name": "priceFeedData",
+        "type": "tuple"
+      }
+    ],
+    "name": "PriceFeedDataUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newResetDuration",
+        "type": "uint256"
+      }
+    ],
+    "name": "ResetDurationUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "lowerMilestone",
+            "type": "uint32"
+          },
+          { "internalType": "uint80", "name": "costInUsd", "type": "uint80" }
+        ],
+        "indexed": false,
+        "internalType": "struct IAtiaShrine.RestorationCost[]",
+        "name": "newRestorationCosts",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "RestorationCostUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "previousAdminRole",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "newAdminRole",
+        "type": "bytes32"
+      }
+    ],
+    "name": "RoleAdminChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      }
+    ],
+    "name": "RoleGranted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      }
+    ],
+    "name": "RoleRevoked",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "restoredStreakCount",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "lastUpdated",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "costInUsd",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "costInPaymentToken",
+        "type": "uint256"
+      }
+    ],
+    "name": "StreakRestored",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "newAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "newLastUpdated",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "longestStreakCount",
+        "type": "uint256"
+      }
+    ],
+    "name": "StreakUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newTreasury",
+        "type": "address"
+      }
+    ],
+    "name": "TreasuryUpdated",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "DEFAULT_ADMIN_ROLE",
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "to", "type": "address" }],
+    "name": "activateStreak",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address[]", "name": "addresses", "type": "address[]" },
+      { "internalType": "uint256[]", "name": "streaks", "type": "uint256[]" }
+    ],
+    "name": "forceRestoreStreak",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "user", "type": "address" }
+    ],
+    "name": "getActivationStatus",
+    "outputs": [
+      { "internalType": "bool", "name": "isLostStreak", "type": "bool" },
+      { "internalType": "bool", "name": "hasPrayedToday", "type": "bool" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getActiveStreakLifeTime",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllRestorationCosts",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "lowerMilestone",
+            "type": "uint32"
+          },
+          { "internalType": "uint80", "name": "costInUsd", "type": "uint80" }
+        ],
+        "internalType": "struct IAtiaShrine.RestorationCost[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "prayer", "type": "address" }
+    ],
+    "name": "getDailyPrayerCount",
+    "outputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getDailyPrayerThreshold",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getFreezePeriod",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPaymentToken",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPriceFeedData",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "tokenInDecimal",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "tokenOutDecimal",
+            "type": "uint8"
+          },
+          {
+            "internalType": "contract IPyth",
+            "name": "pyth",
+            "type": "address"
+          },
+          { "internalType": "bytes32", "name": "priceId", "type": "bytes32" },
+          {
+            "internalType": "uint256",
+            "name": "maxAcceptableAge",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PythConverter",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getResetDuration",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "lostStreakCount",
+        "type": "uint256"
+      }
+    ],
+    "name": "getRestorationCosts",
+    "outputs": [
+      { "internalType": "uint256", "name": "costInUsd", "type": "uint256" },
+      {
+        "internalType": "uint256",
+        "name": "costInPaymentToken",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" }
+    ],
+    "name": "getRoleAdmin",
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
+      { "internalType": "uint256", "name": "index", "type": "uint256" }
+    ],
+    "name": "getRoleMember",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" }
+    ],
+    "name": "getRoleMemberCount",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getStartedAtBlock",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "user", "type": "address" }
+    ],
+    "name": "getStreak",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "currentStreakCount",
+        "type": "uint256"
+      },
+      { "internalType": "uint256", "name": "lastActivated", "type": "uint256" },
+      {
+        "internalType": "uint256",
+        "name": "longestStreakCount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lostStreakCount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTreasury",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
+      { "internalType": "address", "name": "account", "type": "address" }
+    ],
+    "name": "grantRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
+      { "internalType": "address", "name": "account", "type": "address" }
+    ],
+    "name": "hasRole",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "streakLifeTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "startedAtBlock",
+        "type": "uint256"
+      },
+      { "internalType": "address", "name": "admin", "type": "address" }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "streakLifeTime",
+        "type": "uint256"
+      },
+      { "internalType": "uint256", "name": "resetTime", "type": "uint256" }
+    ],
+    "name": "initializeV2",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "freezePeriod", "type": "uint256" },
+      { "internalType": "address", "name": "paymentToken", "type": "address" },
+      { "internalType": "address", "name": "treasury", "type": "address" },
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "lowerMilestone",
+            "type": "uint32"
+          },
+          { "internalType": "uint80", "name": "costInUsd", "type": "uint80" }
+        ],
+        "internalType": "struct IAtiaShrine.RestorationCost[]",
+        "name": "restorationCosts",
+        "type": "tuple[]"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "tokenInDecimal",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "tokenOutDecimal",
+            "type": "uint8"
+          },
+          {
+            "internalType": "contract IPyth",
+            "name": "pyth",
+            "type": "address"
+          },
+          { "internalType": "bytes32", "name": "priceId", "type": "bytes32" },
+          {
+            "internalType": "uint256",
+            "name": "maxAcceptableAge",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PythConverter",
+        "name": "priceFeedData",
+        "type": "tuple"
+      },
+      {
+        "internalType": "uint256",
+        "name": "dailyPrayerThreshold",
+        "type": "uint256"
+      }
+    ],
+    "name": "initializeV3",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "user", "type": "address" }
+    ],
+    "name": "isRestorable",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
+      { "internalType": "address", "name": "account", "type": "address" }
+    ],
+    "name": "renounceRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "to", "type": "address" },
+      { "internalType": "uint256", "name": "maxAmountIn", "type": "uint256" }
+    ],
+    "name": "restoreStreak",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
+      { "internalType": "address", "name": "account", "type": "address" }
+    ],
+    "name": "revokeRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "dailyPrayerThreshold",
+        "type": "uint256"
+      }
+    ],
+    "name": "setDailyPrayerThreshold",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "newFreezePeriod",
+        "type": "uint256"
+      }
+    ],
+    "name": "setFreezePeriod",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "paymentToken", "type": "address" }
+    ],
+    "name": "setPaymentToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "tokenInDecimal",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "tokenOutDecimal",
+            "type": "uint8"
+          },
+          {
+            "internalType": "contract IPyth",
+            "name": "pyth",
+            "type": "address"
+          },
+          { "internalType": "bytes32", "name": "priceId", "type": "bytes32" },
+          {
+            "internalType": "uint256",
+            "name": "maxAcceptableAge",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PythConverter",
+        "name": "priceFeedData",
+        "type": "tuple"
+      }
+    ],
+    "name": "setPriceFeedData",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "newResetDuration",
+        "type": "uint256"
+      }
+    ],
+    "name": "setResetDuration",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "lowerMilestone",
+            "type": "uint32"
+          },
+          { "internalType": "uint80", "name": "costInUsd", "type": "uint80" }
+        ],
+        "internalType": "struct IAtiaShrine.RestorationCost[]",
+        "name": "restorationCosts",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "setRestorationCosts",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "streakLifeTime", "type": "uint256" }
+    ],
+    "name": "setStreakLifeTime",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "treasury", "type": "address" }
+    ],
+    "name": "setTreasury",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes4", "name": "interfaceId", "type": "bytes4" }
+    ],
+    "name": "supportsInterface",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
