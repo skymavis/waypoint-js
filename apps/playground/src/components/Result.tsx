@@ -2,7 +2,7 @@ import Link from "next/link"
 import * as React from "react"
 import { EXPLORER_DOMAIN } from "src/contexts/WalletContext"
 
-import { Input } from "./input"
+import { Input } from "../@/components/ui/input"
 
 type ResultType = "text" | "transaction_hash"
 
@@ -33,7 +33,14 @@ type ResultProps = {
 const Result = ({ value = "", placeholder, type = "text" }: ResultProps) => {
   return (
     <Wrapper value={value} type={type}>
-      <Input tabIndex={-1} placeholder={placeholder} value={value} readOnly type="string" />
+      <Input
+        tabIndex={-1}
+        placeholder={placeholder}
+        value={value}
+        readOnly
+        type="string"
+        className={type === "transaction_hash" ? "cursor-pointer" : ""}
+      />
     </Wrapper>
   )
 }

@@ -13,12 +13,12 @@ import {
   CardHeader,
   CardTitle,
 } from "src/@/components/ui/card"
-import { Result } from "src/@/components/ui/result"
 import { useWrapToast } from "src/hooks/useWrapToast"
 import { formatBalance } from "src/utils/currency"
 import { debugError } from "src/utils/debug"
 
 import { LoadingSpinner } from "../LoadingSpinner"
+import { Result } from "../Result"
 
 export const GetRonBalance = () => {
   const { walletProvider, account } = useWalletgo()

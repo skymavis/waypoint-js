@@ -13,7 +13,6 @@ import {
 } from "src/@/components/ui/card"
 import { Input } from "src/@/components/ui/input"
 import { Label } from "src/@/components/ui/label"
-import { Result } from "src/@/components/ui/result"
 import { ADDRESS_CONFIG } from "src/config/address"
 import { AXS__factory } from "src/contracts"
 import { useWrapToast } from "src/hooks/useWrapToast"
@@ -21,6 +20,7 @@ import { fromFracAmount } from "src/utils/currency"
 import { debugError } from "src/utils/debug"
 
 import { LoadingSpinner } from "../LoadingSpinner"
+import { Result } from "../Result"
 
 export const ApproveAxs = () => {
   const { walletProvider, account } = useWalletgo()

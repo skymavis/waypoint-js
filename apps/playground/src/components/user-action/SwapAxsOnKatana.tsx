@@ -15,13 +15,13 @@ import {
   CardTitle,
 } from "src/@/components/ui/card"
 import { Input } from "src/@/components/ui/input"
-import { Result } from "src/@/components/ui/result"
 import { ADDRESS_CONFIG } from "src/config/address"
 import { KatanaRouter__factory } from "src/contracts"
 import { useWrapToast } from "src/hooks/useWrapToast"
 import { debugError } from "src/utils/debug"
 
 import { LoadingSpinner } from "../LoadingSpinner"
+import { Result } from "../Result"
 
 export const SwapAxsOnKatana = () => {
   const { walletProvider, account } = useWalletgo()

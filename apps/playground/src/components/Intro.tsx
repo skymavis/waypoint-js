@@ -28,7 +28,7 @@ export const Intro = () => {
         {account ? truncateAddress(account) : "Connect your wallet"}
       </Button>
       {account && (
-        <div className="mt-2 text-sm font-medium text-destructive">
+        <div className="mt-2 text-sm font-medium text-green-600">
           Connected! Now you could interact with wallet features.
         </div>
       )}
