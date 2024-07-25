@@ -11,7 +11,7 @@ import { createContext, FC, ReactNode, useCallback, useState } from "react"
 import { idConfigAtom } from "src/atom/env-config"
 import { MavisIdConnector } from "src/connectors/MavisIdConnector"
 
-export const EXPLORER_DOMAIN = "https://app.roninchain.com"
+export const EXPLORER_DOMAIN = "https://saigon-app.roninchain.com"
 export const EXPLORER_CDN_URL = "https://cdn.skymavis.com/explorer-cdn"
 const WC_PROJECT_ID = "d2ef97836db7eb390bcb2c1e9847ecdc"
 

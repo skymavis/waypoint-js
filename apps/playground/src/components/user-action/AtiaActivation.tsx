@@ -12,13 +12,13 @@ import {
   CardHeader,
   CardTitle,
 } from "src/@/components/ui/card"
-import { Input } from "src/@/components/ui/input"
 import { ADDRESS_CONFIG } from "src/config/address"
 import { AtiaShrine__factory } from "src/contracts"
 import { useWrapToast } from "src/hooks/useWrapToast"
 import { debugError } from "src/utils/debug"
 
 import { LoadingSpinner } from "../LoadingSpinner"
+import { Result } from "../Result"
 
 export const AtiaActivation = () => {
   const { walletProvider, account } = useWalletgo()
@@ -63,14 +63,7 @@ export const AtiaActivation = () => {
           <div className="grid items-center w-full gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="result">Result</Label>
-              <Input
-                id="result"
-                tabIndex={-1}
-                placeholder="Your transaction hash"
-                value={txHash ?? ""}
-                readOnly
-                type="string"
-              />
+              <Result placeholder="Your transaction hash" value={txHash} type="transaction_hash" />
             </div>
           </div>
         </form>

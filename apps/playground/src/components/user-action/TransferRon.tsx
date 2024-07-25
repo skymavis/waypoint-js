@@ -18,6 +18,7 @@ import { fromFracAmount } from "src/utils/currency"
 import { debugError } from "src/utils/debug"
 
 import { LoadingSpinner } from "../LoadingSpinner"
+import { Result } from "../Result"
 
 export const TransferRon = () => {
   const { walletProvider, account } = useWalletgo()
@@ -25,7 +26,7 @@ export const TransferRon = () => {
 
   const [loading, setLoading] = useState<boolean>(false)
   const [ronAmount, setRonAmount] = useState<string>("0.1")
-  const [toAddress, setToAddress] = useState<string>()
+  const [toAddress, setToAddress] = useState<string>("")
   const [txHash, setTxHash] = useState<string>()
 
   const handleTransferRon = async () => {
@@ -94,14 +95,7 @@ export const TransferRon = () => {
 
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="result">Result</Label>
-              <Input
-                id="result"
-                tabIndex={-1}
-                placeholder="Your transaction hash"
-                value={txHash ?? ""}
-                readOnly
-                type="string"
-              />
+              <Result placeholder="Your transaction hash" value={txHash} type="transaction_hash" />
             </div>
           </div>
         </form>

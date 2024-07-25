@@ -20,6 +20,7 @@ import { fromFracAmount } from "src/utils/currency"
 import { debugError } from "src/utils/debug"
 
 import { LoadingSpinner } from "../LoadingSpinner"
+import { Result } from "../Result"
 
 export const TransferAxs = () => {
   const { walletProvider, account } = useWalletgo()
@@ -92,14 +93,7 @@ export const TransferAxs = () => {
 
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="result">Result</Label>
-              <Input
-                id="result"
-                tabIndex={-1}
-                placeholder="Your transaction hash"
-                value={txHash ?? ""}
-                readOnly
-                type="string"
-              />
+              <Result placeholder="Your transaction hash" value={txHash} type="transaction_hash" />
             </div>
           </div>
         </form>
