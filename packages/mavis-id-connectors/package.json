@@ -1,0 +1,58 @@
+{
+  "name": "@sky-mavis/mavis-id-connectors",
+  "repository": {
+    "url": "https://github.com/skymavis/mavis-id-js"
+  },
+  "version": "1.0.0",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/mjs/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./dist/*": "./dist/*"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/mjs/index.js",
+  "types": "./dist/types/index.d.ts",
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && rollup -c",
+    "dev": "rm -rf dist && rollup -c --watch",
+    "lint": "eslint . --ext .js,.ts --max-warnings=0",
+    "clean": "rm -rf .turbo node_modules dist"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "7.24.4",
+    "@rollup/plugin-babel": "6.0.4",
+    "@rollup/plugin-commonjs": "25.0.7",
+    "@rollup/plugin-node-resolve": "15.2.3",
+    "@sky-mavis/eslint-config-ts": "workspace:*",
+    "@types/node": "20.12.11",
+    "eslint": "8.57.0",
+    "fs-extra": "11.2.0",
+    "prettier": "3.2.5",
+    "rollup": "4.14.1",
+    "rollup-plugin-peer-deps-external": "2.2.4",
+    "rollup-plugin-typescript2": "0.36.0",
+    "tslib": "2.6.2",
+    "typescript": "5.4.5"
+  },
+  "peerDependencies": {
+    "@wagmi/core": "^2.x",
+    "viem": "^2.x"
+  },
+  "dependencies": {
+    "@sky-mavis/mavis-id-sdk": "workspace:*"
+  }
+}
