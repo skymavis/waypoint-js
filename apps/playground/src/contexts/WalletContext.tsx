@@ -8,8 +8,8 @@ import {
 } from "@roninnetwork/walletgo"
 import { useAtomValue } from "jotai"
 import { createContext, FC, ReactNode, useCallback, useState } from "react"
-import { idConfigAtom } from "src/atom/env-config"
-import { MavisIdConnector } from "src/connectors/MavisIdConnector"
+import { waypointConfigAtom } from "src/atom/env-config"
+import { RoninWaypointConnector } from "src/connectors/RoninWaypointConnector"
 
 export const EXPLORER_DOMAIN = "https://saigon-app.roninchain.com"
 export const EXPLORER_CDN_URL = "https://cdn.skymavis.com/explorer-cdn"
@@ -29,8 +29,8 @@ export const WalletgoDialogContext = createContext<IDialogContext>({
 const DEFAULT_WALLETS = createRoninWallets({
   projectId: WC_PROJECT_ID,
   clientMeta: {
-    name: "ID Playground",
-    description: "ID Playground",
+    name: "Ronin Waypoint Playground",
+    description: "Ronin Waypoint Playground",
     icons: [`${EXPLORER_CDN_URL}/asset/favicon/apple-touch-icon.png`],
     url: EXPLORER_DOMAIN,
     redirect: {
@@ -47,8 +47,8 @@ interface IProviderProps {
 }
 
 export const WalletContext: FC<IProviderProps> = ({ children }) => {
-  const { clientId, origin } = useAtomValue(idConfigAtom)
-  const idConnector = new MavisIdConnector(clientId, origin)
+  const { clientId, origin } = useAtomValue(waypointConfigAtom)
+  const idConnector = new RoninWaypointConnector(clientId, origin)
 
   const [open, setOpen] = useState(false)
 

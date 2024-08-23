@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.1] - Unreleased
 
-- Fix default value of `redirectUrl` on MavisIdWallet's constructor
+- Fix default value of `redirectUrl` on RoninWaypointWallet's constructor
 
 ### Changed
 
@@ -25,9 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Rename `MavisIdProvider` to `MavisIdWallet`
+- Rename `MavisIdProvider` to `RoninWaypointWallet`
 - Rename `gateOrigin` params to `idOrigin`
-- Send transaction - switch to consume `send` endpoint from Mavis ID
+- Send transaction - switch to consume `send` endpoint from Ronin Waypoint
 - Sign data v4 - no longer modify `chainId`
 
 ### Fixed
@@ -66,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - refactor typing & error handling
 - authorize redirect url should configurable
 
-[unreleased]: https://github.com/skymavis/mavis-id-js/compare/mavis-id-sdk@v1.0.0...HEAD
-[1.0.0]: https://github.com/skymavis/mavis-id-js/compare/mavis-id-sdk@v0.0.2...mavis-id-sdk@v1.0.0
-[0.0.2]: https://github.com/skymavis/mavis-id-js/compare/mavis-id-sdk@v0.0.1...mavis-id-sdk@v0.0.2
-[0.0.1]: https://github.com/skymavis/mavis-id-js/releases/tag/mavis-id-sdk@v0.0.1
+[unreleased]: https://github.com/skymavis/waypoint-js/compare/mavis-id-sdk@v1.0.0...HEAD
+[1.0.0]: https://github.com/skymavis/waypoint-js/compare/mavis-id-sdk@v0.0.2...mavis-id-sdk@v1.0.0
+[0.0.2]: https://github.com/skymavis/waypoint-js/compare/mavis-id-sdk@v0.0.1...mavis-id-sdk@v0.0.2
+[0.0.1]: https://github.com/skymavis/waypoint-js/releases/tag/mavis-id-sdk@v0.0.1

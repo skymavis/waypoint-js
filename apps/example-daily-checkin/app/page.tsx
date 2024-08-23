@@ -47,18 +47,18 @@ export default function Home() {
   }, [])
 
   return (
-    <main className="flex min-h-screen flex-col items-start gap-4 p-24">
+    <main className="flex flex-col items-start min-h-screen gap-4 p-24">
       <button
-        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl"
+        className="px-4 py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl"
         onClick={handleConnectWallet}
       >
-        Login by Mavis ID
+        Login by Ronin Waypoint
       </button>
 
       {account && (
         <div>
-          <div className="text-gray-800 font-semibold text-lg mt-2">Welcome back!</div>
-          <div className="mt-1 font-semibold text-sm tracking-tight text-gray-600">
+          <div className="mt-2 text-lg font-semibold text-gray-800">Welcome back!</div>
+          <div className="mt-1 text-sm font-semibold tracking-tight text-gray-600">
             Login as: {account}
           </div>
         </div>

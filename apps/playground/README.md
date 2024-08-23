@@ -1,6 +1,6 @@
 # SDK Playground
 
-Mavis ID Example using Next.js & ether.js & Walletgo
+Ronin Waypoint Example using Next.js & ether.js & Walletgo
 
 ## Prerequisites
 

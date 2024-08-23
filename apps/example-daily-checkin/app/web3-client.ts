@@ -1,8 +1,8 @@
-import { MavisIdWallet } from "@sky-mavis/mavis-id-sdk"
+import { RoninWaypointWallet } from "@sky-mavis/waypoint"
 import { createPublicClient, createWalletClient, custom, http } from "viem"
 import { saigon } from "viem/chains"
 
-const idWalletProvider = MavisIdWallet.create({
+const idWalletProvider = RoninWaypointWallet.create({
   chainId: saigon.id,
   clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
 })

@@ -12,11 +12,11 @@ import type { GenericTransaction } from "./tx"
 
 export interface Eip1193Provider extends EIP1193Events {
   request: <ReturnType = unknown>(
-    args: EIP1193Parameters<MavisIdRequestSchema>,
+    args: EIP1193Parameters<RoninWaypointRequestSchema>,
   ) => Promise<ReturnType>
 }
 
-export type MavisIdRequestSchema = [
+export type RoninWaypointRequestSchema = [
   ...PublicRpcSchema,
   {
     Method: "eth_accounts"

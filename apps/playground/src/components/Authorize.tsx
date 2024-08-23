@@ -1,11 +1,11 @@
-import { authorize } from "@sky-mavis/mavis-id-sdk"
+import { authorize } from "@sky-mavis/waypoint"
 import { useAtomValue } from "jotai"
 import { Button } from "src/@/components/ui/button"
-import { idConfigAtom } from "src/atom/env-config"
+import { waypointConfigAtom } from "src/atom/env-config"
 import { useWrapToast } from "src/hooks/useWrapToast"
 
 export const Authorize = () => {
-  const { clientId, origin } = useAtomValue(idConfigAtom)
+  const { clientId, origin } = useAtomValue(waypointConfigAtom)
   const { toastSuccess } = useWrapToast()
 
   const handleAuthorize = async () => {
@@ -20,7 +20,7 @@ export const Authorize = () => {
 
   return (
     <Button className="mt-4 w-[247px]" onClick={handleAuthorize}>
-      Login with ID
+      Login with Ronin Waypoint
     </Button>
   )
 }

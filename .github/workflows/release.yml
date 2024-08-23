@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - "mavis-id-sdk@v**"
+      - "waypoint@v**"
   workflow_dispatch:
 
 jobs:

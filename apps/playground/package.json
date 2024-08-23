@@ -20,7 +20,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.5",
     "@roninnetwork/walletgo": "0.5.10",
-    "@sky-mavis/mavis-id-sdk": "workspace:*",
+    "@sky-mavis/waypoint": "workspace:*",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "ethers": "5.7.2",

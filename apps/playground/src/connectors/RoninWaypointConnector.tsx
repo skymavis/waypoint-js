@@ -4,16 +4,14 @@ import {
   ConnectorError,
   IConnectResult,
 } from "@roninnetwork/walletgo"
-import { MavisIdWallet } from "@sky-mavis/mavis-id-sdk"
+import { RoninWaypointWallet } from "@sky-mavis/waypoint"
 
-import { MavisLogo } from "./MavisLogo"
+import { RoninLogo } from "./RoninLogo"
 
-export const ID_URL = "https://id.skymavis.com"
-const STORAGE_KEY = "MAVIS.ID:ADDRESS"
+export const RONIN_WAYPOINT_URL = "https://waypoint.roninchain.com"
+const STORAGE_KEY = "RONIN.WAYPOINT:ADDRESS"
 
-const mavisIdLogo = <MavisLogo />
-
-export class MavisIdConnector extends BaseConnector<MavisIdWallet> {
+export class RoninWaypointConnector extends BaseConnector<RoninWaypointWallet> {
   clientId: string
   idOrigin: string
 
@@ -23,14 +21,14 @@ export class MavisIdConnector extends BaseConnector<MavisIdWallet> {
 
   hidden = false
 
-  provider?: MavisIdWallet
+  provider?: RoninWaypointWallet
 
   constructor(clientId: string, idOrigin: string) {
     super(
-      "MAVIS_ID_CONNECTOR",
-      "Mavis ID",
-      { default: ID_URL, external: ID_URL },
-      mavisIdLogo,
+      "RONIN_WAYPOINT_CONNECTOR",
+      "Ronin Waypoint",
+      { default: RONIN_WAYPOINT_URL, external: RONIN_WAYPOINT_URL },
+      <RoninLogo />,
       false,
     )
 
@@ -42,8 +40,8 @@ export class MavisIdConnector extends BaseConnector<MavisIdWallet> {
     return localStorage.getItem(STORAGE_KEY) !== null
   }
 
-  async connect(chainId: number): Promise<IConnectResult<MavisIdWallet>> {
-    const newProvider = MavisIdWallet.create({
+  async connect(chainId: number): Promise<IConnectResult<RoninWaypointWallet>> {
+    const newProvider = RoninWaypointWallet.create({
       idOrigin: this.idOrigin,
       clientId: this.clientId,
       chainId: chainId,
@@ -61,7 +59,7 @@ export class MavisIdConnector extends BaseConnector<MavisIdWallet> {
       }
     }
 
-    throw new ConnectorError("ConnectFail", "Could not connect to ID")
+    throw new ConnectorError("ConnectFail", "Could not connect to Ronin Waypoint")
   }
 
   async disconnect(): Promise<boolean> {

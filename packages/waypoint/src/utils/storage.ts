@@ -1,5 +1,5 @@
 export const STORAGE_ADDRESS_KEY = "ADDRESS"
-export const STORAGE_PREFIX = "MAVIS.ID"
+export const STORAGE_PREFIX = "RONIN.WAYPOINT"
 
 const isStorageAvailable = () => typeof window !== "undefined" && "localStorage" in window
 

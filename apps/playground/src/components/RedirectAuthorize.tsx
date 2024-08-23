@@ -1,12 +1,12 @@
-import { parseRedirectUrl, redirectAuthorize } from "@sky-mavis/mavis-id-sdk"
+import { parseRedirectUrl, redirectAuthorize } from "@sky-mavis/waypoint"
 import { useAtomValue } from "jotai"
 import { useEffect } from "react"
 import { Button } from "src/@/components/ui/button"
-import { idConfigAtom } from "src/atom/env-config"
+import { waypointConfigAtom } from "src/atom/env-config"
 import { useWrapToast } from "src/hooks/useWrapToast"
 
 export const RedirectAuthorize = () => {
-  const { clientId, origin } = useAtomValue(idConfigAtom)
+  const { clientId, origin } = useAtomValue(waypointConfigAtom)
   const { toastSuccess } = useWrapToast()
 
   const handleRedirectAuthorize = async () => {
@@ -30,7 +30,7 @@ export const RedirectAuthorize = () => {
 
   return (
     <Button className="mt-4 w-[247px]" onClick={handleRedirectAuthorize}>
-      Login with ID | Redirect
+      Login with Ronin Waypoint | Redirect
     </Button>
   )
 }

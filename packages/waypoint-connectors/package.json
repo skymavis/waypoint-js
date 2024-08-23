@@ -1,7 +1,7 @@
 {
-  "name": "@sky-mavis/mavis-id-connectors",
+  "name": "@sky-mavis/waypoint-connectors",
   "repository": {
-    "url": "https://github.com/skymavis/mavis-id-js"
+    "url": "https://github.com/skymavis/waypoint-js"
   },
   "version": "1.0.0",
   "license": "MIT",
@@ -53,6 +53,6 @@
     "viem": "^2.x"
   },
   "dependencies": {
-    "@sky-mavis/mavis-id-sdk": "workspace:*"
+    "@sky-mavis/waypoint": "workspace:*"
   }
 }

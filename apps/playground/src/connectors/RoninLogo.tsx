@@ -1,6 +1,7 @@
 import * as React from "react"
 import { memo, SVGProps } from "react"
 
+// ! TODO: Change SkyMavis logo to Ronin logo
 const SvgComponent = (props: SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 177 180" fill="none" {...props}>
     <path
@@ -10,4 +11,4 @@ const SvgComponent = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 )
 
-export const MavisLogo = memo(SvgComponent)
+export const RoninLogo = memo(SvgComponent)

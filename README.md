@@ -1,10 +1,10 @@
-# Mavis ID SDK
+# Ronin Waypoint Web SDK
 
-TypeScript SDK to interact with Mavis ID
+TypeScript Web SDK to interact with Ronin Waypoint
 
 ### Packages
 
-| Name                                                                            | Features                                                         |
-| ------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| [SDK](https://github.com/skymavis/mavis-id-js/tree/main/packages/mavis-id-sdk)  | SDK lets developers integrate with Mavis ID seamlessly & easily. |
-| [Playground](https://github.com/skymavis/mavis-id-js/tree/main/apps/playground) | SDK example with Next.js & ether.js                              |
+| Name | Features |
+| --- | --- |
+| [SDK](/packages/waypoint) | SDK lets developers integrate with Ronin Waypoint seamlessly & easily. |
+| [Playground](/apps/playground) | Playground & example with Next.js & ether.js |
