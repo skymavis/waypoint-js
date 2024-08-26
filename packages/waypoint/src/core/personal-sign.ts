@@ -36,7 +36,7 @@ export const personalSign = async ({
     throw new UnauthorizedProviderError(err)
   }
 
-  // * ID only accept raw string message - NOT hex
+  // * Ronin Waypoint only accept raw string message - NOT hex
   const message = !isHex(data) ? data : hexToString(data)
 
   if (!message) {

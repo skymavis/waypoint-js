@@ -60,7 +60,7 @@ const IdErrorMap = Object.freeze({
 export const normalizeIdError = (idErr: IdError) => {
   switch (idErr.code) {
     case IdErrorMap.WALLET_USER_CANCEL.code: {
-      const err = new Error("user reject action on ID")
+      const err = new Error("user reject action on Ronin Waypoint")
       return new UserRejectedRequestError(err)
     }
 
@@ -95,7 +95,7 @@ export const normalizeIdError = (idErr: IdError) => {
     }
 
     default: {
-      const err = new Error("unknown ID error")
+      const err = new Error("unknown Ronin Waypoint error")
       return new InternalRpcError(err)
     }
   }

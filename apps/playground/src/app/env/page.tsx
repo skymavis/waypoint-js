@@ -4,13 +4,13 @@ import { useWalletgo } from "@roninnetwork/walletgo"
 import { useAtomValue, useSetAtom } from "jotai"
 import Link from "next/link"
 import { Button } from "src/@/components/ui/button"
-import { idConfigAtom, switchIdConfigAtom } from "src/atom/env-config"
+import { switchWaypointConfigAtom, waypointConfigAtom } from "src/atom/env-config"
 
 const RootPage = () => {
   const { deactivate } = useWalletgo()
 
-  const idConfig = useAtomValue(idConfigAtom)
-  const switchIdEnv = useSetAtom(switchIdConfigAtom)
+  const providerConfig = useAtomValue(waypointConfigAtom)
+  const switchIdEnv = useSetAtom(switchWaypointConfigAtom)
 
   const handleSwitchEnv = () => {
     try {
@@ -24,17 +24,17 @@ const RootPage = () => {
 
   return (
     <>
-      <div className="flex flex-col h-screen w-screen items-center justify-center p-16">
+      <div className="flex flex-col items-center justify-center w-screen h-screen p-16">
         <div className="flex gap-2">
-          <span className="font-bold">ID Origin:</span>
-          <span>{idConfig.origin}</span>
+          <span className="font-bold">Ronin Waypoint Origin:</span>
+          <span>{providerConfig.origin}</span>
         </div>
         <div className="flex gap-2">
           <span className="font-bold">Client ID:</span>
-          <span>{idConfig.clientId}</span>
+          <span>{providerConfig.clientId}</span>
         </div>
         <Button className="mt-4 w-[247px]" onClick={handleSwitchEnv}>
-          Switch ID Origin
+          Switch Ronin Waypoint Origin
         </Button>
 
         <Link href={"/"}>

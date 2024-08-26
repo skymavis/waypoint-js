@@ -1,4 +1,4 @@
-import { ID_ORIGIN_PROD } from "./common/gate"
+import { RONIN_WAYPOINT_ORIGIN_PROD } from "./common/gate"
 import { IdResponse } from "./common/id-response"
 import { getScopesParams, Scope } from "./common/scope"
 import { CommunicateHelper } from "./core/communicate"
@@ -11,12 +11,12 @@ import { validateIdAddress } from "./utils/validate-address"
 export type AuthorizeOpts = {
   /**
    * Client ID are used to identify your application for this integration.
-   * You can find it in Developer Portal under ID Service settings.
+   * You can find it in Developer Portal under Ronin Waypoint Service settings.
    */
   clientId: string
 
   /**
-   * Mavis ID environment - for testing only.
+   * Ronin Waypoint environment - for testing only.
    * DO NOT override this value in production.
    */
   idOrigin?: string
@@ -44,21 +44,26 @@ export type RedirectAuthorizeOpts = AuthorizeOpts & {
 }
 
 /**
- * Authorize a user via Mavis ID, returning an accessToken and user address.
+ * Authorize a user via Ronin Waypoint, returning an accessToken and user address.
  * This function will open a popup for authorization.
  *
  * @param opts Options for authorization.
  * @returns Authorization result including accessToken and user address.
  *
  * @example
- * import { authorize } from "@sky-mavis/mavis-id-sdk"
+ * import { authorize } from "@sky-mavis/waypoint"
  *
  * const { accessToken, address } = await authorize({
  *  clientId: "YOUR_CLIENT_ID",
  * })
  */
 export const authorize = async (opts: AuthorizeOpts) => {
-  const { clientId, idOrigin = ID_ORIGIN_PROD, scopes, redirectUrl = window.location.origin } = opts
+  const {
+    clientId,
+    idOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
+    scopes,
+    redirectUrl = window.location.origin,
+  } = opts
   const helper = new CommunicateHelper(idOrigin)
 
   const authData = await helper.sendRequest<IdResponse>(state =>
@@ -78,13 +83,13 @@ export const authorize = async (opts: AuthorizeOpts) => {
 }
 
 /**
- * Authorize a user via Mavis ID in redirect mode, returning state, accessToken and user address.
- * This function will redirect the user to Mavis ID for authorization.
+ * Authorize a user via Ronin Waypoint in redirect mode, returning state, accessToken and user address.
+ * This function will redirect the user to Ronin Waypoint for authorization.
  *
  * @param opts Options for redirect authorization.
  *
  * @example
- * import { redirectAuthorize } from "@sky-mavis/mavis-id-sdk"
+ * import { redirectAuthorize } from "@sky-mavis/waypoint"
  *
  * const { state, accessToken, address } = await redirectAuthorize({
  *  clientId: "YOUR_CLIENT_ID",
@@ -95,7 +100,7 @@ export const redirectAuthorize = (opts: RedirectAuthorizeOpts) => {
     clientId,
     redirectUrl = window.location.origin,
     state = crypto.randomUUID(),
-    idOrigin = ID_ORIGIN_PROD,
+    idOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
     scopes,
   } = opts
 

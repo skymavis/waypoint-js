@@ -1,8 +1,8 @@
-# Mavis ID SDK
+# Ronin Waypoint Web SDK
 
-## What is Mavis ID?
+## What is Ronin Waypoint?
 
-The [Mavis ID](https://id.skymavis.com) lets developers use features such as player authorization, account creation, and in-app wallet interaction in mobile and desktop games.
+The [Ronin Waypoint](https://waypoint.roninchain.com) lets developers use features such as player authorization, account creation, and in-app wallet interaction in mobile and desktop games.
 
 #### Features:
 
@@ -13,15 +13,15 @@ The [Mavis ID](https://id.skymavis.com) lets developers use features such as pla
 
 ## SDK Introduction
 
-The Mavis ID SDK lets developers integrate with Mavis ID seamlessly & easily.
+The Ronin Waypoint Web SDK lets developers integrate with Ronin Waypoint seamlessly & easily.
 
-- [Head to the playground](https://mavis-id-playground.vercel.app) to experience Mavis ID your way
+- [Head to the playground](https://mavis-id-playground.vercel.app) to experience Ronin Waypoint your way
 - [Head to the faucet](https://faucet.roninchain.com) to get your RON on Saigon Testnet
 
 #### Features:
 
-- Authorize user with Mavis ID
-- `MavisIdWallet` is [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) Compatible Ethereum JavaScript Provider
+- Authorize user with Ronin Waypoint
+- `RoninWaypointWallet` is [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) Compatible Ethereum JavaScript Provider
 - Interact with any Javascript Ethereum Interface such as `viem`, `ether.js`, `web3js`
 - `WagmiConnector` | `WalletgoConnector` is coming soon
 - Standalone utilities for game developers (nfts, token balance, token approval, katana swap, ...) is coming soon
@@ -29,36 +29,29 @@ The Mavis ID SDK lets developers integrate with Mavis ID seamlessly & easily.
 ## Prerequisites
 
 - Create an app in the Developer Console to get your app ID.
-- Request permission to use the Mavis ID service at Developer Console > your app > App Permission > Mavis ID > Request Access.
+- Request permission to use the Ronin Waypoint service at Developer Console > your app > App Permission > Ronin Waypoint > Request Access.
 
 For more information, see the [documentation](https://docs.skymavis.com/mavis/mavis-id/guides/get-started).
 
 ## Installation
 
-npm:
-
 ```bash
-npm install @sky-mavis/mavis-id-sdk
-```
+# npm
+npm install @sky-mavis/waypoint
 
-yarn:
+# yarn
+yarn add @sky-mavis/waypoint
 
-```bash
-yarn add @sky-mavis/mavis-id-sdk
-```
-
-pnpm:
-
-```bash
-pnpm install @sky-mavis/mavis-id-sdk
+# pnpm
+pnpm install @sky-mavis/waypoint
 ```
 
 ## Initialization
 
 ```js
-import { MavisIdWallet } from "@sky-mavis/mavis-id-sdk"
+import { RoninWaypointWallet } from "@sky-mavis/waypoint"
 
-const idWalletProvider = MavisIdWallet.create({
+const idWalletProvider = RoninWaypointWallet.create({
   clientId: process.env.YOUR_APP_ID,
   chainId: chainId,
 })
@@ -67,7 +60,7 @@ const idWalletProvider = MavisIdWallet.create({
 ## Authorize user
 
 ```js
-import { authorize } from "@sky-mavis/mavis-id-sdk"
+import { authorize } from "@sky-mavis/waypoint"
 
 const result = await authorize({
   clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
@@ -109,10 +102,13 @@ const walletClient = createWalletClient({ chain, transport: custom(idWalletProvi
 const accounts = await idWalletProvider.request<string[]>({ method: "eth_requestAccounts" })
 
 if (accounts.length) {
-  mavisIdProvider.request<string>({ method: "eth_getBalance", params: [accounts[0], "latest"] })
+  roninWaypointProvider.request<string>({
+    method: "eth_getBalance",
+    params: [accounts[0], "latest"]
+  })
 }
 ```
 
 ## Example
 
-[Head to the playground source code](https://github.com/skymavis/mavis-id-js/tree/main/apps/playground) for full use-cases
+[Head to the playground source code](https://github.com/skymavis/waypoint-js/tree/main/apps/playground) for full use-cases

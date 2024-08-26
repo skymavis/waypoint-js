@@ -13,8 +13,8 @@ import {
 
 import { AuthorizeOpts } from "./auth"
 import { VIEM_CHAIN_MAPPING } from "./common/chain"
-import { Eip1193EventName, Eip1193Provider, MavisIdRequestSchema } from "./common/eip1193"
-import { ID_ORIGIN_PROD } from "./common/gate"
+import { Eip1193EventName, Eip1193Provider, RoninWaypointRequestSchema } from "./common/eip1193"
+import { RONIN_WAYPOINT_ORIGIN_PROD } from "./common/gate"
 import { IdResponse } from "./common/id-response"
 import { getScopesParams, Scope } from "./common/scope"
 import { CommunicateHelper } from "./core/communicate"
@@ -25,26 +25,26 @@ import { openPopup } from "./utils/popup"
 import { getStorage, removeStorage, setStorage, STORAGE_ADDRESS_KEY } from "./utils/storage"
 import { validateIdAddress } from "./utils/validate-address"
 
-export type MavisIdWalletOpts = AuthorizeOpts & {
+export type RoninWaypointWalletOpts = AuthorizeOpts & {
   chainId: number
 }
 
 /**
  * A JavaScript Ethereum Provider API for consistency across clients and applications.
  *
- * This provider is designed to easily integrate with Mavis ID.
+ * This provider is designed to easily integrate with Ronin Waypoint.
  *
  * Use `create` function to create a new instance.
  *
  * @example
- * import { MavisIdWallet } from "@sky-mavis/mavis-id-sdk"
+ * import { RoninWaypointWallet } from "@sky-mavis/waypoint"
  *
- * const idWalletProvider = MavisIdWallet.create({
+ * const idWalletProvider = RoninWaypointWallet.create({
  *  clientId: "YOUR_CLIENT_ID",
  *  chainId: ronin.chainId,
  * })
  */
-export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
+export class RoninWaypointWallet extends EventEmitter implements Eip1193Provider {
   private readonly clientId: string
   private readonly idOrigin: string
   private readonly redirectUrl: string
@@ -56,14 +56,14 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
   private readonly viemClient: Client
   private readonly communicateHelper: CommunicateHelper
 
-  protected constructor(options: MavisIdWalletOpts) {
+  protected constructor(options: RoninWaypointWalletOpts) {
     super()
 
     const {
       clientId,
       chainId,
       scopes = [],
-      idOrigin = ID_ORIGIN_PROD,
+      idOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
       redirectUrl = typeof window !== "undefined" ? window.location.origin : "",
     } = options
 
@@ -105,22 +105,22 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
   }
 
   /**
-   * Creates a new MavisIdWallet instance.
+   * Creates a new RoninWaypointWallet instance.
    *
-   * @param options Options for MavisIdWallet.
+   * @param options Options for RoninWaypointWallet.
    *
-   * @returns MavisIdWallet instance.
+   * @returns RoninWaypointWallet instance.
    *
    * @example
-   * import { MavisIdWallet } from "@sky-mavis/mavis-id-sdk"
+   * import { RoninWaypointWallet } from "@sky-mavis/waypoint"
    *
-   * const idWalletProvider = MavisIdWallet.create({
+   * const idWalletProvider = RoninWaypointWallet.create({
    *  clientId: "YOUR_CLIENT_ID",
    *  chainId: ronin.chainId,
    * })
    */
-  public static create = (options: MavisIdWalletOpts) => {
-    return new MavisIdWallet(options)
+  public static create = (options: RoninWaypointWalletOpts) => {
+    return new RoninWaypointWallet(options)
   }
 
   private getIdAddress = () => {
@@ -139,7 +139,7 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
   }
 
   /**
-   * Connects to Mavis ID provider and retrieves authorization data & user wallet address.
+   * Connects to Ronin Waypoint provider and retrieves authorization data & user wallet address.
    *
    * @returns The access token and address.
    */
@@ -159,7 +159,7 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
     const address = validateIdAddress(rawAddress)
 
     if (!address) {
-      const err = new Error("ID do NOT return valid address")
+      const err = new Error("Ronin Waypoint do NOT return valid address")
       throw new UnauthorizedProviderError(err)
     }
 
@@ -179,7 +179,7 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
   }
 
   /**
-   * Disconnect from Mavis ID provider and clear the cached address in localStorage.
+   * Disconnect from Ronin Waypoint provider and clear the cached address in localStorage.
    */
   disconnect = () => {
     const shouldEmitDisconnectEvent = !!this.address
@@ -203,7 +203,7 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
    *
    * https://eips.ethereum.org/EIPS/eip-1193
    */
-  request = async <ReturnType = unknown>(args: EIP1193Parameters<MavisIdRequestSchema>) => {
+  request = async <ReturnType = unknown>(args: EIP1193Parameters<RoninWaypointRequestSchema>) => {
     const {
       clientId,
       idOrigin,
@@ -226,9 +226,9 @@ export class MavisIdWallet extends EventEmitter implements Eip1193Provider {
         return result as ReturnType
       }
 
-      // * Mavis ID is not like other providers, it need open popup to authorize & get address
+      // * Ronin Waypoint is not like other providers, it need open popup to authorize & get address
       // * eth_requestAccounts should NOT get address from localStorage cache
-      // * if user change address in ID, it should get new address
+      // * if user change address in Ronin Waypoint, it should get new address
       case "eth_requestAccounts": {
         const { address: newAddress } = await connect()
         return [newAddress] as ReturnType

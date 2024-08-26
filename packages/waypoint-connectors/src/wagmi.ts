@@ -1,16 +1,20 @@
-import { MavisIdWallet, MavisIdWalletOpts, VIEM_CHAIN_MAPPING } from "@sky-mavis/mavis-id-sdk"
+import {
+  RoninWaypointWallet,
+  RoninWaypointWalletOpts,
+  VIEM_CHAIN_MAPPING,
+} from "@sky-mavis/waypoint"
 import { createConnector } from "@wagmi/core"
 import { ronin } from "@wagmi/core/chains"
 import { Address, getAddress } from "viem"
 
 const supportedChainIds = Object.values(VIEM_CHAIN_MAPPING).map(chain => chain.id)
 
-createWagmiConnector.type = "mavisIDWallet" as const
+createWagmiConnector.type = "roninWaypointWallet" as const
 
-export function createWagmiConnector(parameters: MavisIdWalletOpts) {
-  let _provider: MavisIdWallet | undefined
+export function createWagmiConnector(parameters: RoninWaypointWalletOpts) {
+  let _provider: RoninWaypointWallet | undefined
 
-  return createConnector<MavisIdWallet>(config => {
+  return createConnector<RoninWaypointWallet>(config => {
     function getSupportedChain(chainId?: number) {
       const targetChainId = chainId ?? parameters.chainId
       return (
@@ -21,8 +25,8 @@ export function createWagmiConnector(parameters: MavisIdWalletOpts) {
     }
 
     return {
-      id: "mavisIDWallet",
-      name: "Mavis ID Wallet",
+      id: "roninWaypointWallet",
+      name: "Ronin Waypoint Wallet",
       icon: "https://cdn.skymavis.com/skymavis-home/public/favicon.ico",
       type: createWagmiConnector.type,
 
@@ -52,7 +56,7 @@ export function createWagmiConnector(parameters: MavisIdWalletOpts) {
 
       async getProvider({ chainId } = {}) {
         if (!_provider) {
-          const provider = MavisIdWallet.create({
+          const provider = RoninWaypointWallet.create({
             ...parameters,
             chainId: getSupportedChain(chainId).id,
           })
