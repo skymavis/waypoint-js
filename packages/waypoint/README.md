@@ -2,7 +2,7 @@
 
 ## What is Ronin Waypoint?
 
-The [Ronin Waypoint](https://waypoint.roninchain.com) lets developers use features such as player authorization, account creation, and in-app wallet interaction in mobile and desktop games.
+[Ronin Waypoint](https://waypoint.roninchain.com) is a service that lets developers use features such as player authorization, account creation, and in-app wallet interaction in mobile and desktop games.
 
 #### Features:
 
@@ -28,10 +28,10 @@ The Ronin Waypoint Web SDK lets developers integrate with Ronin Waypoint seamles
 
 ## Prerequisites
 
-- Create an app in the Developer Console to get your app ID.
-- Request permission to use the Ronin Waypoint service at Developer Console > your app > App Permission > Ronin Waypoint > Request Access.
+- Create an app in the [Developer Console](https://developers.skymavis.com/console) to get your client ID.
+- Request permission to use the Ronin Waypoint service in the Developer Console, under **your app > App Permission > Sky Mavis Account (OAuth 2.0) > Request Access**.
 
-For more information, see the [documentation](https://docs.skymavis.com/mavis/mavis-id/guides/get-started).
+For more information, see the [documentation](https://docs.skymavis.com/mavis/ronin-waypoint/guides/get-started).
 
 ## Installation
 
@@ -52,7 +52,7 @@ pnpm install @sky-mavis/waypoint
 import { RoninWaypointWallet } from "@sky-mavis/waypoint"
 
 const idWalletProvider = RoninWaypointWallet.create({
-  clientId: process.env.YOUR_APP_ID,
+  clientId: process.env.YOUR_CLIENT_ID,
   chainId: chainId,
 })
 ```
@@ -64,6 +64,7 @@ import { authorize } from "@sky-mavis/waypoint"
 
 const result = await authorize({
   clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
+  id.origin: "https://waypoint.roninchain.com",
 })
 
 console.debug("🚀 | Authorize Result:", result)
@@ -109,6 +110,6 @@ if (accounts.length) {
 }
 ```
 
-## Example
+## Examples
 
-[Head to the playground source code](https://github.com/skymavis/waypoint-js/tree/main/apps/playground) for full use-cases
+For complete use cases, see the [playground source code](https://github.com/skymavis/waypoint-js/tree/main/apps/playground).
