@@ -5,6 +5,7 @@ import fsExtra from "fs-extra"
 import path, { dirname } from "path"
 import { defineConfig } from "rollup"
 import peerDepsExternal from "rollup-plugin-peer-deps-external"
+import nodePolyfills from "rollup-plugin-polyfill-node"
 import typescript from "rollup-plugin-typescript2"
 import { fileURLToPath } from "url"
 
@@ -53,6 +54,7 @@ const mainConfig = defineConfig({
     nodeResolve({
       preferBuiltins: true,
     }),
+    nodePolyfills(),
     commonjs(),
     typescript({
       useTsconfigDeclarationDir: true,
