@@ -25,7 +25,7 @@ import { openPopup } from "./utils/popup"
 import { getStorage, removeStorage, setStorage, STORAGE_ADDRESS_KEY } from "./utils/storage"
 import { validateIdAddress } from "./utils/validate-address"
 
-export type RoninWaypointWalletOpts = AuthorizeOpts & {
+export type WaypointProviderOpts = AuthorizeOpts & {
   chainId: number
 }
 
@@ -34,17 +34,19 @@ export type RoninWaypointWalletOpts = AuthorizeOpts & {
  *
  * This provider is designed to easily integrate with Ronin Waypoint.
  *
- * Use `create` function to create a new instance.
+ * Use `create` function to create a new instance.ddress"
+import { EventEmitter } from "events"
+import { A, ChainDisconnectedError, Client, createClient, EIP1193Parameters, http, ProviderDisconnectedError, toHex, UnauthorizedProviderError } from "viem
  *
  * @example
- * import { RoninWaypointWallet } from "@sky-mavis/waypoint"
+ * import { WaypointProvider } from "@sky-mavis/waypoint"
  *
- * const idWalletProvider = RoninWaypointWallet.create({
+ * const idWalletProvider = WaypointProvider.create({
  *  clientId: "YOUR_CLIENT_ID",
  *  chainId: ronin.chainId,
  * })
  */
-export class RoninWaypointWallet extends EventEmitter implements Eip1193Provider {
+export class WaypointProvider extends EventEmitter implements Eip1193Provider {
   private readonly clientId: string
   private readonly waypointOrigin: string
   private readonly redirectUrl: string
@@ -56,7 +58,7 @@ export class RoninWaypointWallet extends EventEmitter implements Eip1193Provider
   private readonly viemClient: Client
   private readonly communicateHelper: CommunicateHelper
 
-  protected constructor(options: RoninWaypointWalletOpts) {
+  protected constructor(options: WaypointProviderOpts) {
     super()
 
     const {
@@ -105,22 +107,22 @@ export class RoninWaypointWallet extends EventEmitter implements Eip1193Provider
   }
 
   /**
-   * Creates a new RoninWaypointWallet instance.
+   * Creates a new WaypointProvider instance.
    *
-   * @param options Options for RoninWaypointWallet.
+   * @param options Options for WaypointProvider.
    *
-   * @returns RoninWaypointWallet instance.
+   * @returns WaypointProvider instance.
    *
    * @example
-   * import { RoninWaypointWallet } from "@sky-mavis/waypoint"
+   * import { WaypointProvider } from "@sky-mavis/waypoint"
    *
-   * const idWalletProvider = RoninWaypointWallet.create({
+   * const idWalletProvider = WaypointProvider.create({
    *  clientId: "YOUR_CLIENT_ID",
    *  chainId: ronin.chainId,
    * })
    */
-  public static create = (options: RoninWaypointWalletOpts) => {
-    return new RoninWaypointWallet(options)
+  public static create = (options: WaypointProviderOpts) => {
+    return new WaypointProvider(options)
   }
 
   private getIdAddress = () => {

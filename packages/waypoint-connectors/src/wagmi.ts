@@ -1,6 +1,6 @@
 import {
-  RoninWaypointWallet,
-  RoninWaypointWalletOpts,
+  WaypointProvider,
+  WaypointProviderOpts,
   VIEM_CHAIN_MAPPING,
 } from "@sky-mavis/waypoint"
 import { createConnector } from "@wagmi/core"
@@ -11,10 +11,10 @@ const supportedChainIds = Object.values(VIEM_CHAIN_MAPPING).map(chain => chain.i
 
 createWagmiConnector.type = "roninWaypointWallet" as const
 
-export function createWagmiConnector(parameters: RoninWaypointWalletOpts) {
-  let _provider: RoninWaypointWallet | undefined
+export function createWagmiConnector(parameters: WaypointProviderOpts) {
+  let _provider: WaypointProvider | undefined
 
-  return createConnector<RoninWaypointWallet>(config => {
+  return createConnector<WaypointProvider>(config => {
     function getSupportedChain(chainId?: number) {
       const targetChainId = chainId ?? parameters.chainId
       return (
@@ -56,7 +56,7 @@ export function createWagmiConnector(parameters: RoninWaypointWalletOpts) {
 
       async getProvider({ chainId } = {}) {
         if (!_provider) {
-          const provider = RoninWaypointWallet.create({
+          const provider = WaypointProvider.create({
             ...parameters,
             chainId: getSupportedChain(chainId).id,
           })
