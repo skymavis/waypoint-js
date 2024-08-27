@@ -32,9 +32,9 @@ pnpm install @sky-mavis/waypoint
 Once the SDK is installed, you need to initialize it by creating a wallet provider. This will allow you to interact with the Ronin Waypoint services.
 
 ```javascript
-import { RoninWaypointWallet } from "@sky-mavis/waypoint";
+import { WaypointProvider } from "@sky-mavis/waypoint";
 
-const provider = RoninWaypointWallet.create({
+const provider = WaypointProvider.create({
   clientId: "<REGISTERED_APPLICATION_ID>",  // Replace with your actual app ID
   chainId: chainId,  // Specify the appropriate chain ID
 });
