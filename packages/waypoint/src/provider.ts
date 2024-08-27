@@ -46,7 +46,7 @@ export type RoninWaypointWalletOpts = AuthorizeOpts & {
  */
 export class RoninWaypointWallet extends EventEmitter implements Eip1193Provider {
   private readonly clientId: string
-  private readonly idOrigin: string
+  private readonly waypointOrigin: string
   private readonly redirectUrl: string
   private readonly scopes: Scope[]
 
@@ -63,16 +63,16 @@ export class RoninWaypointWallet extends EventEmitter implements Eip1193Provider
       clientId,
       chainId,
       scopes = [],
-      idOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
+      waypointOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
       redirectUrl = typeof window !== "undefined" ? window.location.origin : "",
     } = options
 
     this.clientId = clientId
-    this.idOrigin = idOrigin
+    this.waypointOrigin = waypointOrigin
     this.redirectUrl = redirectUrl
     this.chainId = chainId
     this.scopes = this.addDefaultScopes(scopes)
-    this.communicateHelper = new CommunicateHelper(idOrigin)
+    this.communicateHelper = new CommunicateHelper(waypointOrigin)
     this.viemClient = this.createViemClient(chainId)
   }
 
@@ -144,10 +144,10 @@ export class RoninWaypointWallet extends EventEmitter implements Eip1193Provider
    * @returns The access token and address.
    */
   connect = async () => {
-    const { idOrigin, clientId, redirectUrl, scopes, communicateHelper, chainId } = this
+    const { waypointOrigin, clientId, redirectUrl, scopes, communicateHelper, chainId } = this
 
     const authData = await communicateHelper.sendRequest<IdResponse>(state =>
-      openPopup(`${idOrigin}/client/${clientId}/authorize`, {
+      openPopup(`${waypointOrigin}/client/${clientId}/authorize`, {
         state,
         redirect: redirectUrl,
         origin: window.location.origin,
@@ -206,7 +206,7 @@ export class RoninWaypointWallet extends EventEmitter implements Eip1193Provider
   request = async <ReturnType = unknown>(args: EIP1193Parameters<RoninWaypointRequestSchema>) => {
     const {
       clientId,
-      idOrigin,
+      waypointOrigin,
       communicateHelper,
       chainId,
       viemClient,
@@ -241,7 +241,7 @@ export class RoninWaypointWallet extends EventEmitter implements Eip1193Provider
           params,
           expectAddress,
           clientId,
-          idOrigin,
+          waypointOrigin,
           communicateHelper,
         }) as ReturnType
       }
@@ -254,7 +254,7 @@ export class RoninWaypointWallet extends EventEmitter implements Eip1193Provider
           chainId,
           expectAddress,
           clientId,
-          idOrigin,
+          waypointOrigin,
           communicateHelper,
         }) as ReturnType
       }
@@ -267,7 +267,7 @@ export class RoninWaypointWallet extends EventEmitter implements Eip1193Provider
           chainId,
           expectAddress,
           clientId,
-          idOrigin,
+          waypointOrigin,
           communicateHelper,
         }) as ReturnType
       }

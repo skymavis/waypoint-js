@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Rename `MavisIdProvider` to `RoninWaypointWallet`
-- Rename `gateOrigin` params to `idOrigin`
+- Rename `gateOrigin` params to `waypointOrigin`
 - Send transaction - switch to consume `send` endpoint from Ronin Waypoint
 - Sign data v4 - no longer modify `chainId`
 

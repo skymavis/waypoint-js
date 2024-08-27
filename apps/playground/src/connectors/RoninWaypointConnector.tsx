@@ -8,12 +8,12 @@ import { RoninWaypointWallet } from "@sky-mavis/waypoint"
 
 import { RoninLogo } from "./RoninLogo"
 
-export const RONIN_WAYPOINT_URL = "https://waypoint.roninchain.com"
+export const RONIN_WAYPOINT_URL = "https://id.skymavis.com"
 const STORAGE_KEY = "RONIN.WAYPOINT:ADDRESS"
 
 export class RoninWaypointConnector extends BaseConnector<RoninWaypointWallet> {
   clientId: string
-  idOrigin: string
+  waypointOrigin: string
 
   switchable: false
   scannable: false
@@ -23,7 +23,7 @@ export class RoninWaypointConnector extends BaseConnector<RoninWaypointWallet> {
 
   provider?: RoninWaypointWallet
 
-  constructor(clientId: string, idOrigin: string) {
+  constructor(clientId: string, waypointOrigin: string) {
     super(
       "RONIN_WAYPOINT_CONNECTOR",
       "Ronin Waypoint",
@@ -33,7 +33,7 @@ export class RoninWaypointConnector extends BaseConnector<RoninWaypointWallet> {
     )
 
     this.clientId = clientId
-    this.idOrigin = idOrigin
+    this.waypointOrigin = waypointOrigin
   }
 
   async shouldAutoConnect(): Promise<boolean> {
@@ -42,7 +42,7 @@ export class RoninWaypointConnector extends BaseConnector<RoninWaypointWallet> {
 
   async connect(chainId: number): Promise<IConnectResult<RoninWaypointWallet>> {
     const newProvider = RoninWaypointWallet.create({
-      idOrigin: this.idOrigin,
+      waypointOrigin: this.waypointOrigin,
       clientId: this.clientId,
       chainId: chainId,
     })

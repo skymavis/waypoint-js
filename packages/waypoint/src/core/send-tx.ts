@@ -11,7 +11,7 @@ type SendTransactionParams = {
   expectAddress: Address
 
   clientId: string
-  idOrigin: string
+  waypointOrigin: string
   communicateHelper: CommunicateHelper
 }
 
@@ -22,13 +22,13 @@ export const sendTransaction = async ({
   expectAddress,
 
   clientId,
-  idOrigin,
+  waypointOrigin,
   communicateHelper,
 }: SendTransactionParams): Promise<string> => {
   const [transaction] = params
 
   const txHash = await communicateHelper.sendRequest<string>(state =>
-    openPopup(`${idOrigin}/wallet/send`, {
+    openPopup(`${waypointOrigin}/wallet/send`, {
       state,
       clientId,
       origin: window.location.origin,

@@ -18,7 +18,7 @@ type SignTypedDataV4Params = {
 
   clientId: string
   chainId: number
-  idOrigin: string
+  waypointOrigin: string
   communicateHelper: CommunicateHelper
 }
 
@@ -76,7 +76,7 @@ export const signTypedDataV4 = async ({
 
   clientId,
   chainId,
-  idOrigin,
+  waypointOrigin,
   communicateHelper,
 }: SignTypedDataV4Params) => {
   const [address, data] = params
@@ -93,7 +93,7 @@ export const signTypedDataV4 = async ({
 
   try {
     const signature = await communicateHelper.sendRequest<string>(state =>
-      openPopup(`${idOrigin}/wallet/sign`, {
+      openPopup(`${waypointOrigin}/wallet/sign`, {
         state,
 
         clientId,
