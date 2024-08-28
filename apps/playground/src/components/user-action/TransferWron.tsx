@@ -42,9 +42,7 @@ export const TransferWron = () => {
     try {
       const rawAmount = fromFracAmount(wronAmount, 18)
       const contract = WRON__factory.connect(ADDRESS_CONFIG.WRON, walletProvider.getSigner())
-      const txData = await contract.transfer(toAddress, rawAmount, {
-        gasLimit: 1000000,
-      })
+      const txData = await contract.transfer(toAddress, rawAmount)
 
       setTxHash(txData.hash)
       toastSuccess(`Transfer ${wronAmount} WRON successfully!`)
