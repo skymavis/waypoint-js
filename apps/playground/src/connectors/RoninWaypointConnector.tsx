@@ -8,7 +8,7 @@ import { WaypointProvider } from "@sky-mavis/waypoint"
 
 import { RoninLogo } from "./RoninLogo"
 
-export const RONIN_WAYPOINT_URL = "https://id.skymavis.com"
+export const RONIN_WAYPOINT_URL = "https://waypoint.roninchain.com"
 const STORAGE_KEY = "RONIN.WAYPOINT:ADDRESS"
 
 export class RoninWaypointConnector extends BaseConnector<WaypointProvider> {
