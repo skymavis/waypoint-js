@@ -11,7 +11,7 @@ export const Authorize = () => {
   const handleAuthorize = async () => {
     const result = await authorize({
       clientId,
-      idOrigin: origin,
+      waypointOrigin: origin,
     })
 
     console.debug("🚀 | Authorization Result:", result)

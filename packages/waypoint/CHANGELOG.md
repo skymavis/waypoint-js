@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.1] - Unreleased
 
-- Fix default value of `redirectUrl` on RoninWaypointWallet's constructor
+- Fix default value of `redirectUrl` on WaypointProvider's constructor
 
 ### Changed
 
@@ -25,8 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Rename `MavisIdProvider` to `RoninWaypointWallet`
-- Rename `gateOrigin` params to `idOrigin`
+- Rename `MavisIdProvider` to `WaypointProvider`
+- Rename `gateOrigin` params to `waypointOrigin`
 - Send transaction - switch to consume `send` endpoint from Ronin Waypoint
 - Sign data v4 - no longer modify `chainId`
 

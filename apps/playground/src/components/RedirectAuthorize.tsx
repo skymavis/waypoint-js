@@ -12,7 +12,7 @@ export const RedirectAuthorize = () => {
   const handleRedirectAuthorize = async () => {
     redirectAuthorize({
       clientId,
-      idOrigin: origin,
+      waypointOrigin: origin,
     })
   }
 

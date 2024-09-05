@@ -4,7 +4,7 @@ import {
   ConnectorError,
   IConnectResult,
 } from "@roninnetwork/walletgo"
-import { RoninWaypointWallet } from "@sky-mavis/waypoint"
+import { WaypointProvider } from "@sky-mavis/waypoint"
 
 import { RoninLogo } from "./RoninLogo"
 
@@ -15,7 +15,7 @@ const Logo = <RoninLogo />
 
 export class RoninWaypointConnector extends BaseConnector<RoninWaypointWallet> {
   clientId: string
-  idOrigin: string
+  waypointOrigin: string
 
   switchable: false
   scannable: false
@@ -23,9 +23,9 @@ export class RoninWaypointConnector extends BaseConnector<RoninWaypointWallet> {
 
   hidden = false
 
-  provider?: RoninWaypointWallet
+  provider?: WaypointProvider
 
-  constructor(clientId: string, idOrigin: string) {
+  constructor(clientId: string, waypointOrigin: string) {
     super(
       "RONIN_WAYPOINT_CONNECTOR",
       "Ronin Waypoint",
@@ -35,16 +35,16 @@ export class RoninWaypointConnector extends BaseConnector<RoninWaypointWallet> {
     )
 
     this.clientId = clientId
-    this.idOrigin = idOrigin
+    this.waypointOrigin = waypointOrigin
   }
 
   async shouldAutoConnect(): Promise<boolean> {
     return localStorage.getItem(STORAGE_KEY) !== null
   }
 
-  async connect(chainId: number): Promise<IConnectResult<RoninWaypointWallet>> {
-    const newProvider = RoninWaypointWallet.create({
-      idOrigin: this.idOrigin,
+  async connect(chainId: number): Promise<IConnectResult<WaypointProvider>> {
+    const newProvider = WaypointProvider.create({
+      waypointOrigin: this.waypointOrigin,
       clientId: this.clientId,
       chainId: chainId,
     })

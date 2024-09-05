@@ -19,7 +19,7 @@ export type AuthorizeOpts = {
    * Ronin Waypoint environment - for testing only.
    * DO NOT override this value in production.
    */
-  idOrigin?: string
+  waypointOrigin?: string
 
   /**
    * Scopes are used by an application during authentication to authorize access to a user’s details, like name and picture.
@@ -60,14 +60,14 @@ export type RedirectAuthorizeOpts = AuthorizeOpts & {
 export const authorize = async (opts: AuthorizeOpts) => {
   const {
     clientId,
-    idOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
+    waypointOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
     scopes,
     redirectUrl = window.location.origin,
   } = opts
-  const helper = new CommunicateHelper(idOrigin)
+  const helper = new CommunicateHelper(waypointOrigin)
 
   const authData = await helper.sendRequest<IdResponse>(state =>
-    openPopup(`${idOrigin}/client/${clientId}/authorize`, {
+    openPopup(`${waypointOrigin}/client/${clientId}/authorize`, {
       state,
       redirect: redirectUrl,
       origin: window.location.origin,
@@ -100,11 +100,11 @@ export const redirectAuthorize = (opts: RedirectAuthorizeOpts) => {
     clientId,
     redirectUrl = window.location.origin,
     state = crypto.randomUUID(),
-    idOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
+    waypointOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
     scopes,
   } = opts
 
-  replaceUrl(`${idOrigin}/client/${clientId}/authorize`, {
+  replaceUrl(`${waypointOrigin}/client/${clientId}/authorize`, {
     state,
     redirect: redirectUrl,
     scope: getScopesParams(scopes),
