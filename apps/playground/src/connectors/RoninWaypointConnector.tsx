@@ -13,7 +13,7 @@ const STORAGE_KEY = "RONIN.WAYPOINT:ADDRESS"
 
 const Logo = <RoninLogo />
 
-export class RoninWaypointConnector extends BaseConnector<RoninWaypointWallet> {
+export class RoninWaypointConnector extends BaseConnector<WaypointProvider> {
   clientId: string
   waypointOrigin: string
 
