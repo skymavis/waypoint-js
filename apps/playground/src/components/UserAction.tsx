@@ -1,4 +1,5 @@
 import { ApproveAxs } from "./user-action/ApproveAxs"
+import { ApproveWron } from "./user-action/ApproveWron"
 import { AtiaActivation } from "./user-action/AtiaActivation"
 import { GetAddress } from "./user-action/GetAddress"
 import { GetRonBalance } from "./user-action/GetRonBalance"
@@ -8,6 +9,7 @@ import { StakingAxs } from "./user-action/StakingAxs"
 import { SwapAxsOnKatana } from "./user-action/SwapAxsOnKatana"
 import { TransferAxs } from "./user-action/TransferAxs"
 import { TransferRon } from "./user-action/TransferRon"
+import { TransferWron } from "./user-action/TransferWron"
 
 export const UserAction = () => (
   <>
@@ -21,5 +23,7 @@ export const UserAction = () => (
     <SwapAxsOnKatana />
     <StakingAxs />
     <AtiaActivation />
+    <ApproveWron />
+    <TransferWron />
   </>
 )

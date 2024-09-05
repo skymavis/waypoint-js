@@ -11,7 +11,9 @@ import { RoninLogo } from "./RoninLogo"
 export const RONIN_WAYPOINT_URL = "https://waypoint.roninchain.com"
 const STORAGE_KEY = "RONIN.WAYPOINT:ADDRESS"
 
-export class RoninWaypointConnector extends BaseConnector<WaypointProvider> {
+const Logo = <RoninLogo />
+
+export class RoninWaypointConnector extends BaseConnector<RoninWaypointWallet> {
   clientId: string
   waypointOrigin: string
 
@@ -28,7 +30,7 @@ export class RoninWaypointConnector extends BaseConnector<WaypointProvider> {
       "RONIN_WAYPOINT_CONNECTOR",
       "Ronin Waypoint",
       { default: RONIN_WAYPOINT_URL, external: RONIN_WAYPOINT_URL },
-      <RoninLogo />,
+      Logo,
       false,
     )
 
