@@ -59,7 +59,7 @@ const result = await authorize({
   /* redirectUrl: "http://localhost/authorize/waypoint" // If the application want the redirect authorize */
 });
 
-console.debug("Authorized:", result);
+console.debug(result); // { accessToken: '<id_token>', address: '<user_address>' }
 ```
 
 ### Explanation
