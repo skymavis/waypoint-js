@@ -276,6 +276,9 @@ importers:
       rollup-plugin-peer-deps-external:
         specifier: 2.2.4
         version: 2.2.4(rollup@4.14.1)
+      rollup-plugin-polyfill-node:
+        specifier: 0.13.0
+        version: 0.13.0(rollup@4.14.1)
       rollup-plugin-typescript2:
         specifier: 0.36.0
         version: 0.36.0(rollup@4.14.1)(typescript@5.4.5)
@@ -1762,6 +1765,15 @@ packages:
     engines: {node: '>=14.0.0'}
     peerDependencies:
       rollup: ^2.68.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
+  '@rollup/plugin-inject@5.0.5':
+    resolution: {integrity: sha512-2+DEJbNBoPROPkgTDNe8/1YXWcqxbN5DTjASVIOx8HS+pITXushyNiBV56RB08zuptzz8gT3YfkqriTBVycepg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
     peerDependenciesMeta:
       rollup:
         optional: true
@@ -4636,6 +4648,11 @@ packages:
     peerDependencies:
       rollup: '*'
 
+  rollup-plugin-polyfill-node@0.13.0:
+    resolution: {integrity: sha512-FYEvpCaD5jGtyBuBFcQImEGmTxDTPbiHjJdrYIp+mFIwgXiXabxvKUK7ZT9P31ozu2Tqm9llYQMRWsfvTMTAOw==}
+    peerDependencies:
+      rollup: ^1.20.0 || ^2.0.0 || ^3.0.0 || ^4.0.0
+
   rollup-plugin-typescript2@0.36.0:
     resolution: {integrity: sha512-NB2CSQDxSe9+Oe2ahZbf+B4bh7pHwjV5L+RSYpCu7Q5ROuN94F9b6ioWwKfz3ueL3KTtmX4o2MUH2cgHDIEUsw==}
     peerDependencies:
@@ -7138,6 +7155,14 @@ snapshots:
       estree-walker: 2.0.2
       glob: 8.1.0
       is-reference: 1.2.1
+      magic-string: 0.30.10
+    optionalDependencies:
+      rollup: 4.14.1
+
+  '@rollup/plugin-inject@5.0.5(rollup@4.14.1)':
+    dependencies:
+      '@rollup/pluginutils': 5.1.0(rollup@4.14.1)
+      estree-walker: 2.0.2
       magic-string: 0.30.10
     optionalDependencies:
       rollup: 4.14.1
@@ -10599,6 +10624,11 @@ snapshots:
 
   rollup-plugin-peer-deps-external@2.2.4(rollup@4.14.1):
     dependencies:
+      rollup: 4.14.1
+
+  rollup-plugin-polyfill-node@0.13.0(rollup@4.14.1):
+    dependencies:
+      '@rollup/plugin-inject': 5.0.5(rollup@4.14.1)
       rollup: 4.14.1
 
   rollup-plugin-typescript2@0.36.0(rollup@4.14.1)(typescript@5.4.5):
