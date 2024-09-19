@@ -38,6 +38,10 @@ jobs:
       - name: Get package
         run: |
           echo "PACKAGE_NAME=$(echo "${{ github.ref_name }}" | cut -d'@' -f1)" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=$(echo "${{ github.ref_name }}" | cut -d'@' -f2 | cut -c2-)" >> $GITHUB_ENV
+      - name: Update package version
+        run: |
+          sed -i '' 's/"version": "[^"]*"/"version": "${{ env.PACKAGE_VERSION }}"/' packages/${{ env.PACKAGE_NAME }}/package.json
       - name: Build
         run: pnpm build --filter="@sky-mavis/${{ env.PACKAGE_NAME }}"
       - name: Publish to npm
