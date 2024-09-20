@@ -8,8 +8,14 @@ type UrlParams = string | number | object | undefined | null
 
 export const openPopup = (inputUrl: string, query?: Record<string, UrlParams>) => {
   if (typeof window !== "undefined" && window.top) {
-    const left = Math.max(0, Math.round(window.screenX + (window.outerWidth - DEFAULT_WIDTH) / 2))
-    const top = Math.max(0, Math.round(window.screenY + (window.outerHeight - DEFAULT_HEIGHT) / 2))
+    const screenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX
+    const screenTop = window.screenTop !== undefined ? window.screenTop : window.screenY
+
+    const screenWidth = window.innerWidth
+    const screenHeight = window.innerHeight
+
+    const left = screenLeft + (screenWidth - DEFAULT_WIDTH) / 2
+    const top = screenTop + (screenHeight - DEFAULT_HEIGHT) / 2
 
     const url = new URL(inputUrl)
 
