@@ -3,25 +3,21 @@
   "repository": {
     "url": "https://github.com/skymavis/waypoint-js"
   },
-  "version": "2.0.0",
+  "version": "2.0.1",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/mjs/index.js",
-      "require": "./dist/cjs/index.js",
+    "default": {
+      "main": "./dist/index.js",
+      "import": "./dist/index.js",
       "types": "./dist/types/index.d.ts"
-    },
-    "./dist/*": "./dist/*"
+    }
   },
-  "main": "dist/cjs/index.js",
-  "module": "dist/mjs/index.js",
-  "types": "./dist/types/index.d.ts",
-  "sideEffects": [
-    "*.css"
-  ],
   "files": [
     "dist",
     "README.md"
@@ -37,6 +33,7 @@
     "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-commonjs": "25.0.7",
     "@rollup/plugin-node-resolve": "15.2.3",
+    "@rollup/plugin-typescript": "11.1.6",
     "@sky-mavis/eslint-config-ts": "workspace:*",
     "@types/node": "20.12.11",
     "eslint": "8.57.0",
@@ -45,7 +42,6 @@
     "rollup": "4.14.1",
     "rollup-plugin-peer-deps-external": "2.2.4",
     "rollup-plugin-polyfill-node": "0.13.0",
-    "rollup-plugin-typescript2": "0.36.0",
     "tslib": "2.6.2",
     "typescript": "5.4.5",
     "viem": "2.9.2"
