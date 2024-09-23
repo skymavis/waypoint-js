@@ -13,7 +13,6 @@
 
     "composite": true,
     "declaration": true,
-    "declarationMap": true,
     "declarationDir": "dist/types",
 
     "module": "ES2015",
