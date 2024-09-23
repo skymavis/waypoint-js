@@ -1,8 +1,4 @@
-import {
-  WaypointProvider,
-  WaypointProviderOpts,
-  VIEM_CHAIN_MAPPING,
-} from "@sky-mavis/waypoint"
+import { VIEM_CHAIN_MAPPING, WaypointProvider, WaypointProviderOpts } from "@sky-mavis/waypoint"
 import { createConnector } from "@wagmi/core"
 import { ronin } from "@wagmi/core/chains"
 import { Address, getAddress } from "viem"

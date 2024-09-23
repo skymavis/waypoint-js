@@ -12,6 +12,8 @@ const mainConfig = defineConfig({
     {
       dir: "dist",
       format: "esm",
+      preserveModules: true,
+      preserveModulesRoot: "src",
     },
   ],
   plugins: [

@@ -9,15 +9,9 @@
     "access": "public"
   },
   "type": "module",
-  "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/types/index.d.ts",
-  "exports": {
-    "default": {
-      "main": "./dist/index.js",
-      "import": "./dist/index.js",
-      "types": "./dist/types/index.d.ts"
-    }
-  },
+  "sideEffects": false,
   "files": [
     "dist",
     "README.md"
