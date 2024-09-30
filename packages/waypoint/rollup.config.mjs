@@ -11,6 +11,9 @@ import nodePolyfills from "rollup-plugin-polyfill-node"
 import typescript from "rollup-plugin-typescript2"
 
 const mainConfig = defineConfig({
+  // This configuration the same as preserveModules but without node_modules folder
+  // To solve module conflict on Nextjs/Remix
+  // Ref: https://rollupjs.org/configuration-options/#input
   input: Object.fromEntries(
     globSync("src/**/*.ts").map(file => [
       path.relative("src", file.slice(0, file.length - path.extname(file).length)),
