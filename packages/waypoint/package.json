@@ -14,9 +14,22 @@
   "types": "dist/types/index.d.ts",
   "sideEffects": false,
   "files": [
-    "dist",
-    "README.md"
+    "*",
+    "!**/*.tsbuildinfo",
+    "!tsconfig.build.json"
   ],
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./skynet": {
+      "types": "./dist/types/skynet/index.d.ts",
+      "import": "./dist/skynet/index.js"
+    }
+  },
   "scripts": {
     "build": "rm -rf dist && rollup -c",
     "dev": "rm -rf dist && rollup -c --watch",
@@ -41,5 +54,8 @@
     "tslib": "2.6.2",
     "typescript": "5.4.5",
     "viem": "2.9.2"
+  },
+  "dependencies": {
+    "ofetch": "1.4.0"
   }
 }

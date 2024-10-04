@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "rootDir": "src",
+    "rootDir": ".",
 
     "moduleResolution": "Bundler",
 
@@ -20,6 +20,6 @@
     "esModuleInterop": true,
     "lib": ["dom", "esnext", "ES2019.Object"]
   },
-  "include": ["src"],
+  "include": ["common", "core", "utils", "auth.ts", "index.ts", "provider.ts", "skynet"],
   "exclude": ["node_modules", "dist"]
 }
