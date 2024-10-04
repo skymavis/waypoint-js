@@ -6,7 +6,7 @@ import { Paths } from "./paths"
 
 const SKYNET_BASE_URL = "https://api-gateway.skymavis.com/skynet/ronin/web3/v2"
 
-const Keys = {
+const RequestKey = {
   getBalanceFromAddress: "/accounts/{address}/fungible_tokens" as const,
   getNFTsFromAddress: "/accounts/{address}/nfts" as const,
   getCollectionsFromAddress: "/accounts/{address}/collections" as const,
@@ -89,59 +89,65 @@ export class Skynet {
     })
   }
 
-  async getBalanceFromAddress(params: RequestParams<"get", typeof Keys.getBalanceFromAddress>) {
-    return this.apiCall("get", Keys.getBalanceFromAddress, params)
+  async getBalanceFromAddress(
+    params: RequestParams<"get", typeof RequestKey.getBalanceFromAddress>,
+  ) {
+    return this.apiCall("get", RequestKey.getBalanceFromAddress, params)
   }
 
-  async getNFTsFromAddress(params: RequestParams<"get", typeof Keys.getNFTsFromAddress>) {
-    return this.apiCall("get", Keys.getNFTsFromAddress, params)
+  async getNFTsFromAddress(params: RequestParams<"get", typeof RequestKey.getNFTsFromAddress>) {
+    return this.apiCall("get", RequestKey.getNFTsFromAddress, params)
   }
 
   async getCollectionsFromAddress(
-    params: RequestParams<"get", typeof Keys.getCollectionsFromAddress>,
+    params: RequestParams<"get", typeof RequestKey.getCollectionsFromAddress>,
   ) {
-    return this.apiCall("get", Keys.getCollectionsFromAddress, params)
+    return this.apiCall("get", RequestKey.getCollectionsFromAddress, params)
   }
 
   async getNFTsFromAddressAndContract(
-    params: RequestParams<"get", typeof Keys.getNFTsFromAddressAndContract>,
+    params: RequestParams<"get", typeof RequestKey.getNFTsFromAddressAndContract>,
   ) {
-    return this.apiCall("get", Keys.getNFTsFromAddressAndContract, params)
+    return this.apiCall("get", RequestKey.getNFTsFromAddressAndContract, params)
   }
 
   async getBalanceFromAddressAndContract(
-    params: RequestParams<"get", typeof Keys.getBalanceFromAddressAndContract>,
+    params: RequestParams<"get", typeof RequestKey.getBalanceFromAddressAndContract>,
   ) {
-    return this.apiCall("get", Keys.getBalanceFromAddressAndContract, params)
+    return this.apiCall("get", RequestKey.getBalanceFromAddressAndContract, params)
   }
 
-  async getNFTOwners(params: RequestParams<"get", typeof Keys.getNFTOwners>) {
-    return this.apiCall("get", Keys.getNFTOwners, params)
+  async getNFTOwners(params: RequestParams<"get", typeof RequestKey.getNFTOwners>) {
+    return this.apiCall("get", RequestKey.getNFTOwners, params)
   }
 
-  async getNFTDetails(params: RequestParams<"get", typeof Keys.getNFTDetails>) {
-    return this.apiCall("get", Keys.getNFTDetails, params)
+  async getNFTDetails(params: RequestParams<"get", typeof RequestKey.getNFTDetails>) {
+    return this.apiCall("get", RequestKey.getNFTDetails, params)
   }
 
-  async refreshNFTMetadata(params: RequestParams<"post", typeof Keys.refreshNFTMetadata>) {
-    return this.apiCall("post", Keys.refreshNFTMetadata, params)
+  async refreshNFTMetadata(params: RequestParams<"post", typeof RequestKey.refreshNFTMetadata>) {
+    return this.apiCall("post", RequestKey.refreshNFTMetadata, params)
   }
 
   async refreshNFTMetadataAsync(
-    params: RequestParams<"post", typeof Keys.refreshNFTMetadataAsync>,
+    params: RequestParams<"post", typeof RequestKey.refreshNFTMetadataAsync>,
   ) {
-    return this.apiCall("post", Keys.refreshNFTMetadataAsync, params)
+    return this.apiCall("post", RequestKey.refreshNFTMetadataAsync, params)
   }
 
-  async getNFTsDetails(params: RequestParams<"post", typeof Keys.getNFTsDetails>) {
-    return this.apiCall("post", Keys.getNFTsDetails, params)
+  async getNFTsDetails(params: RequestParams<"post", typeof RequestKey.getNFTsDetails>) {
+    return this.apiCall("post", RequestKey.getNFTsDetails, params)
   }
 
-  async getNFTsFromCollection(params: RequestParams<"get", typeof Keys.getNFTsFromCollection>) {
-    return this.apiCall("get", Keys.getNFTsFromCollection, params)
+  async getNFTsFromCollection(
+    params: RequestParams<"get", typeof RequestKey.getNFTsFromCollection>,
+  ) {
+    return this.apiCall("get", RequestKey.getNFTsFromCollection, params)
   }
 
-  async getOwnersFromCollection(params: RequestParams<"get", typeof Keys.getOwnersFromCollection>) {
-    return this.apiCall("get", Keys.getOwnersFromCollection, params)
+  async getOwnersFromCollection(
+    params: RequestParams<"get", typeof RequestKey.getOwnersFromCollection>,
+  ) {
+    return this.apiCall("get", RequestKey.getOwnersFromCollection, params)
   }
 }

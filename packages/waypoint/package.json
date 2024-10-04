@@ -16,7 +16,8 @@
   "files": [
     "*",
     "!**/*.tsbuildinfo",
-    "!tsconfig.build.json"
+    "!tsconfig.build.json",
+    "!rollup.config.mjs"
   ],
   "exports": {
     "./package.json": "./package.json",
