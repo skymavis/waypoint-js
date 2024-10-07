@@ -21,6 +21,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.12.1
+          registry-url: https://npm.pkg.github.com/
+          scope: "@axieinfinity"
 
       - name: Setup pnpm
         shell: bash
@@ -45,4 +47,4 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READ_TOKEN }}
 
       - name: Build
-        run: pnpm build
+        run: pnpm build --filter="./packages/*"
