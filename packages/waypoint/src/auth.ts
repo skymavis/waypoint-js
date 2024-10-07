@@ -74,10 +74,15 @@ export const authorize = async (opts: AuthorizeOpts) => {
       scope: getScopesParams(scopes),
     }),
   )
-  const { id_token: accessToken, address: rawAddress } = authData ?? {}
+  const {
+    id_token: accessToken,
+    address: rawAddress,
+    secondary_address: secondaryAddress,
+  } = authData ?? {}
 
   return {
     accessToken,
+    secondaryAddress,
     address: validateIdAddress(rawAddress),
   }
 }
@@ -136,10 +141,12 @@ export const parseRedirectUrl = () => {
   const state = url.searchParams.get("state")
   const rawToken = url.searchParams.get("data")
   const rawAddress = url.searchParams.get("address") ?? undefined
+  const secondaryAddress = url.searchParams.get("secondary_address") ?? undefined
 
   return {
     state,
     accessToken: rawToken,
     address: validateIdAddress(rawAddress),
+    secondaryAddress: validateIdAddress(secondaryAddress),
   }
 }
