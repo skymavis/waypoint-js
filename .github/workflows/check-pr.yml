@@ -21,6 +21,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.12.1
+
       - name: Config private registry
         run: |
           echo "@axieinfinity:registry=https://npm.pkg.github.com/" >> .npmrc
