@@ -140,8 +140,8 @@ export const parseRedirectUrl = () => {
 
   const state = url.searchParams.get("state")
   const rawToken = url.searchParams.get("data")
-  const rawAddress = url.searchParams.get("address") ?? undefined
-  const secondaryAddress = url.searchParams.get("secondary_address") ?? undefined
+  const rawAddress = url.searchParams.get("address")
+  const secondaryAddress = url.searchParams.get("secondary_address")
 
   return {
     state,
