@@ -82,8 +82,8 @@ export const authorize = async (opts: AuthorizeOpts) => {
 
   return {
     accessToken,
-    secondaryAddress,
     address: validateIdAddress(rawAddress),
+    secondaryAddress: validateIdAddress(secondaryAddress),
   }
 }
 
