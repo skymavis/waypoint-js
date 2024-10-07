@@ -21,8 +21,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.12.1
-          registry-url: https://npm.pkg.github.com/
-          scope: "@axieinfinity"
 
       - name: Setup pnpm
         shell: bash
@@ -41,10 +39,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
+      - name: Config private registry
+        run: |
+          echo "@axieinfinity:registry=https://npm.pkg.github.com/" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_READ_TOKEN }}" >> .npmrc
+
       - name: Install dependencies
         run: pnpm install
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_READ_TOKEN }}
 
       - name: Build
         run: pnpm build --filter="./packages/*"
