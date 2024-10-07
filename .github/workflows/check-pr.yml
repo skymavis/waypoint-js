@@ -21,6 +21,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.12.1
+          cache: "pnpm"
+          cache-dependency-path: "pnpm-lock.yaml"
+          registry-url: https://npm.pkg.github.com/
+          scope: "@axieinfinity"
 
       - name: Setup pnpm
         shell: bash
