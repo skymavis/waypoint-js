@@ -1,8 +1,8 @@
 import { getAddress, isAddress } from "viem"
 
-export const validateIdAddress = (responseAddress = "") => {
+export const validateIdAddress = (responseAddress?: string | null) => {
   try {
-    return isAddress(responseAddress) ? getAddress(responseAddress) : undefined
+    return responseAddress && isAddress(responseAddress) ? getAddress(responseAddress) : undefined
   } catch (error) {
     return undefined
   }
