@@ -41,7 +41,7 @@ export default function Home() {
   }, [])
 
   return (
-    <main className="flex flex-col items-start min-h-screen gap-4 p-24">
+    <main className="flex flex-col items-start min-h-screen gap-4 p-8 md:p-24">
       <button
         className={clsx(
           "px-4 py-3 font-bold text-white bg-sky-600 hover:bg-sky-700 rounded-xl",
