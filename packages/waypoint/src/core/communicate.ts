@@ -91,8 +91,9 @@ export class CommunicateHelper {
 
     const intervalId = setInterval(() => {
       const intervalHandler = this.pendingIntervals.get(requestId)
+      const responseHandler = this.pendingRequests.get(requestId)
 
-      if (window?.closed && intervalHandler) {
+      if (window?.closed && intervalHandler && responseHandler) {
         this.handleResponse({
           state: requestId,
           type: "fail",
