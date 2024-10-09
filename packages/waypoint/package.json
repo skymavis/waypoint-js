@@ -26,6 +26,10 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./web": {
+      "types": "./dist/types/web/index.d.ts",
+      "import": "./dist/web/index.js"
+    },
     "./skynet": {
       "types": "./dist/types/skynet/index.d.ts",
       "import": "./dist/skynet/index.js"
