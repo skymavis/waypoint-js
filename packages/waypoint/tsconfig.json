@@ -20,6 +20,6 @@
     "esModuleInterop": true,
     "lib": ["dom", "esnext", "ES2019.Object"]
   },
-  "include": ["web", "skynet", "utils"],
+  "include": ["web", "skynet"],
   "exclude": ["node_modules", "dist"]
 }
