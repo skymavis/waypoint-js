@@ -33,6 +33,10 @@
     "./skynet": {
       "types": "./dist/types/skynet/index.d.ts",
       "import": "./dist/skynet/index.js"
+    },
+    "./core": {
+      "types": "./dist/types/core/index.d.ts",
+      "import": "./dist/core/index.js"
     }
   },
   "scripts": {
@@ -42,6 +46,7 @@
     "clean": "rm -rf .turbo node_modules dist"
   },
   "devDependencies": {
+    "@axieinfinity/lockbox": "2.1.6",
     "@babel/preset-env": "7.24.4",
     "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-commonjs": "25.0.7",
