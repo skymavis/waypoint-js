@@ -1,4 +1,4 @@
-import { connectKeyless } from "@sky-mavis/waypoint/core"
+import { getKeylessProvider } from "@sky-mavis/waypoint/core"
 import clsx from "clsx"
 import React, { FC, ReactNode, useCallback, useRef, useState } from "react"
 import { createWalletClient, custom, WalletClient } from "viem"
@@ -27,7 +27,7 @@ export const WalletProvider: FC<Props> = props => {
       throw new Error("No access token found")
     }
 
-    const provider = await connectKeyless({
+    const provider = await getKeylessProvider({
       chainId: saigon.id,
       waypointToken: accessToken,
       recoveryPassword: password,

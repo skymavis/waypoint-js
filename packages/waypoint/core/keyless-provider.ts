@@ -1,6 +1,6 @@
 import { Lockbox } from "@axieinfinity/lockbox"
 
-import { ConnectError } from "./error"
+import { GetKeylessProviderError } from "./error"
 
 export type TrackParams = {
   enable: boolean
@@ -13,7 +13,7 @@ export type WasmParams = {
   optionalParams: string
 }
 
-export type Opts = {
+export type GetKeylessProviderOpts = {
   chainId: number
   waypointToken: string
   overrideRpcUrl?: string
@@ -24,19 +24,19 @@ export type Opts = {
   recoveryPassword: string
 }
 
-const initLockbox = (opts: Opts) => {
+const initLockbox = (opts: GetKeylessProviderOpts) => {
   const { chainId, waypointToken, overrideRpcUrl, wasmUrl, wasmParams } = opts
 
   try {
     return Lockbox.init({
-      chainId: chainId,
+      chainId,
       accessToken: waypointToken,
       overrideRpcUrl,
       wasmUrl,
       wasmParams,
     })
   } catch (error) {
-    throw new ConnectError(error, {
+    throw new GetKeylessProviderError(error, {
       code: -100,
       shortMessage: "could NOT initialize lockbox client",
     })
@@ -49,25 +49,34 @@ const getBackupClientShard = async (lockboxClient: Lockbox) => {
 
     return key
   } catch (error) {
-    throw new ConnectError(error, { code: -200, shortMessage: "could NOT get backup client shard" })
+    throw new GetKeylessProviderError(error, {
+      code: -200,
+      shortMessage: "could NOT get backup client shard",
+    })
   }
 }
 
-export const connectKeyless = async (opts: Opts) => {
+export const getKeylessProvider = async (opts: GetKeylessProviderOpts) => {
   const { recoveryPassword } = opts
 
   const lockboxClient = initLockbox(opts)
-  const clientsShard = await getBackupClientShard(lockboxClient)
+  const clientShard = await getBackupClientShard(lockboxClient)
 
   try {
-    await lockboxClient.decryptClientShard(clientsShard, recoveryPassword)
+    await lockboxClient.decryptClientShard(clientShard, recoveryPassword)
   } catch (error) {
-    throw new ConnectError(error, { code: -300, shortMessage: "could NOT decrypt client shard" })
+    throw new GetKeylessProviderError(error, {
+      code: -300,
+      shortMessage: "could NOT decrypt client shard",
+    })
   }
 
   try {
     return lockboxClient.getProvider()
   } catch (error) {
-    throw new ConnectError(error, { code: -400, shortMessage: "could NOT initialize provider" })
+    throw new GetKeylessProviderError(error, {
+      code: -400,
+      shortMessage: "could NOT initialize provider",
+    })
   }
 }

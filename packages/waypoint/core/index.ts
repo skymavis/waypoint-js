@@ -1,2 +1,2 @@
-export * from "./connect-keyless"
 export * from "./error"
+export * from "./keyless-provider"
