@@ -157,7 +157,7 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
       }),
     )
 
-    const { id_token: accessToken, address: rawAddress } = authData
+    const { id_token: token, address: rawAddress } = authData
     const address = validateIdAddress(rawAddress)
 
     if (!address) {
@@ -175,7 +175,7 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
     this.emit(Eip1193EventName.connect, { chainId: chainId })
 
     return {
-      accessToken,
+      token,
       address,
     }
   }

@@ -20,16 +20,16 @@ export const WalletProvider: FC<Props> = props => {
   const [error, setError] = useState<string>()
 
   const newWalletClient = useCallback(async (password: string) => {
-    const accessToken = localStorage.getItem("accessToken")
+    const token = localStorage.getItem("token")
     const expectedAddress = localStorage.getItem("address")
 
-    if (!accessToken || !expectedAddress) {
-      throw new Error("No access token found")
+    if (!token || !expectedAddress) {
+      throw new Error("No waypoint token found")
     }
 
     const provider = await getKeylessProvider({
       chainId: saigon.id,
-      waypointToken: accessToken,
+      waypointToken: token,
       recoveryPassword: password,
     })
 
