@@ -1,4 +1,4 @@
-import { parseRedirectUrl, redirectAuthorize } from "@sky-mavis/waypoint"
+import { authorize, parseRedirectUrl } from "@sky-mavis/waypoint"
 import { useAtomValue } from "jotai"
 import { useEffect } from "react"
 import { Button } from "src/@/components/ui/button"
@@ -10,7 +10,8 @@ export const RedirectAuthorize = () => {
   const { toastSuccess } = useWrapToast()
 
   const handleRedirectAuthorize = async () => {
-    redirectAuthorize({
+    authorize({
+      mode: "redirect",
       clientId,
       waypointOrigin: origin,
     })

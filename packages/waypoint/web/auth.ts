@@ -8,7 +8,7 @@ import { validateIdAddress } from "./utils/validate-address"
 /**
  * Options for authorizing a client.
  */
-export type AuthorizeOpts = {
+export type BaseAuthorizeOpts = {
   /**
    * Client ID are used to identify your application for this integration.
    * You can find it in Developer Portal under Ronin Waypoint Service settings.
@@ -36,7 +36,19 @@ export type AuthorizeOpts = {
   redirectUrl?: string
 }
 
-export type RedirectAuthorizeOpts = AuthorizeOpts & {
+export type PopupAuthorizeOpts = BaseAuthorizeOpts & {
+  /**
+   * Authorize the user via a popup.
+   */
+  mode: "popup"
+}
+
+export type RedirectAuthorizeOpts = BaseAuthorizeOpts & {
+  /**
+   * Redirect the user to the authorization page.
+   */
+  mode: "redirect"
+
   /**
    * The unique state to identify the request & response.
    */
@@ -45,25 +57,36 @@ export type RedirectAuthorizeOpts = AuthorizeOpts & {
 
 /**
  * Authorize a user via Ronin Waypoint, returning an token and user address.
- * This function will open a popup for authorization.
  *
  * @param opts Options for authorization.
- * @returns Authorization result including token and user address.
+ * @returns Authorization result including token and user addresses, or undefined in case of redirect.
  *
  * @example
  * import { authorize } from "@sky-mavis/waypoint"
  *
  * const { token, address } = await authorize({
+ *  mode: "popup",
  *  clientId: "YOUR_CLIENT_ID",
  * })
  */
-export const authorize = async (opts: AuthorizeOpts) => {
+export const authorize = async (opts: PopupAuthorizeOpts | RedirectAuthorizeOpts) => {
   const {
+    mode,
     clientId,
-    waypointOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
     scopes,
+    waypointOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
     redirectUrl = window.location.origin,
   } = opts
+
+  if (mode === "redirect") {
+    replaceUrl(`${waypointOrigin}/client/${clientId}/authorize`, {
+      redirect: redirectUrl,
+      state: opts.state ?? crypto.randomUUID(),
+      scope: getScopesParams(scopes),
+    })
+    return
+  }
+
   const helper = new CommunicateHelper(waypointOrigin)
 
   const authData = await helper.sendRequest<IdResponse>(state =>
@@ -74,6 +97,7 @@ export const authorize = async (opts: AuthorizeOpts) => {
       scope: getScopesParams(scopes),
     }),
   )
+
   const {
     id_token: token,
     address: rawAddress,
@@ -85,35 +109,6 @@ export const authorize = async (opts: AuthorizeOpts) => {
     address: validateIdAddress(rawAddress),
     secondaryAddress: validateIdAddress(secondaryAddress),
   }
-}
-
-/**
- * Authorize a user via Ronin Waypoint in redirect mode, returning state, token and user address.
- * This function will redirect the user to Ronin Waypoint for authorization.
- *
- * @param opts Options for redirect authorization.
- *
- * @example
- * import { redirectAuthorize } from "@sky-mavis/waypoint"
- *
- * redirectAuthorize({
- *  clientId: "YOUR_CLIENT_ID",
- * })
- */
-export const redirectAuthorize = (opts: RedirectAuthorizeOpts) => {
-  const {
-    clientId,
-    redirectUrl = window.location.origin,
-    state = crypto.randomUUID(),
-    waypointOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
-    scopes,
-  } = opts
-
-  replaceUrl(`${waypointOrigin}/client/${clientId}/authorize`, {
-    state,
-    redirect: redirectUrl,
-    scope: getScopesParams(scopes),
-  })
 }
 
 /**

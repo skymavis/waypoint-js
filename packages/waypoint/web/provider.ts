@@ -11,7 +11,7 @@ import {
   UnauthorizedProviderError,
 } from "viem"
 
-import { AuthorizeOpts } from "./auth"
+import { BaseAuthorizeOpts } from "./auth"
 import { VIEM_CHAIN_MAPPING } from "./common/chain"
 import { Eip1193EventName, Eip1193Provider, RoninWaypointRequestSchema } from "./common/eip1193"
 import { RONIN_WAYPOINT_ORIGIN_PROD } from "./common/gate"
@@ -25,7 +25,7 @@ import { openPopup } from "./utils/popup"
 import { getStorage, removeStorage, setStorage, STORAGE_ADDRESS_KEY } from "./utils/storage"
 import { validateIdAddress } from "./utils/validate-address"
 
-export type WaypointProviderOpts = AuthorizeOpts & {
+export type WaypointProviderOpts = BaseAuthorizeOpts & {
   chainId: number
 }
 
