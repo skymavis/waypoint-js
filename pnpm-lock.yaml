@@ -72,9 +72,6 @@ importers:
 
   apps/example-daily-checkin-no-popup:
     dependencies:
-      '@axieinfinity/lockbox':
-        specifier: 2.1.6
-        version: 2.1.6(typescript@5.4.5)(viem@2.9.2(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
       '@sky-mavis/waypoint':
         specifier: workspace:*
         version: link:../../packages/waypoint
