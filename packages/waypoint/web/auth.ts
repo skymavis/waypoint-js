@@ -44,16 +44,16 @@ export type RedirectAuthorizeOpts = AuthorizeOpts & {
 }
 
 /**
- * Authorize a user via Ronin Waypoint, returning an accessToken and user address.
+ * Authorize a user via Ronin Waypoint, returning an token and user address.
  * This function will open a popup for authorization.
  *
  * @param opts Options for authorization.
- * @returns Authorization result including accessToken and user address.
+ * @returns Authorization result including token and user address.
  *
  * @example
  * import { authorize } from "@sky-mavis/waypoint"
  *
- * const { accessToken, address } = await authorize({
+ * const { token, address } = await authorize({
  *  clientId: "YOUR_CLIENT_ID",
  * })
  */
@@ -75,20 +75,20 @@ export const authorize = async (opts: AuthorizeOpts) => {
     }),
   )
   const {
-    id_token: accessToken,
+    id_token: token,
     address: rawAddress,
     secondary_address: secondaryAddress,
   } = authData ?? {}
 
   return {
-    accessToken,
+    token,
     address: validateIdAddress(rawAddress),
     secondaryAddress: validateIdAddress(secondaryAddress),
   }
 }
 
 /**
- * Authorize a user via Ronin Waypoint in redirect mode, returning state, accessToken and user address.
+ * Authorize a user via Ronin Waypoint in redirect mode, returning state, token and user address.
  * This function will redirect the user to Ronin Waypoint for authorization.
  *
  * @param opts Options for redirect authorization.
@@ -96,7 +96,7 @@ export const authorize = async (opts: AuthorizeOpts) => {
  * @example
  * import { redirectAuthorize } from "@sky-mavis/waypoint"
  *
- * const { state, accessToken, address } = await redirectAuthorize({
+ * redirectAuthorize({
  *  clientId: "YOUR_CLIENT_ID",
  * })
  */
@@ -123,7 +123,7 @@ export const redirectAuthorize = (opts: RedirectAuthorizeOpts) => {
  * @returns Parsed data from the redirect URL.
  *
  * @example
- * const { state, accessToken, address } = parseRedirectUrl()
+ * const { state, token, address } = parseRedirectUrl()
  */
 export const parseRedirectUrl = () => {
   const url = new URL(window.location.href)
@@ -145,7 +145,7 @@ export const parseRedirectUrl = () => {
 
   return {
     state,
-    accessToken: rawToken,
+    token: rawToken,
     address: validateIdAddress(rawAddress),
     secondaryAddress: validateIdAddress(secondaryAddress),
   }

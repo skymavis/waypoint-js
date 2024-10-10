@@ -27,13 +27,13 @@ export default function Home() {
 
   useEffect(() => {
     try {
-      const { accessToken, address = "" } = parseRedirectUrl()
+      const { token, address = "" } = parseRedirectUrl()
 
-      if (isAddress(address) && accessToken) {
+      if (isAddress(address) && token) {
         setAccount(address)
 
         localStorage.setItem("address", address)
-        localStorage.setItem("accessToken", accessToken)
+        localStorage.setItem("token", token)
       }
     } catch (error) {
       console.debug("🚀 | parseRedirectUrl:", error)
