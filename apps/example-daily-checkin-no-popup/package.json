@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@axieinfinity/lockbox": "2.1.6",
     "@sky-mavis/waypoint": "workspace:*",
     "clsx": "^2.1.1",
     "jwt-decode": "^4.0.0",

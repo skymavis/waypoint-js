@@ -1,4 +1,4 @@
-import { Lockbox } from "@axieinfinity/lockbox"
+import { connectKeyless } from "@sky-mavis/waypoint/core"
 import clsx from "clsx"
 import React, { FC, ReactNode, useCallback, useRef, useState } from "react"
 import { createWalletClient, custom, WalletClient } from "viem"
@@ -12,8 +12,6 @@ type Props = {
 
 export const WalletProvider: FC<Props> = props => {
   const { children } = props
-
-  const lockboxClientRef = useRef<Lockbox>()
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -29,17 +27,14 @@ export const WalletProvider: FC<Props> = props => {
       throw new Error("No access token found")
     }
 
-    lockboxClientRef.current = Lockbox.init({
+    const provider = await connectKeyless({
       chainId: saigon.id,
-      accessToken,
+      waypointToken: accessToken,
+      recoveryPassword: password,
     })
 
-    const lockboxClient = lockboxClientRef.current
-    const { key: clientsShard } = await lockboxClient.getBackupClientShard()
-    await lockboxClient.decryptClientShard(clientsShard, password)
-
     const walletClient = createWalletClient({
-      transport: custom(lockboxClient.getProvider()),
+      transport: custom(provider),
       chain: saigon,
     })
 
