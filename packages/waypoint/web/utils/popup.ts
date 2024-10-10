@@ -2,7 +2,6 @@ import { UserRejectedRequestError } from "viem"
 
 const DEFAULT_WIDTH = 480
 const DEFAULT_HEIGHT = 720
-const DEFAULT_TITLE = "Confirm your action!"
 
 type UrlParams = string | number | object | undefined | null
 
@@ -27,7 +26,7 @@ export const openPopup = (inputUrl: string, query?: Record<string, UrlParams>) =
 
     const popup = window.open(
       url,
-      DEFAULT_TITLE,
+      `_blank`,
       `
         scrollbars=yes,
         width=${DEFAULT_WIDTH},
