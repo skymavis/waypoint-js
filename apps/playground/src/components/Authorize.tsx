@@ -10,6 +10,7 @@ export const Authorize = () => {
 
   const handleAuthorize = async () => {
     const result = await authorize({
+      mode: "popup",
       clientId,
       waypointOrigin: origin,
     })

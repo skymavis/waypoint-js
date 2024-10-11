@@ -1,6 +1,6 @@
 "use client"
 
-import { parseRedirectUrl, redirectAuthorize } from "@sky-mavis/waypoint"
+import { authorize, parseRedirectUrl } from "@sky-mavis/waypoint"
 import clsx from "clsx"
 import { useEffect, useState } from "react"
 import { Address, isAddress } from "viem"
@@ -14,7 +14,8 @@ export default function Home() {
 
   const handleAuthorize = async () => {
     try {
-      redirectAuthorize({
+      authorize({
+        mode: "redirect",
         clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
         scopes: ["email", "profile", "openid", "wallet"],
       })
