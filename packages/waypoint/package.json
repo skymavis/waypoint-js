@@ -3,7 +3,7 @@
   "repository": {
     "url": "https://github.com/skymavis/waypoint-js"
   },
-  "version": "2.0.3",
+  "version": "3.0.0",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -46,7 +46,7 @@
     "clean": "rm -rf .turbo node_modules dist"
   },
   "devDependencies": {
-    "@axieinfinity/lockbox": "2.1.6",
+    "@axieinfinity/lockbox": "2.1.8",
     "@babel/preset-env": "7.24.4",
     "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-commonjs": "25.0.7",
@@ -64,6 +64,6 @@
     "rollup-plugin-typescript2": "0.36.0",
     "tslib": "2.6.2",
     "typescript": "5.4.5",
-    "viem": "2.9.2"
+    "viem": "2.21.22"
   }
 }
