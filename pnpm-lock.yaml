@@ -291,10 +291,6 @@ importers:
         version: 8.56.10
 
   packages/waypoint:
-    dependencies:
-      ofetch:
-        specifier: 1.4.0
-        version: 1.4.0
     devDependencies:
       '@axieinfinity/lockbox':
         specifier: 2.1.6
@@ -326,6 +322,9 @@ importers:
       glob:
         specifier: 11.0.0
         version: 11.0.0
+      ofetch:
+        specifier: 1.4.0
+        version: 1.4.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
