@@ -293,8 +293,8 @@ importers:
   packages/waypoint:
     devDependencies:
       '@axieinfinity/lockbox':
-        specifier: 2.1.8
-        version: 2.1.8(typescript@5.4.5)(viem@2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
+        specifier: file:internal-libs/lockbox-2.1.8.tgz
+        version: file:packages/waypoint/internal-libs/lockbox-2.1.8.tgz(typescript@5.4.5)(viem@2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
       '@babel/preset-env':
         specifier: 7.24.4
         version: 7.24.4(@babel/core@7.24.6)
@@ -421,11 +421,15 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@axieinfinity/lockbox@2.1.8':
-    resolution: {integrity: sha512-qnIUwxX6EQIfoqrY/MGrlacWzxrqk8eOFgR5Db7amrv0Jxm/FAktEEptJCFSuaCgRO2uboq2PIQohX6fDXKsPg==, tarball: https://npm.pkg.github.com/download/@axieinfinity/lockbox/2.1.8/1b539dc7be9f3bbf90feea3612041fe9bdda8a73}
+  '@axieinfinity/lockbox@file:packages/waypoint/internal-libs/lockbox-2.1.8.tgz':
+    resolution: {integrity: sha512-3XFl9RpmLmOnGxQF/6gWgwEY/8zslH5nnshN81LEmAO3qSh6xVApF08LxTu9+trl9dAHhLmgzn9muhPk7//lTg==, tarball: file:packages/waypoint/internal-libs/lockbox-2.1.8.tgz}
+    version: 2.1.8
     peerDependencies:
       typescript: '>=5.0.4'
       viem: '>=2.21.19'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   '@babel/code-frame@7.24.6':
     resolution: {integrity: sha512-ZJhac6FkEd1yhG2AHOmfcXG4ceoLltoCVJjN5XsWN9BifBQr+cHJbWi0h68HZuSORq+3WtJ2z0hwF2NG1b5kcA==}
@@ -5560,10 +5564,11 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@axieinfinity/lockbox@2.1.8(typescript@5.4.5)(viem@2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))':
+  '@axieinfinity/lockbox@file:packages/waypoint/internal-libs/lockbox-2.1.8.tgz(typescript@5.4.5)(viem@2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))':
     dependencies:
-      typescript: 5.4.5
       viem: 2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+    optionalDependencies:
+      typescript: 5.4.5
 
   '@babel/code-frame@7.24.6':
     dependencies:
