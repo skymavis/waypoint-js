@@ -4,8 +4,7 @@ Web3 API provides enhanced functionality and superior performance across key blo
 
 ## Prerequisites
 
-- Permission to use the Skynet service (<https://developers.skymavis.com>)
-![CleanShot 2024-10-14 at 11 17 47@2x](https://github.com/user-attachments/assets/7e48ded1-e0de-4958-83a2-cb0b0680e392)
+- Prepare your api key which found on [Developer Portal](https://developers.skymavis.com/console/applications/)
 ![CleanShot 2024-10-14 at 11 18 38@2x](https://github.com/user-attachments/assets/5be21680-436c-4d3f-95a3-35668fad2e69)
 
 ## Installation
