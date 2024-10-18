@@ -98,21 +98,21 @@ export class Skynet {
   private async apiCall<M extends Method, T extends keyof Paths>(
     method: M,
     path: T,
-    params: RequestParams<M, T>,
+    params?: RequestParams<M, T>,
   ) {
     let query, body
 
-    if ("query" in params) {
+    if (params && "query" in params) {
       query = params.query
       delete params.query
     }
 
-    if ("body" in params) {
+    if (params && "body" in params) {
       body = params.body
       delete (params as Partial<typeof params>).body
     }
 
-    const url = constructUrl(path, params as Record<string, string>)
+    const url = constructUrl(path, (params ?? {}) as Record<string, string>)
     return this.fetcher<ResponseData<Paths[T][M]>>(url, {
       method,
       query: query as FetchOptions<"json">["query"],
@@ -184,14 +184,12 @@ export class Skynet {
     return this.apiCall("get", RequestKey.getInternalTransactionTransfersFromAddress, params)
   }
 
-  async getFinalizedBlockNumber(
-    params: RequestParams<"get", typeof RequestKey.getFinalizedBlockNumber>,
-  ) {
-    return this.apiCall("get", RequestKey.getFinalizedBlockNumber, params)
+  async getFinalizedBlockNumber() {
+    return this.apiCall("get", RequestKey.getFinalizedBlockNumber)
   }
 
-  async getLatestBlockNumber(params: RequestParams<"get", typeof RequestKey.getLatestBlockNumber>) {
-    return this.apiCall("get", RequestKey.getLatestBlockNumber, params)
+  async getLatestBlockNumber() {
+    return this.apiCall("get", RequestKey.getLatestBlockNumber)
   }
 
   async getTransactionsByBlockNumber(
