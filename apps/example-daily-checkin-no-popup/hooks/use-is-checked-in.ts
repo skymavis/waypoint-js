@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react"
 import { Address } from "viem"
 
-import { web3PublicClient } from "../web3-client"
-import { CHECK_IN_ABI, CHECK_IN_ADDRESS } from "./common"
+import { CHECK_IN_ABI, CHECK_IN_ADDRESS } from "../common/check-in-contract"
+import { web3PublicClient } from "../common/web3-public-client"
 
 export const useIsCheckedIn = (currentAddress: Address) => {
   const [missed, setMissed] = useState<boolean | undefined>()

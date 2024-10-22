@@ -1,17 +1,14 @@
 "use client"
 
-import { authorize, parseRedirectUrl } from "@sky-mavis/waypoint"
+import { authorize } from "@sky-mavis/waypoint"
 import clsx from "clsx"
-import { useEffect, useState } from "react"
-import { Address, isAddress } from "viem"
 
-import { CheckIn } from "./check-in/check-in"
-import { RonSvg } from "./components/ron-svg"
-import { WalletProvider } from "./wallet-context/wallet-provider"
+import { CheckIn } from "../components/check-in"
+import { RonSvg } from "../components/ron-svg"
+import { useWallet } from "../hooks/use-wallet"
 
 export default function Home() {
-  const [account, setAccount] = useState<Address>()
-  const [error, setError] = useState<string>()
+  const { address } = useWallet()
 
   const handleAuthorize = async () => {
     try {
@@ -22,30 +19,28 @@ export default function Home() {
       })
     } catch (error) {
       console.debug("🚀 | handleAuthorize:", error)
-      setAccount(undefined)
-      setError("User reject to connect wallet! Check your console for future details.")
     }
   }
 
-  useEffect(() => {
-    try {
-      const { token, address = "" } = parseRedirectUrl()
+  // useEffect(() => {
+  //   try {
+  //     const { token, address = "" } = parseRedirectUrl()
 
-      if (isAddress(address) && token) {
-        setAccount(address)
+  //     if (isAddress(address) && token) {
+  //       setAccount(address)
 
-        localStorage.setItem("address", address)
-        localStorage.setItem("token", token)
-      }
-    } catch (error) {
-      console.debug("🚀 | parseRedirectUrl:", error)
-    }
-  }, [])
+  //       localStorage.setItem(WP_ADDRESS_STORAGE_KEY, address)
+  //       localStorage.setItem(WP_TOKEN_STORAGE_KEY, token)
+  //     }
+  //   } catch (error) {
+  //     console.debug("🚀 | parseRedirectUrl:", error)
+  //   }
+  // }, [])
 
   return (
-    <main className="flex flex-col min-h-screen w-screen max-w-sm m-auto px-4">
+    <>
       <div
-        className={clsx("flex-1 flex flex-col justify-center items-center", account && "hidden")}
+        className={clsx("flex-1 flex flex-col justify-center items-center", address && "hidden")}
       >
         <img src="./planner.png" className="size-16" />
         <div className="text-xl font-semibold mt-3">Daily Check-In</div>
@@ -69,18 +64,17 @@ export default function Home() {
         </button>
       </div>
 
-      {account && (
+      {address && (
         <div className="mt-10">
           <img src="./wallet.png" className="size-16" />
           <div className="mt-4 text-xl font-semibold">Your wallet</div>
-          <div className="text-sm tracking-tight text-slate-500 truncate italic">{account}</div>
+          <div className="text-sm tracking-tight text-slate-500 truncate italic">{address}</div>
 
           <div className="border-t border-slate-400 mt-2" />
         </div>
       )}
-      {error && <p className="text-rose-600 font-semibold">{error}</p>}
 
-      <WalletProvider>{account && <CheckIn account={account} />}</WalletProvider>
-    </main>
+      {address && <CheckIn account={address} />}
+    </>
   )
 }

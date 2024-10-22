@@ -1,27 +1,40 @@
+"use client"
+
 import { getKeylessProvider } from "@sky-mavis/waypoint/core"
 import clsx from "clsx"
-import React, { FC, ReactNode, useCallback, useRef, useState } from "react"
-import { createWalletClient, custom, WalletClient } from "viem"
+import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from "react"
+import { Address, createWalletClient, custom, WalletClient } from "viem"
 import { saigon } from "viem/chains"
 
+import { getUser } from "../common/get-user"
+import { WP_ADDRESS_STORAGE_KEY, WP_TOKEN_STORAGE_KEY } from "../common/storage"
 import { WalletContext } from "./wallet-context"
 
 type Props = {
   children?: ReactNode
 }
 
+// * handle global flow
+// * get users' password & unlock wallet
+// * reconnect wallet
+// * reauthorized user if needed
+// * WHY: all application will have access to walletClient to interact with blockchain
 export const WalletProvider: FC<Props> = props => {
   const { children } = props
 
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const [address, setAddress] = useState<Address>()
+  const [email, setEmail] = useState<string>()
+  const [expiration, setExpiration] = useState<number>()
 
   const [walletClient, setWalletClient] = useState<WalletClient>()
   const [isOpen, setOpen] = useState<boolean>(false)
   const [error, setError] = useState<string>()
 
   const newWalletClient = useCallback(async (password: string) => {
-    const token = localStorage.getItem("token")
-    const expectedAddress = localStorage.getItem("address")
+    const token = localStorage.getItem(WP_TOKEN_STORAGE_KEY)
+    const expectedAddress = localStorage.getItem(WP_ADDRESS_STORAGE_KEY)
 
     if (!token || !expectedAddress) {
       throw new Error("No waypoint token found")
@@ -76,11 +89,25 @@ export const WalletProvider: FC<Props> = props => {
     setOpen(false)
   }
 
+  useEffect(() => {
+    try {
+      const { address, tokenPayload } = getUser()
+
+      setAddress(address)
+      setEmail(tokenPayload.email)
+      setExpiration(tokenPayload.exp)
+    } catch (error) {
+      console.debug(error)
+    }
+  }, [])
+
   return (
     <WalletContext.Provider
       value={{
         requestWalletClient,
         walletClient,
+        address,
+        email,
       }}
     >
       {children}

@@ -1,16 +1,16 @@
 import { FC, useState } from "react"
 import { Address } from "viem"
 
-import { useWalletClient } from "../wallet-context/use-wallet-client"
-import { web3PublicClient } from "../web3-client"
-import { CHECK_IN_ABI, CHECK_IN_ADDRESS } from "./common"
-import { useIsCheckedIn } from "./use-is-checked-in"
+import { CHECK_IN_ABI, CHECK_IN_ADDRESS } from "../common/check-in-contract"
+import { web3PublicClient } from "../common/web3-public-client"
+import { useIsCheckedIn } from "../hooks/use-is-checked-in"
+import { useWallet } from "../hooks/use-wallet"
 
 type Props = {
   account: Address
 }
 export const CheckIn: FC<Props> = ({ account }) => {
-  const { walletClient, requestWalletClient } = useWalletClient()
+  const { walletClient, requestWalletClient } = useWallet()
 
   const { data: isCheckedIn, loading, refetch: refetchCheckedIn } = useIsCheckedIn(account)
 
