@@ -29,10 +29,10 @@ export const Account = () => {
           Logout
         </button>
       </div>
-      <div className="mt-2 text-sm font-semibold truncate">{email}</div>
+      <div className="mt-2 text-base font-semibold truncate">{email}</div>
       <div className="text-sm tracking-tight text-slate-500 truncate italic">{address}</div>
 
-      <div className="border-t border-slate-400 mt-2" />
+      <div className="border-t border-slate-400 mt-3" />
     </div>
   )
 }

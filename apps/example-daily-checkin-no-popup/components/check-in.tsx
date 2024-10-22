@@ -12,7 +12,7 @@ type Props = {
 export const CheckIn: FC<Props> = ({ account }) => {
   const { walletClient, requestWalletClient } = useWallet()
 
-  const { data: isCheckedIn, loading, refetch: refetchCheckedIn } = useIsCheckedIn(account)
+  const { data: isCheckedIn, isLoading, mutate } = useIsCheckedIn(account)
 
   const [txHash, setTxHash] = useState<string>()
   const [isWaitTx, setIsWaitTx] = useState<boolean>(false)
@@ -47,7 +47,7 @@ export const CheckIn: FC<Props> = ({ account }) => {
       })
 
       if (receipt.status === "success") {
-        refetchCheckedIn()
+        mutate()
         setError(undefined)
         setIsWaitTx(false)
 
@@ -65,26 +65,26 @@ export const CheckIn: FC<Props> = ({ account }) => {
   }
 
   return (
-    <div className="mt-8 flex flex-col">
-      <div className="font-semibold tracking-wider">
-        {loading ? (
-          <div className="text-cyan-600">Loading...</div>
+    <div className="mt-6 flex flex-col">
+      <div className="flex flex-col space-y-1 text-base tracking-wide font-medium">
+        {isLoading || !isCheckedIn ? (
+          <>
+            <img src="./check-in.png" className="size-16" />
+            <div className="text-sky-600">{isLoading ? "Loading..." : "Please check in now!"}</div>
+          </>
         ) : (
           <>
-            {isCheckedIn ? (
-              <div className="text-amber-600">You are already checked in for today.</div>
-            ) : (
-              <div className="text-emerald-600">Please check in now!</div>
-            )}
+            <img src="./calendar.png" className="size-16" />
+            <div className="text-amber-600">You are already checked in for today.</div>
           </>
         )}
       </div>
 
-      <div className="flex flex-col gap-2 mt-4">
+      <div className="flex flex-col gap-2 mt-2">
         {walletClient && (
           <button
-            className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-4 rounded-xl mt-2 disabled:opacity-50 tracking-wider"
-            disabled={isCheckedIn || loading || isWaitTx}
+            className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-4 rounded-full mt-2 disabled:opacity-50 tracking-wider"
+            disabled={isCheckedIn || isLoading || isWaitTx}
             onClick={handleCheckIn}
           >
             {isWaitTx ? "Wait for transaction" : "Check In"}
@@ -93,26 +93,32 @@ export const CheckIn: FC<Props> = ({ account }) => {
 
         {!walletClient && (
           <button
-            className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-4 rounded-xl mt-2 disabled:opacity-50 tracking-wider"
+            className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-4 rounded-full mt-2 disabled:opacity-50 tracking-wider"
             onClick={handleUnlock}
           >
             Unlock your wallet
           </button>
         )}
+      </div>
 
+      <div className="border-t border-slate-400 mt-3 mb-4" />
+
+      <div className="font-medium inline-flex">
         {txHash && (
           <>
-            <p className="font-semibold text-emerald-600">Send successfully!</p>
+            Check your transaction:&nbsp;
             <a
-              className="text-sky-600 hover:text-sky-700 font-semibold"
+              className="text-sky-600 hover:text-sky-700"
               href={`https://saigon-app.roninchain.com/tx/${txHash}`}
+              target="_blank"
+              rel="noreferrer"
             >
-              Check your transaction here
+              here
             </a>
+            !
           </>
         )}
-
-        {error && <p className="text-rose-600 font-semibold">{error}</p>}
+        {error && <p className="text-rose-400">{error}</p>}
       </div>
     </div>
   )

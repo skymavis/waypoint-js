@@ -119,33 +119,33 @@ export const WalletProvider: FC<Props> = props => {
 
       <div
         className={clsx(
-          "z-50 inset-0 bg-slate-800 bg-opacity-70 flex items-center justify-center",
+          "z-50 inset-0 bg-slate-800 bg-opacity-50 flex items-center justify-center",
           isOpen ? "fixed" : "hidden",
         )}
       >
-        <div className="bg-white w-96 rounded-lg p-5">
-          <h1 className="text-xl font-semibold text-slate-700">Unlock Wallet</h1>
-          <p className="text-md text-slate-500 font-light">With your wallet recovery password</p>
+        <div className="bg-white max-w-sm w-full rounded-2xl p-6 mb-20">
+          <h1 className="text-xl font-semibold tracking-wide">Unlock Wallet</h1>
+          <p className="text-sm text-slate-500 font-light">Use your wallet recovery password</p>
 
           <input
             autoFocus
             ref={inputRef}
-            className="w-full mt-4 rounded-md border-slate-400 border h-10 px-2 font-light"
+            className="w-full mt-6 rounded-lg border-slate-400 border px-4 py-3 font-light"
             type="password"
-            placeholder="Wallet's recovery password"
+            placeholder="Recovery password"
             defaultValue=""
           />
-          {error && <p className="text-rose-600 mt-2 text-sm">{error}</p>}
+          {error && <p className="text-rose-400 mt-2 text-sm">{error}</p>}
 
-          <div className="flex w-full gap-4">
+          <div className="flex w-full gap-4 mt-6">
             <button
-              className="mt-8 w-full h-12 border-slate-200 border rounded-md text-slate-700 text-md font-semibold active:bg-slate-100"
+              className="w-full h-12 border-slate-400 border rounded-full text-slate-700 text-md font-semibold active:bg-slate-100"
               onClick={handleClose}
             >
               Close
             </button>
             <button
-              className="mt-8 w-full h-12 bg-sky-600 rounded-md text-white text-md font-semibold active:bg-sky-700"
+              className="w-full h-12 bg-sky-600 hover:bg-sky-700 rounded-full text-white text-md font-semibold active:bg-sky-700"
               onClick={handleUnlock}
             >
               Unlock
