@@ -80,26 +80,28 @@ export const CheckIn: FC<Props> = ({ account }) => {
         )}
       </div>
 
-      <div className="flex flex-col gap-2 mt-2">
-        {walletClient && (
-          <button
-            className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-4 rounded-full mt-2 disabled:opacity-50 tracking-wider"
-            disabled={isCheckedIn || isLoading || isWaitTx}
-            onClick={handleCheckIn}
-          >
-            {isWaitTx ? "Wait for transaction" : "Check In"}
-          </button>
-        )}
+      {!isCheckedIn && !isLoading && (
+        <div className="flex flex-col gap-2 mt-2">
+          {walletClient && (
+            <button
+              className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-4 rounded-full mt-2 disabled:opacity-50 tracking-wider"
+              disabled={isCheckedIn || isLoading || isWaitTx}
+              onClick={handleCheckIn}
+            >
+              {isWaitTx ? "Wait for transaction" : "Check In"}
+            </button>
+          )}
 
-        {!walletClient && (
-          <button
-            className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-4 rounded-full mt-2 disabled:opacity-50 tracking-wider"
-            onClick={handleUnlock}
-          >
-            Unlock your wallet
-          </button>
-        )}
-      </div>
+          {!walletClient && (
+            <button
+              className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-4 rounded-full mt-2 disabled:opacity-50 tracking-wider"
+              onClick={handleUnlock}
+            >
+              Unlock your wallet
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="border-t border-slate-400 mt-3 mb-4" />
 
