@@ -2,6 +2,7 @@
 
 import { getKeylessProvider } from "@sky-mavis/waypoint/core"
 import clsx from "clsx"
+import { useRouter } from "next/navigation"
 import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from "react"
 import { Address, createWalletClient, custom, WalletClient } from "viem"
 import { saigon } from "viem/chains"
@@ -21,6 +22,8 @@ type Props = {
 // * WHY: all application will have access to walletClient to interact with blockchain
 export const WalletProvider: FC<Props> = props => {
   const { children } = props
+
+  const { replace } = useRouter()
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -98,6 +101,7 @@ export const WalletProvider: FC<Props> = props => {
       setExpiration(tokenPayload.exp)
     } catch (error) {
       console.debug(error)
+      replace("/login")
     }
   }, [])
 
@@ -108,6 +112,7 @@ export const WalletProvider: FC<Props> = props => {
         walletClient,
         address,
         email,
+        expiration,
       }}
     >
       {children}

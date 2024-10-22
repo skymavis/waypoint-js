@@ -4,6 +4,7 @@ import { Address, WalletClient } from "viem"
 type ContextValue = {
   address: Address | undefined
   email: string | undefined
+  expiration: number | undefined
 
   requestWalletClient: () => void
   walletClient: WalletClient | undefined
@@ -16,6 +17,7 @@ type WalletContext = Context<ContextValue>
 export const WalletContext: WalletContext = createContext<ContextValue>({
   address: undefined,
   email: undefined,
+  expiration: undefined,
 
   requestWalletClient: () => {},
   walletClient: undefined,
