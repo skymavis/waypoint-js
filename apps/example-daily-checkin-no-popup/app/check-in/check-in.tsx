@@ -65,9 +65,7 @@ export const CheckIn: FC<Props> = ({ account }) => {
   }
 
   return (
-    <div className="flex flex-col w-full max-w-screen-sm">
-      <div className="border-t border-slate-500 my-4" />
-
+    <div className="flex flex-col">
       <div className="font-semibold tracking-wider">
         {loading ? (
           <div className="text-cyan-600">Loading...</div>

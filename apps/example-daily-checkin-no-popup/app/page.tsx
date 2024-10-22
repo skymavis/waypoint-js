@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import { Address, isAddress } from "viem"
 
 import { CheckIn } from "./check-in/check-in"
+import { RonSvg } from "./components/ron-svg"
 import { WalletProvider } from "./wallet-context/wallet-provider"
 
 export default function Home() {
@@ -42,23 +43,39 @@ export default function Home() {
   }, [])
 
   return (
-    <main className="flex flex-col items-start min-h-screen gap-4 p-8 md:p-24">
-      <button
-        className={clsx(
-          "px-4 py-3 font-bold text-white bg-sky-600 hover:bg-sky-700 rounded-xl",
-          account && "hidden",
-        )}
-        onClick={handleAuthorize}
+    <main className="flex flex-col min-h-screen w-screen max-w-sm m-auto px-4">
+      <div
+        className={clsx("flex-1 flex flex-col justify-center items-center", account && "hidden")}
       >
-        Login by Ronin Waypoint
-      </button>
+        <img src="./planner.png" className="size-16" />
+        <div className="text-xl font-semibold mt-3">Daily Check-In</div>
+
+        <button
+          className={clsx(
+            "mt-16 py-2 px-6",
+            "flex items-center rounded-xl",
+            "bg-teal-800 bg-opacity-10 active:bg-opacity-15 hover:bg-opacity-15",
+          )}
+          onClick={handleAuthorize}
+        >
+          <RonSvg className="size-10 mr-3 shrink-0" />
+
+          <div className="flex-1 flex flex-col justify-start items-start text-left">
+            <div className="font-semibold text-base truncate">Ronin Waypoint</div>
+            <div className="text-sm text-slate-500 truncate">
+              Connect the wallet with your email
+            </div>
+          </div>
+        </button>
+      </div>
 
       {account && (
-        <div>
-          <div className="mt-2 text-2xl font-semibold text-slate-800">Welcome back!</div>
-          <div className="mt-1 text-md font-semibold tracking-tight text-slate-500">
-            Login as: {account}
-          </div>
+        <div className="mt-10">
+          <img src="./wallet.png" className="size-16" />
+          <div className="mt-4 text-xl font-semibold">Your wallet</div>
+          <div className="text-sm tracking-tight text-slate-500 truncate italic">{account}</div>
+
+          <div className="border-t border-slate-400 mt-2" />
         </div>
       )}
       {error && <p className="text-rose-600 font-semibold">{error}</p>}
