@@ -1,20 +1,18 @@
 "use client"
 
-import { getKeylessProvider } from "@sky-mavis/waypoint/core"
 import clsx from "clsx"
 import { useRouter } from "next/navigation"
 import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from "react"
-import { Address, createWalletClient, custom, WalletClient } from "viem"
-import { saigon } from "viem/chains"
+import { Address, WalletClient } from "viem"
+
+import { connectHeadless, reconnectHeadless } from "@/common/headless-client"
 
 import { getUser } from "../common/get-user"
-import { WP_ADDRESS_STORAGE_KEY, WP_TOKEN_STORAGE_KEY } from "../common/storage"
 import { WalletContext } from "./wallet-context"
 
 type Props = {
   children?: ReactNode
 }
-
 // * handle global flow
 // * get users' password & unlock wallet
 // * reconnect wallet
@@ -35,38 +33,6 @@ export const WalletProvider: FC<Props> = props => {
   const [isOpen, setOpen] = useState<boolean>(false)
   const [error, setError] = useState<string>()
 
-  const newWalletClient = useCallback(async (password: string) => {
-    const token = localStorage.getItem(WP_TOKEN_STORAGE_KEY)
-    const expectedAddress = localStorage.getItem(WP_ADDRESS_STORAGE_KEY)
-
-    if (!token || !expectedAddress) {
-      throw new Error("No waypoint token found")
-    }
-
-    const provider = await getKeylessProvider({
-      chainId: saigon.id,
-      waypointToken: token,
-      recoveryPassword: password,
-    })
-
-    const walletClient = createWalletClient({
-      transport: custom(provider),
-      chain: saigon,
-    })
-
-    const walletAccounts = await walletClient.getAddresses()
-
-    if (walletAccounts.length === 0) {
-      throw new Error("No connected accounts found")
-    }
-
-    if (walletAccounts[0] !== expectedAddress) {
-      throw new Error("Connected account does not match expected address")
-    }
-
-    return walletClient
-  }, [])
-
   const requestWalletClient = useCallback(async () => {
     if (inputRef.current) {
       inputRef.current.value = ""
@@ -78,9 +44,9 @@ export const WalletProvider: FC<Props> = props => {
     const password = inputRef.current?.value ?? ""
 
     try {
-      const newClient = await newWalletClient(password)
+      const newWalletClient = await connectHeadless(password)
 
-      setWalletClient(newClient)
+      setWalletClient(newWalletClient)
       setOpen(false)
     } catch (error) {
       setError("Password is incorrect")
@@ -93,6 +59,7 @@ export const WalletProvider: FC<Props> = props => {
   }
 
   useEffect(() => {
+    // * get user's address, email, expiration
     try {
       const { address, tokenPayload } = getUser()
 
@@ -102,6 +69,15 @@ export const WalletProvider: FC<Props> = props => {
     } catch (error) {
       console.debug(error)
       replace("/login")
+    }
+
+    // * reconnect to headless client
+    try {
+      reconnectHeadless().then(client => {
+        setWalletClient(client)
+      })
+    } catch (error) {
+      console.debug(error)
     }
   }, [])
 
