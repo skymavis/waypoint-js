@@ -1,69 +1,21 @@
 "use client"
 
-import { authorize, parseRedirectUrl } from "@sky-mavis/waypoint"
-import clsx from "clsx"
-import { useEffect, useState } from "react"
-import { Address, isAddress } from "viem"
+import { Account } from "@/components/account"
+import { ReAuthorized } from "@/components/re-authorize"
 
-import { CheckIn } from "./check-in/check-in"
-import { WalletProvider } from "./wallet-context/wallet-provider"
+import { CheckIn } from "../components/check-in"
+import { useWallet } from "../hooks/use-wallet"
 
 export default function Home() {
-  const [account, setAccount] = useState<Address>()
-  const [error, setError] = useState<string>()
-
-  const handleAuthorize = async () => {
-    try {
-      authorize({
-        mode: "redirect",
-        clientId: "0e188f93-b419-4b0f-8df4-0f976da91ee6",
-        scopes: ["email", "profile", "openid", "wallet"],
-      })
-    } catch (error) {
-      console.debug("🚀 | handleAuthorize:", error)
-      setAccount(undefined)
-      setError("User reject to connect wallet! Check your console for future details.")
-    }
-  }
-
-  useEffect(() => {
-    try {
-      const { token, address = "" } = parseRedirectUrl()
-
-      if (isAddress(address) && token) {
-        setAccount(address)
-
-        localStorage.setItem("address", address)
-        localStorage.setItem("token", token)
-      }
-    } catch (error) {
-      console.debug("🚀 | parseRedirectUrl:", error)
-    }
-  }, [])
+  const { address } = useWallet()
 
   return (
-    <main className="flex flex-col items-start min-h-screen gap-4 p-8 md:p-24">
-      <button
-        className={clsx(
-          "px-4 py-3 font-bold text-white bg-sky-600 hover:bg-sky-700 rounded-xl",
-          account && "hidden",
-        )}
-        onClick={handleAuthorize}
-      >
-        Login by Ronin Waypoint
-      </button>
+    <>
+      <Account />
 
-      {account && (
-        <div>
-          <div className="mt-2 text-2xl font-semibold text-slate-800">Welcome back!</div>
-          <div className="mt-1 text-md font-semibold tracking-tight text-slate-500">
-            Login as: {account}
-          </div>
-        </div>
-      )}
-      {error && <p className="text-rose-600 font-semibold">{error}</p>}
+      {address && <CheckIn account={address} />}
 
-      <WalletProvider>{account && <CheckIn account={account} />}</WalletProvider>
-    </main>
+      <ReAuthorized />
+    </>
   )
 }

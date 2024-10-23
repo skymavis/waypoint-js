@@ -56,6 +56,9 @@ const getBackupClientShard = async (lockboxClient: Lockbox) => {
   }
 }
 
+/**
+ * @deprecated switch to waypoint/headless
+ */
 export const getKeylessProvider = async (opts: GetKeylessProviderOpts) => {
   const { recoveryPassword } = opts
 

@@ -37,6 +37,10 @@
     "./core": {
       "types": "./dist/types/core/index.d.ts",
       "import": "./dist/core/index.js"
+    },
+    "./headless": {
+      "types": "./dist/types/headless/index.d.ts",
+      "import": "./dist/headless/index.js"
     }
   },
   "scripts": {
