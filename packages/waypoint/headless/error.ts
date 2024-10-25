@@ -1,22 +1,15 @@
-export type HeadlessClientErrorCode =
-  | -1 // unknown error
-  | -100 // init lockbox error
-  | -200 // get backup client shard error
-  | -300 // decrypt client shard error
-  | -310 // client shard is not valid
-  | -400 // waypoint token is not valid
-  | -500 // get provider error
-  | -600 // could not sign message
+export type HeadlessClientErrorCode = -1 | -100 | -200 | -300 | -400 | -410 | -500 | -600 | -700
 
 const errorNameMap: Record<HeadlessClientErrorCode, string> = {
   [-1]: "UnknownError",
-  [-100]: "InitLockboxError",
+  [-100]: "InitHeadlessClientError",
   [-200]: "GetBackupClientShardError",
   [-300]: "DecryptClientShardError",
-  [-310]: "ClientShardIsNotValid",
-  [-400]: "WaypointTokenIsNotValid",
-  [-500]: "GetProviderError",
-  [-600]: "CouldNotSignMessage",
+  [-400]: "InvalidWaypointTokenError",
+  [-410]: "InvalidClientShardError",
+  [-500]: "GetLockboxProviderError",
+  [-600]: "KeylessValidationError",
+  [-700]: "ClientIsNotConnected",
 }
 
 type HeadlessClientErrorOpts = {
