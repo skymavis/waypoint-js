@@ -5,7 +5,7 @@ export interface ClientShardStorage {
 
 export const DEFAULT_SHARD_STORAGE_KEY = "WAYPOINT:HEADLESS.SHARD"
 
-const isStorageAvailable = () => typeof localStorage !== "undefined"
+const isStorageAvailable = () => typeof sessionStorage !== "undefined"
 
 export const _defaultShardStorage: ClientShardStorage = {
   get: () => {
@@ -13,14 +13,14 @@ export const _defaultShardStorage: ClientShardStorage = {
       return undefined
     }
 
-    return localStorage.getItem(DEFAULT_SHARD_STORAGE_KEY) ?? undefined
+    return sessionStorage.getItem(DEFAULT_SHARD_STORAGE_KEY) ?? undefined
   },
   set: newShard => {
     if (!isStorageAvailable()) {
       return false
     }
 
-    localStorage.setItem(DEFAULT_SHARD_STORAGE_KEY, newShard)
+    sessionStorage.setItem(DEFAULT_SHARD_STORAGE_KEY, newShard)
     return true
   },
 }
