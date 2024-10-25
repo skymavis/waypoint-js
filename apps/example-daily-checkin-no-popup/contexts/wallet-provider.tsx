@@ -72,13 +72,14 @@ export const WalletProvider: FC<Props> = props => {
     }
 
     // * reconnect to headless client
-    try {
-      reconnectHeadless().then(client => {
+
+    reconnectHeadless()
+      .then(client => {
         setWalletClient(client)
       })
-    } catch (error) {
-      console.debug(error)
-    }
+      .catch(error => {
+        console.debug(error)
+      })
   }, [])
 
   return (

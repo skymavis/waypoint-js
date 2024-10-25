@@ -7,12 +7,12 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@sky-mavis/eslint-config-ts": "workspace:*",
     "eslint-plugin-react": "7.34.1",
-    "eslint-plugin-react-hooks": "4.6.0",
-    "@sky-mavis/eslint-config-ts": "workspace:*"
+    "eslint-plugin-react-hooks": "4.6.0"
   },
   "devDependencies": {
-    "@types/eslint": "^8.4.7"
+    "@types/eslint": "^8.56.12"
   },
   "peerDependencies": {
     "eslint": ">=8.56.0",

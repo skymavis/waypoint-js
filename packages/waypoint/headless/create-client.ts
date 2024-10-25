@@ -1,7 +1,7 @@
-import { _HeadlessClient, type _OverrideLockboxOpts } from "./headless-client"
+import { _HeadlessClient, type _LockboxConfig } from "./headless-client"
 import { _defaultShardStorage, type ClientShardStorage } from "./shard-storage"
 
-export type CreateHeadlessClientOpts = _OverrideLockboxOpts & {
+export type CreateHeadlessClientOpts = _LockboxConfig & {
   storage?: ClientShardStorage
 }
 

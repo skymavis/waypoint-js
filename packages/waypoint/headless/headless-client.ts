@@ -1,4 +1,5 @@
-import { Lockbox } from "@axieinfinity/lockbox"
+import { type GenericTransaction, Lockbox, type LockboxProvider } from "@axieinfinity/lockbox"
+import { type Address } from "viem"
 
 import { HeadlessClientError } from "./error"
 import { type ClientShardStorage } from "./shard-storage"
@@ -12,40 +13,24 @@ type WasmParams = {
   timeout: number
   optionalParams: string
 }
-export type _OverrideLockboxOpts = {
+export type _LockboxConfig = {
+  chainId: number
   overrideRpcUrl?: string
   wasmUrl?: string
   wasmParams?: WasmParams
 }
 
-type BaseLockboxOpts = {
-  chainId: number
+export type BaseParams = {
   waypointToken: string
 }
-export type ConnectOpts = BaseLockboxOpts & {
+export type ConnectParam = BaseParams & {
   recoveryPassword: string
 }
-export type ReconnectOpts = BaseLockboxOpts
-
-const createLockbox = (baseOpts: BaseLockboxOpts, overrideOpts: _OverrideLockboxOpts) => {
-  const { chainId, waypointToken } = baseOpts
-  const { overrideRpcUrl, wasmUrl, wasmParams } = overrideOpts
-
-  try {
-    return Lockbox.init({
-      chainId,
-      accessToken: waypointToken,
-      overrideRpcUrl,
-      wasmUrl,
-      wasmParams,
-    })
-  } catch (error) {
-    throw new HeadlessClientError(error, {
-      code: -100,
-      shortMessage: "could NOT initialize Lockbox",
-    })
-  }
+export type ReconnectParams = BaseParams
+export type ValidateSponsorTxParams = BaseParams & {
+  txRequest: GenericTransaction
 }
+
 const getBackupClientShard = async (lockboxClient: Lockbox) => {
   try {
     const { key } = await lockboxClient.getBackupClientShard()
@@ -96,29 +81,39 @@ const getProvider = (lockboxClient: Lockbox) => {
 }
 
 export class _HeadlessClient {
-  private _overrideLockboxOtps: _OverrideLockboxOpts
+  private lockbox: Lockbox
   public storage: ClientShardStorage
+  public provider?: LockboxProvider
+  public address?: Address
 
-  constructor(overrideOpts: _OverrideLockboxOpts, storage: ClientShardStorage) {
-    this._overrideLockboxOtps = overrideOpts
+  constructor(config: _LockboxConfig, storage: ClientShardStorage) {
+    try {
+      this.lockbox = Lockbox.init(config)
+    } catch (error) {
+      throw new HeadlessClientError(error, {
+        code: -100,
+        shortMessage: "could NOT initialize Lockbox",
+      })
+    }
+
     this.storage = storage
   }
 
-  connect = async (opts: ConnectOpts) => {
-    const { recoveryPassword } = opts
-    const { _overrideLockboxOtps, storage } = this
+  connect = async (params: ConnectParam) => {
+    const { recoveryPassword, waypointToken } = params
+    const { lockbox, storage } = this
 
-    const lockboxClient = createLockbox(opts, _overrideLockboxOtps)
+    lockbox.setAccessToken(waypointToken)
 
-    const backupShard = await getBackupClientShard(lockboxClient)
-    const clientShard = await decryptClientShard(lockboxClient, backupShard, recoveryPassword)
-
-    await signTestMessage(lockboxClient)
-
-    const address = await lockboxClient.getAddress()
-    const provider = getProvider(lockboxClient)
+    const backupShard = await getBackupClientShard(lockbox)
+    const clientShard = await decryptClientShard(lockbox, backupShard, recoveryPassword)
+    await signTestMessage(lockbox)
+    const address = await lockbox.getAddress()
+    const provider = getProvider(lockbox)
 
     storage.set(clientShard)
+    this.provider = provider
+    this.address = address
 
     return {
       address,
@@ -126,10 +121,9 @@ export class _HeadlessClient {
     }
   }
 
-  reconnect = async (opts: ReconnectOpts) => {
-    const { _overrideLockboxOtps, storage } = this
-
-    const lockboxClient = createLockbox(opts, _overrideLockboxOtps)
+  reconnect = async (params: ReconnectParams) => {
+    const { waypointToken } = params
+    const { lockbox, storage } = this
 
     const clientShard = storage.get()
     if (!clientShard) {
@@ -138,16 +132,32 @@ export class _HeadlessClient {
         shortMessage: "client shard get from storage is NOT valid",
       })
     }
-    lockboxClient.setClientShard(clientShard)
 
-    await signTestMessage(lockboxClient)
+    lockbox.setClientShard(clientShard)
+    lockbox.setAccessToken(waypointToken)
 
-    const address = await lockboxClient.getAddress()
-    const provider = getProvider(lockboxClient)
+    await signTestMessage(lockbox)
+    const address = await lockbox.getAddress()
+    const provider = getProvider(lockbox)
 
+    this.provider = provider
+    this.address = address
     return {
       address,
       provider,
     }
+  }
+
+  validateSponsorTx = (params: ValidateSponsorTxParams) => {
+    const { txRequest, waypointToken } = params
+    const { lockbox } = this
+
+    const sponsorTx: GenericTransaction = {
+      ...txRequest,
+      type: "0x64",
+    }
+
+    lockbox.setAccessToken(waypointToken)
+    return lockbox.validateSponsorTx(sponsorTx)
   }
 }
