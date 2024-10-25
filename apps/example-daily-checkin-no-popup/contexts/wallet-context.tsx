@@ -1,5 +1,7 @@
 import { Context, createContext } from "react"
-import { Address, WalletClient } from "viem"
+import { Address, CustomTransport, WalletClient } from "viem"
+
+import { saigon } from "../common/chain"
 
 type ContextValue = {
   address: Address | undefined
@@ -7,7 +9,7 @@ type ContextValue = {
   expiration: number | undefined
 
   requestWalletClient: () => void
-  walletClient: WalletClient | undefined
+  walletClient: WalletClient<CustomTransport, typeof saigon> | undefined
 }
 
 type WalletContext = Context<ContextValue>

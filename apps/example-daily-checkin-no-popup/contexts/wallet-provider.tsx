@@ -3,8 +3,9 @@
 import clsx from "clsx"
 import { useRouter } from "next/navigation"
 import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from "react"
-import { Address, WalletClient } from "viem"
+import { Address, CustomTransport, WalletClient } from "viem"
 
+import { saigon } from "@/common/chain"
 import { connectHeadless, reconnectHeadless } from "@/common/headless-client"
 
 import { getUser } from "../common/get-user"
@@ -29,7 +30,7 @@ export const WalletProvider: FC<Props> = props => {
   const [email, setEmail] = useState<string>()
   const [expiration, setExpiration] = useState<number>()
 
-  const [walletClient, setWalletClient] = useState<WalletClient>()
+  const [walletClient, setWalletClient] = useState<WalletClient<CustomTransport, typeof saigon>>()
   const [isOpen, setOpen] = useState<boolean>(false)
   const [error, setError] = useState<string>()
 
