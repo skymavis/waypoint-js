@@ -1,7 +1,7 @@
 import { HeadlessClient } from "@sky-mavis/waypoint/headless"
 import { createWalletClient, custom, getAddress, isAddressEqual } from "viem"
-import { saigon } from "viem/chains"
 
+import { saigon } from "./chain"
 import { WP_ADDRESS_STORAGE_KEY, WP_TOKEN_STORAGE_KEY } from "./storage"
 
 export const headlessClient = HeadlessClient.create({ chainId: saigon.id })

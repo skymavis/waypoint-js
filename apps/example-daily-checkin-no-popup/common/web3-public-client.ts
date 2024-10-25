@@ -1,5 +1,6 @@
 import { createPublicClient, http } from "viem"
-import { saigon } from "viem/chains"
+
+import { saigon } from "./chain"
 
 export const web3PublicClient = createPublicClient({
   transport: http(),
