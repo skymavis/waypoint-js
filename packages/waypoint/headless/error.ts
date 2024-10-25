@@ -9,7 +9,7 @@ const errorNameMap: Record<HeadlessClientErrorCode, string> = {
   [-410]: "InvalidClientShardError",
   [-500]: "GetLockboxProviderError",
   [-600]: "KeylessValidationError",
-  [-700]: "ClientIsNotConnected",
+  [-700]: "ClientIsNotConnectedError",
 }
 
 type HeadlessClientErrorOpts = {
