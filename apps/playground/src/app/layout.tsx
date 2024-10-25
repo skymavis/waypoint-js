@@ -3,6 +3,7 @@ import "./globals.css"
 import { Provider } from "jotai"
 import type { Metadata } from "next"
 import { Inter as FontSans } from "next/font/google"
+import { ReactNode } from "react"
 import { Toaster } from "src/@/components/ui/toaster"
 import { cn } from "src/@/lib/utils"
 import { WalletContext } from "src/contexts/WalletContext"
@@ -21,7 +22,7 @@ const fontSans = FontSans({
   variable: "--font-sans",
 })
 
-const RootLayout = ({ children }: { children: React.ReactNode }) => {
+const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
     <html lang="en">
       <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>

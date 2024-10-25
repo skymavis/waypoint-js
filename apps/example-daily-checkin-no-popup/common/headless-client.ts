@@ -1,10 +1,10 @@
-import { createHeadlessClient } from "@sky-mavis/waypoint/headless"
+import { HeadlessClient } from "@sky-mavis/waypoint/headless"
 import { createWalletClient, custom, getAddress, isAddressEqual } from "viem"
 import { saigon } from "viem/chains"
 
 import { WP_ADDRESS_STORAGE_KEY, WP_TOKEN_STORAGE_KEY } from "./storage"
 
-const headlessClient = createHeadlessClient({})
+export const headlessClient = HeadlessClient.create({ chainId: saigon.id })
 
 export const connectHeadless = async (password: string) => {
   const token = localStorage.getItem(WP_TOKEN_STORAGE_KEY)
@@ -15,7 +15,6 @@ export const connectHeadless = async (password: string) => {
   }
 
   const { provider, address } = await headlessClient.connect({
-    chainId: saigon.id,
     waypointToken: token,
     recoveryPassword: password,
   })
@@ -41,7 +40,6 @@ export const reconnectHeadless = async () => {
   }
 
   const { provider, address } = await headlessClient.reconnect({
-    chainId: saigon.id,
     waypointToken: token,
   })
 

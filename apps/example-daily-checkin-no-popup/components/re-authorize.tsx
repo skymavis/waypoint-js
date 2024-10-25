@@ -7,7 +7,7 @@ import { redirectAuthorize } from "@/common/redirect-authorize"
 import { useWallet } from "../hooks/use-wallet"
 
 export const ReAuthorized = () => {
-  const { expiration, requestWalletClient } = useWallet()
+  const { expiration } = useWallet()
 
   if (!expiration) {
     return null
@@ -26,7 +26,7 @@ export const ReAuthorized = () => {
         Your session end on {new Date(expiration * 1000).toString()}
       </div>
       <div className="text-sm max-w-sm w-full text-center">
-        <span className="underline font-semibold cursor-pointer" onClick={requestWalletClient}>
+        <span className="underline font-semibold cursor-pointer" onClick={redirectAuthorize}>
           Re-authorize
         </span>
         &nbsp;for smooth experience
