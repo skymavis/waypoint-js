@@ -45,9 +45,9 @@ const provider = WaypointProvider.create({
 - **`clientId`:** This is your app ID obtained from the Developer Console.
 - **`chainId`:** The chain ID for the network you want to interact with.
 
-## Step 3: Authorizing a User (Optional)
+## Step 3: Authorizing Account (Optional)
 
-**Note:** If you have a backend system, you can use this method to authorize a user. However, if your application only requires interaction with a web3 wallet, you may skip this step.
+**Note:** If you have a backend system, you can use this method to authorize user account. However, if your application only requires interaction with a web3 wallet, you might skip this step.
 
 To allow users to authorize with Ronin Waypoint, use the following code snippet:
 
@@ -63,7 +63,7 @@ console.debug(result); // { token: '<id_token>', address: '<user_address>' }
 ```
 
 ### Explanation
-- **`authorize`:** This function initiates the authorization process, allowing users to log in or connect their wallet.
+- **`authorize`:** This function allowing users to authorize their account.
 - **`clientId`:** Replace this with your actual client ID.
 
 ## Step 4: Interacting with the Wallet
@@ -75,7 +75,7 @@ The Ronin Waypoint SDK is compatible with various JavaScript Ethereum interfaces
 ```javascript
 import * as ethers from "ethers";
 
-const provider = new ethers.providers.Web3Provider(provider);
+const ethersProvider = new ethers.providers.Web3Provider(provider);
 ```
 
 ### Usage with `web3.js`
@@ -100,15 +100,13 @@ const walletClient = createWalletClient({ chain: saigon, transport: custom(provi
 You can also use the SDK for standalone wallet operations:
 
 ```javascript
-const accounts = await provider.request<string[]>({ method: "eth_requestAccounts" });
+const accounts = await provider.request({ method: "eth_requestAccounts" });
 
-if (accounts.length) {
-  const balance = await provider.request<string>({
-    method: "eth_getBalance",
-    params: [accounts[0], "latest"]
-  });
-  console.log("Account Balance:", balance);
-}
+const balance = await provider.request({
+  method: "eth_getBalance",
+  params: [accounts[0], "latest"]
+});
+console.log("Account Balance:", balance);
 ```
 
 ## Step 5: Testing and Verification
