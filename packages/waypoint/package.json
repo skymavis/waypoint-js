@@ -43,6 +43,10 @@
     "./headless": {
       "types": "./dist/types/headless/index.d.ts",
       "import": "./dist/headless/index.js"
+    },
+    "./deposit": {
+      "types": "./dist/types/deposit/index.d.ts",
+      "import": "./dist/deposit/index.js"
     }
   },
   "scripts": {
