@@ -1,3 +1,5 @@
+import { Address } from "viem"
+
 import { RONIN_WAYPOINT_ORIGIN_PROD } from "./common/gate"
 import { IdResponse } from "./common/id-response"
 import { getScopesParams, Scope } from "./common/scope"
@@ -55,6 +57,14 @@ export type RedirectAuthorizeOpts = BaseAuthorizeOpts & {
   state?: string
 }
 
+export type PopupAuthorizeData = {
+  token: string
+  address: Address | undefined
+  secondaryAddress: Address | undefined
+}
+
+export type AuthorizeData<T> = T extends PopupAuthorizeOpts ? PopupAuthorizeData : undefined
+
 /**
  * Authorize a user via Ronin Waypoint, returning an token and user address.
  *
@@ -69,7 +79,9 @@ export type RedirectAuthorizeOpts = BaseAuthorizeOpts & {
  *  clientId: "YOUR_CLIENT_ID",
  * })
  */
-export const authorize = async (opts: PopupAuthorizeOpts | RedirectAuthorizeOpts) => {
+export const authorize = async <T extends PopupAuthorizeOpts | RedirectAuthorizeOpts>(
+  opts: T,
+): Promise<AuthorizeData<T>> => {
   const {
     mode,
     clientId,
@@ -84,7 +96,7 @@ export const authorize = async (opts: PopupAuthorizeOpts | RedirectAuthorizeOpts
       state: opts.state ?? crypto.randomUUID(),
       scope: getScopesParams(scopes),
     })
-    return
+    return undefined as AuthorizeData<T>
   }
 
   const helper = new CommunicateHelper(waypointOrigin)
@@ -108,7 +120,7 @@ export const authorize = async (opts: PopupAuthorizeOpts | RedirectAuthorizeOpts
     token,
     address: validateIdAddress(rawAddress),
     secondaryAddress: validateIdAddress(secondaryAddress),
-  }
+  } as AuthorizeData<T>
 }
 
 /**
