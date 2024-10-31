@@ -4,8 +4,17 @@ const DEFAULT_WIDTH = 480
 const DEFAULT_HEIGHT = 720
 
 type UrlParams = string | number | object | undefined | null
+type PopupConfig = {
+  width?: number
+  height?: number
+}
 
-export const openPopup = (inputUrl: string, query?: Record<string, UrlParams>) => {
+export const openPopup = (
+  inputUrl: string,
+  query?: Record<string, UrlParams>,
+  config?: PopupConfig,
+) => {
+  const { width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT } = config || {}
   if (typeof window !== "undefined" && window.top) {
     const screenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX
     const screenTop = window.screenTop !== undefined ? window.screenTop : window.screenY
@@ -13,8 +22,8 @@ export const openPopup = (inputUrl: string, query?: Record<string, UrlParams>) =
     const screenWidth = window.innerWidth
     const screenHeight = window.innerHeight
 
-    const left = screenLeft + (screenWidth - DEFAULT_WIDTH) / 2
-    const top = screenTop + (screenHeight - DEFAULT_HEIGHT) / 2
+    const left = screenLeft + (screenWidth - width) / 2
+    const top = screenTop + (screenHeight - height) / 2
 
     const url = new URL(inputUrl)
 
@@ -29,8 +38,8 @@ export const openPopup = (inputUrl: string, query?: Record<string, UrlParams>) =
       `_blank`,
       `
         scrollbars=yes,
-        width=${DEFAULT_WIDTH},
-        height=${DEFAULT_HEIGHT},
+        width=${width},
+        height=${height},
         top=${top},
         left=${left}
       `,
