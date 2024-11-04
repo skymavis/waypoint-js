@@ -3,8 +3,8 @@ import { CommunicateHelper } from "../web/core/communicate"
 import { openPopup } from "../web/utils/popup"
 
 export type DepositConfig = {
-  waypointOrigin?: string
   clientId: string
+  waypointOrigin?: string
   redirectUri?: string
 }
 
