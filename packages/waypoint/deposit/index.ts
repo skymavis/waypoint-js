@@ -10,16 +10,11 @@ export type DepositConfig = {
 
 type OrderSuccessMessage = {
   provider: string
-  transactionHash: string
-  fiatCurrency: string
-  cryptoCurrency: string
-  fiatAmount: number
-  cryptoAmount: number
-}
-
-type OrderFailedMessage = {
-  provider: string
-  reason: string
+  transaction_hash: string
+  fiat_currency: string
+  crypto_currency: string
+  fiat_amount: number
+  crypto_amount: number
 }
 
 type StartDepositParams = {
@@ -47,7 +42,7 @@ export class Deposit {
   }
 
   start = async (params?: StartDepositParams) => {
-    return this.communicateHelper.sendRequest<OrderSuccessMessage | OrderFailedMessage>(state => {
+    const response = await this.communicateHelper.sendRequest<OrderSuccessMessage>(state => {
       const { walletAddress, fiatCurrency, cryptoCurrency } = params ?? {}
       return openPopup(`${this.waypointOrigin}/client/${this.clientId}/deposit`, {
         state,
@@ -58,5 +53,14 @@ export class Deposit {
         crypto_currency: cryptoCurrency,
       })
     })
+
+    return {
+      provider: response.provider,
+      transactionHash: response.transaction_hash,
+      fiatCurrency: response.fiat_currency,
+      cryptoCurrency: response.crypto_currency,
+      fiatAmount: response.fiat_amount,
+      cryptoAmount: response.crypto_amount,
+    }
   }
 }
