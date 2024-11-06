@@ -35,6 +35,7 @@ export class Deposit {
       redirectUri = window.location.origin,
       clientId,
     } = config
+
     this.waypointOrigin = waypointOrigin
     this.clientId = clientId
     this.redirectUri = redirectUri
@@ -44,14 +45,22 @@ export class Deposit {
   start = async (params?: StartDepositParams) => {
     const response = await this.communicateHelper.sendRequest<OrderSuccessMessage>(state => {
       const { walletAddress, fiatCurrency, cryptoCurrency } = params ?? {}
-      return openPopup(`${this.waypointOrigin}/client/${this.clientId}/deposit`, {
+
+      const query = {
         state,
         origin: this.redirectUri,
         redirect_uri: this.redirectUri,
         wallet_address: walletAddress,
         fiat_currency: fiatCurrency,
         crypto_currency: cryptoCurrency,
-      })
+      }
+
+      const popupConfig = {
+        width: 500,
+        height: 728,
+      }
+
+      return openPopup(`${this.waypointOrigin}/client/${this.clientId}/deposit`, query, popupConfig)
     })
 
     return {
