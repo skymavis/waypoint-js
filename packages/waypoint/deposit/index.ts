@@ -23,6 +23,9 @@ type StartDepositParams = {
   cryptoCurrency?: string
 }
 
+const DEPOSIT_POPUP_WIDTH = 500
+const DEPOSIT_POPUP_HEIGHT = 728
+
 export class Deposit {
   private readonly clientId: string
   private readonly waypointOrigin: string
@@ -56,8 +59,8 @@ export class Deposit {
       }
 
       const popupConfig = {
-        width: 500,
-        height: 728,
+        width: DEPOSIT_POPUP_WIDTH,
+        height: DEPOSIT_POPUP_HEIGHT,
       }
 
       return openPopup(`${this.waypointOrigin}/client/${this.clientId}/deposit`, query, popupConfig)
