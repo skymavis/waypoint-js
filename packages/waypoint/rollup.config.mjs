@@ -39,7 +39,7 @@ const mainConfig = defineConfig({
     }),
     babel({
       extensions: [".js", ".jsx", ".es6", ".es", ".mjs", "ts", "tsx"],
-      exclude: "node_modules/**",
+      exclude: ["node_modules/**"],
       presets: [
         [
           "@babel/preset-env",

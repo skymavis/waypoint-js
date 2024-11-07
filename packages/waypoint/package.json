@@ -15,6 +15,7 @@
   "sideEffects": false,
   "files": [
     "*",
+    "!**/*.test.ts",
     "!**/*.tsbuildinfo",
     "!tsconfig.build.json",
     "!rollup.config.mjs"
@@ -47,11 +48,17 @@
     "build": "rm -rf dist && rollup -c",
     "dev": "rm -rf dist && rollup -c --watch",
     "lint": "eslint . --ext .js,.ts --max-warnings=0",
-    "clean": "rm -rf .turbo node_modules dist"
+    "clean": "rm -rf .turbo node_modules dist",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:clear": "jest --clearCache"
   },
   "devDependencies": {
     "@axieinfinity/lockbox": "file:internal-libs/lockbox-2.1.8.tgz",
     "@babel/preset-env": "7.24.4",
+    "@jest/globals": "^29.7.0",
+    "@jest/types": "^29.6.3",
     "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-commonjs": "25.0.7",
     "@rollup/plugin-node-resolve": "15.2.3",
@@ -60,12 +67,15 @@
     "eslint": "8.57.0",
     "fs-extra": "11.2.0",
     "glob": "11.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "ofetch": "1.4.0",
     "prettier": "3.2.5",
     "rollup": "4.14.1",
     "rollup-plugin-peer-deps-external": "2.2.4",
     "rollup-plugin-polyfill-node": "0.13.0",
     "rollup-plugin-typescript2": "0.36.0",
+    "ts-jest": "^29.2.5",
     "tslib": "2.6.2",
     "typescript": "5.4.5",
     "viem": "2.21.22"

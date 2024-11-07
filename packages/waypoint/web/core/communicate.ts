@@ -1,7 +1,7 @@
 import { Deferred } from "../utils/defer"
 import { normalizeIdError } from "../utils/error"
 
-type CallbackMessage = {
+export type CallbackMessage = {
   state: string
 } & (
   | {
@@ -16,6 +16,8 @@ type CallbackMessage = {
       data: string
     }
 )
+
+export type RequestAction = (requestId: string) => Window | undefined
 
 const DELAY_INTERVAL = 1000
 
@@ -105,7 +107,7 @@ export class CommunicateHelper {
     this.pendingIntervals.set(requestId, intervalId)
   }
 
-  sendRequest<T>(action: (requestId: string) => Window | undefined): Promise<T> {
+  sendRequest<T>(action: RequestAction): Promise<T> {
     const id = crypto.randomUUID()
     const responseHandler = new Deferred<T>()
 
