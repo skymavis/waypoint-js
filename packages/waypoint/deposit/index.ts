@@ -35,7 +35,7 @@ export class Deposit {
   constructor(config: DepositConfig) {
     const {
       waypointOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
-      redirectUri = window.location.origin,
+      redirectUri = typeof window !== "undefined" ? window.location.origin : "",
       clientId,
     } = config
 
