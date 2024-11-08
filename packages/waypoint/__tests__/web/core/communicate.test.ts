@@ -1,3 +1,4 @@
+import { RpcError } from "viem"
 import { describe, expect, test, vi } from "vitest"
 
 import { CommunicateHelper } from "../../../web/core/communicate"
@@ -98,7 +99,11 @@ describe("CommunicateHelper", () => {
       try {
         await request
       } catch (error) {
-        expect(error.details).toBe(output)
+        if (error instanceof RpcError) {
+          expect(error.details).toBe(output)
+        } else {
+          throw new Error(`Test failed: Expected an RpcError, but got ${error}`)
+        }
       }
     })
   })
