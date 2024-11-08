@@ -6,6 +6,16 @@ import { CONFIG } from "../../constants"
 
 vi.stubGlobal("open", vi.fn())
 
+const mockSendRequest = () => {
+  let requestId
+  const communicateHelper = new CommunicateHelper(CONFIG.WAYPOINT_ORIGIN)
+  const request = communicateHelper.sendRequest(state => {
+    requestId = state
+    return window
+  })
+  return { requestId, request }
+}
+
 describe("CommunicateHelper", () => {
   test("Create CommunicateHelper", () => {
     const communicateHelper = new CommunicateHelper(CONFIG.WAYPOINT_ORIGIN)
@@ -45,12 +55,7 @@ describe("CommunicateHelper", () => {
     ]
 
     successTestCases.forEach(async ({ input, output }) => {
-      let requestId
-      const communicateHelper = new CommunicateHelper(CONFIG.WAYPOINT_ORIGIN)
-      const request = communicateHelper.sendRequest(state => {
-        requestId = state
-        return window
-      })
+      const { request, requestId } = mockSendRequest()
       // Mock response from popup
       const message = new MessageEvent("message", {
         origin: CONFIG.WAYPOINT_ORIGIN,
@@ -79,12 +84,7 @@ describe("CommunicateHelper", () => {
     ]
 
     failTestCases.forEach(async ({ input, output }) => {
-      let requestId
-      const communicateHelper = new CommunicateHelper(CONFIG.WAYPOINT_ORIGIN)
-      const request = communicateHelper.sendRequest(state => {
-        requestId = state
-        return window
-      })
+      const { request, requestId } = mockSendRequest()
 
       const message = new MessageEvent("message", {
         origin: CONFIG.WAYPOINT_ORIGIN,
