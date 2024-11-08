@@ -15,7 +15,9 @@ const mainConfig = defineConfig({
   // To solve module conflict on Nextjs/Remix
   // Ref: https://rollupjs.org/configuration-options/#input
   input: Object.fromEntries(
-    globSync("**/*.ts").map(file => [
+    globSync("**/*.ts", {
+      ignore: ["**/__tests__/**", "**/*.test.ts", "vitest.config.ts"],
+    }).map(file => [
       path.relative("", file.slice(0, file.length - path.extname(file).length)),
       fileURLToPath(new URL(file, import.meta.url)),
     ]),
