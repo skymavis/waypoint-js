@@ -1,4 +1,4 @@
-import { Hex, InternalRpcError, InvalidParamsRpcError, UnauthorizedProviderError } from "viem"
+import { Hex, InternalRpcError } from "viem"
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 
 import { CommunicateHelper } from "../../../web/core/communicate"
@@ -24,27 +24,27 @@ describe("personalSign", () => {
     vi.restoreAllMocks()
   })
 
-  test("should throw UnauthorizedProviderError if the address does not match expectAddress", async () => {
+  test("should throw error if the address does not match expectAddress", async () => {
     await expect(
       personalSign({
         params: [mockParamData, "0x1111111111111111111111111111111111111111"],
         communicateHelper: communicateHelper,
         ...baseSignParams,
       }),
-    ).rejects.toThrow(UnauthorizedProviderError)
+    ).rejects.toThrowError("personal_sign: current address is different from required address")
   })
 
-  test("should throw InvalidParamsRpcError if the data is empty", async () => {
+  test("should throw error if the data is empty", async () => {
     await expect(
       personalSign({
         params: ["" as Hex, mockAddress],
         communicateHelper,
         ...baseSignParams,
       }),
-    ).rejects.toThrow(InvalidParamsRpcError)
+    ).rejects.toThrowError("personal_sign: message is NOT define")
   })
 
-  test("should throw InternalRpcError if the signature is not a valid hex", async () => {
+  test("should throw error if the signature is not a valid hex", async () => {
     // overwrite sendRequest resolved value
     vi.spyOn(communicateHelper, "sendRequest").mockResolvedValue("000")
 
@@ -54,9 +54,9 @@ describe("personalSign", () => {
         communicateHelper,
         ...baseSignParams,
       }),
-    ).rejects.toThrowError(InternalRpcError)
+    ).rejects.toThrowError("personal_sign: signature is not valid")
   })
-  test("should throw RpcError if the sendRequest got user reject", async () => {
+  test("should throw error if the sendRequest got user reject", async () => {
     // overwrite sendRequest rejected value
     vi.spyOn(communicateHelper, "sendRequest").mockRejectedValue(
       normalizeIdError({ code: 1000, message: "User reject" }),
