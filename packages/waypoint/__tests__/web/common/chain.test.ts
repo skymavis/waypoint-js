@@ -1,4 +1,3 @@
-// viem-chain-mapping.test.ts
 import { goerli, mainnet, ronin, saigon } from "viem/chains"
 import { describe, expect, test } from "vitest"
 

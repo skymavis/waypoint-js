@@ -1,4 +1,3 @@
-// storage.test.ts
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 
 import {
@@ -10,7 +9,6 @@ import {
 } from "../../../web/utils/storage"
 
 describe("Storage functions", () => {
-  // Mocking localStorage before each test
   beforeEach(() => {
     globalThis.localStorage = {
       getItem: vi.fn(),
