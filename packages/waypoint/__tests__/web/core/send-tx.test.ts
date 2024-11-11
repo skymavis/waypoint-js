@@ -1,4 +1,4 @@
-import { Hex, RpcError } from "viem"
+import { Hex } from "viem"
 import { describe, expect, test, vi } from "vitest"
 
 import { CommunicateHelper } from "../../../web/core/communicate"
@@ -9,7 +9,7 @@ import { CONFIG } from "./../../constants"
 describe("sendTransaction", () => {
   const communicateHelper = new CommunicateHelper(CONFIG.WAYPOINT_ORIGIN)
 
-  test("should throw RpcError if the sendRequest got user reject", async () => {
+  test("should throw error if the sendRequest got user reject", async () => {
     vi.spyOn(communicateHelper, "sendRequest").mockRejectedValue(
       normalizeIdError({ code: 1000, message: "User reject" }),
     )
@@ -27,7 +27,7 @@ describe("sendTransaction", () => {
           },
         ],
       }),
-    ).rejects.toThrow(RpcError)
+    ).rejects.toThrowError("user reject action on Ronin Waypoint")
   })
 
   test("should return transaction hash with valid transaction", async () => {

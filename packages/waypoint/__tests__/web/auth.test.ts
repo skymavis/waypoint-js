@@ -5,10 +5,6 @@ import { normalizeIdError } from "../../web/utils/error"
 import { authorize, parseRedirectUrl } from "./../../web/auth"
 import { CONFIG } from "./../constants"
 
-vi.mock("./core/communicate")
-vi.mock("./utils/popup")
-vi.mock("./utils/validate-address")
-
 describe("authorize function", () => {
   afterEach(() => {
     vi.restoreAllMocks()
@@ -112,6 +108,7 @@ describe("parseRedirectUrl", () => {
     expect(state).toBeNull()
     expect(token).toBeNull()
   })
+
   test("should return params matched with url params when they are defined", () => {
     const url = new URL("http://localhost:3000?method=auth&type=success")
     const stateParam = "sample-state"

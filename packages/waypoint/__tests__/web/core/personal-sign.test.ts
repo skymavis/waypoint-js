@@ -1,4 +1,4 @@
-import { Hex, InternalRpcError } from "viem"
+import { Hex } from "viem"
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 
 import { CommunicateHelper } from "../../../web/core/communicate"
@@ -32,6 +32,17 @@ describe("personalSign", () => {
         ...baseSignParams,
       }),
     ).rejects.toThrowError("personal_sign: current address is different from required address")
+  })
+
+  test("should throw error if the addresses is invalid", async () => {
+    const invalidAddress = "0x111111111111"
+    await expect(
+      personalSign({
+        params: [mockParamData, invalidAddress],
+        communicateHelper: communicateHelper,
+        ...baseSignParams,
+      }),
+    ).rejects.toThrowError(`Address "${invalidAddress}" is invalid.`)
   })
 
   test("should throw error if the data is empty", async () => {
