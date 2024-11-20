@@ -18,6 +18,7 @@ type OrderSuccessMessage = {
 }
 
 type StartDepositParams = {
+  email?: string
   walletAddress?: string
   fiatCurrency?: string
   cryptoCurrency?: string
@@ -47,10 +48,11 @@ export class Deposit {
 
   start = async (params?: StartDepositParams) => {
     const response = await this.communicateHelper.sendRequest<OrderSuccessMessage>(state => {
-      const { walletAddress, fiatCurrency, cryptoCurrency } = params ?? {}
+      const { email, walletAddress, fiatCurrency, cryptoCurrency } = params ?? {}
 
       const query = {
         state,
+        email,
         origin: this.redirectUri,
         redirect_uri: this.redirectUri,
         wallet_address: walletAddress,

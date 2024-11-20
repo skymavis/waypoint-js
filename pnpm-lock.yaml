@@ -357,7 +357,7 @@ importers:
         version: 5.4.5
       viem:
         specifier: 2.21.22
-        version: 2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+        version: 2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8)
       vitest:
         specifier: 2.1.4
         version: 2.1.4(@types/node@20.12.11)(@vitest/ui@2.1.4)(jsdom@25.0.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
@@ -8655,7 +8655,7 @@ snapshots:
       loupe: 3.1.2
       tinyrainbow: 1.2.0
 
-  '@wagmi/core@2.14.1(@types/react@18.3.12)(react@18.3.1)(typescript@5.4.5)(use-sync-external-store@1.2.2(react@18.3.1))(viem@2.21.34(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))':
+  '@wagmi/core@2.14.1(@types/react@18.3.12)(react@18.3.1)(typescript@5.4.5)(use-sync-external-store@1.2.2(react@18.3.1))(viem@2.21.34(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))':
     dependencies:
       eventemitter3: 5.0.1
       mipd: 0.0.7(typescript@5.4.5)
