@@ -297,13 +297,13 @@ importers:
     dependencies:
       '@axieinfinity/lockbox':
         specifier: https://github.com/skymavis/waypoint-js/raw/refs/heads/main/packages/waypoint/internal-libs/lockbox-2.1.8.tgz
-        version: https://github.com/skymavis/waypoint-js/raw/refs/heads/main/packages/waypoint/internal-libs/lockbox-2.1.8.tgz(typescript@5.4.5)(viem@2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
+        version: https://github.com/skymavis/waypoint-js/raw/refs/heads/main/packages/waypoint/internal-libs/lockbox-2.1.8.tgz(typescript@5.4.5)(viem@2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))
       ofetch:
         specifier: 1.4.0
         version: 1.4.0
       viem:
         specifier: 2.21.22
-        version: 2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+        version: 2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8)
     devDependencies:
       '@babel/preset-env':
         specifier: 7.24.4
@@ -6225,7 +6225,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@axieinfinity/lockbox@https://github.com/skymavis/waypoint-js/raw/refs/heads/main/packages/waypoint/internal-libs/lockbox-2.1.8.tgz(typescript@5.4.5)(viem@2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))':
+  '@axieinfinity/lockbox@https://github.com/skymavis/waypoint-js/raw/refs/heads/main/packages/waypoint/internal-libs/lockbox-2.1.8.tgz(typescript@5.4.5)(viem@2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))':
     dependencies:
       viem: 2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8)
     optionalDependencies:
