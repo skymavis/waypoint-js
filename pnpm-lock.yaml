@@ -296,8 +296,8 @@ importers:
   packages/waypoint:
     dependencies:
       '@axieinfinity/lockbox':
-        specifier: file:internal-libs/lockbox-2.1.8.tgz
-        version: file:packages/waypoint/internal-libs/lockbox-2.1.8.tgz(typescript@5.4.5)(viem@2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
+        specifier: https://github.com/skymavis/waypoint-js/raw/refs/heads/main/packages/waypoint/internal-libs/lockbox-2.1.8.tgz
+        version: https://github.com/skymavis/waypoint-js/raw/refs/heads/main/packages/waypoint/internal-libs/lockbox-2.1.8.tgz(typescript@5.4.5)(viem@2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
       ofetch:
         specifier: 1.4.0
         version: 1.4.0
@@ -431,8 +431,8 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@axieinfinity/lockbox@file:packages/waypoint/internal-libs/lockbox-2.1.8.tgz':
-    resolution: {integrity: sha512-+61AcDve8c2MbYXxGpcI0b2+t64TT5nIcr8q0I3CFU4oDs+hO40zmEf86fyVjrXbrkLVQymqzVfUSVSl8yxODQ==, tarball: file:packages/waypoint/internal-libs/lockbox-2.1.8.tgz}
+  '@axieinfinity/lockbox@https://github.com/skymavis/waypoint-js/raw/refs/heads/main/packages/waypoint/internal-libs/lockbox-2.1.8.tgz':
+    resolution: {tarball: https://github.com/skymavis/waypoint-js/raw/refs/heads/main/packages/waypoint/internal-libs/lockbox-2.1.8.tgz}
     version: 2.1.8
     peerDependencies:
       typescript: '>=5.0.4'
@@ -6225,7 +6225,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@axieinfinity/lockbox@file:packages/waypoint/internal-libs/lockbox-2.1.8.tgz(typescript@5.4.5)(viem@2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))':
+  '@axieinfinity/lockbox@https://github.com/skymavis/waypoint-js/raw/refs/heads/main/packages/waypoint/internal-libs/lockbox-2.1.8.tgz(typescript@5.4.5)(viem@2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))':
     dependencies:
       viem: 2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8)
     optionalDependencies:
