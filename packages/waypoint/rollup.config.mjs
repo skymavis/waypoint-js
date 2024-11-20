@@ -6,32 +6,42 @@ import commonjs from "@rollup/plugin-commonjs"
 import { nodeResolve } from "@rollup/plugin-node-resolve"
 import { globSync } from "glob"
 import { defineConfig } from "rollup"
+import generatePackageJson from "rollup-plugin-generate-package-json"
 import peerDepsExternal from "rollup-plugin-peer-deps-external"
 import nodePolyfills from "rollup-plugin-polyfill-node"
 import typescript from "rollup-plugin-typescript2"
 
+// This configuration the same as preserveModules but without node_modules folder
+// To solve module conflict on Nextjs/Remix
+// Ref: https://rollupjs.org/configuration-options/#input
+const input = Object.fromEntries(
+  globSync("**/*.ts", {
+    ignore: ["**/__tests__/**", "**/*.test.ts", "vitest.config.ts"],
+  }).map(file => [
+    path.relative("", file.slice(0, file.length - path.extname(file).length)),
+    fileURLToPath(new URL(file, import.meta.url)),
+  ]),
+)
+const commonjsOutDir = "dist/commonjs"
+const moduleOutDir = "dist/module"
+
 const mainConfig = defineConfig({
-  // This configuration the same as preserveModules but without node_modules folder
-  // To solve module conflict on Nextjs/Remix
-  // Ref: https://rollupjs.org/configuration-options/#input
-  input: Object.fromEntries(
-    globSync("**/*.ts", {
-      ignore: ["**/__tests__/**", "**/*.test.ts", "vitest.config.ts"],
-    }).map(file => [
-      path.relative("", file.slice(0, file.length - path.extname(file).length)),
-      fileURLToPath(new URL(file, import.meta.url)),
-    ]),
-  ),
+  input,
   output: [
     {
-      dir: "dist",
-      format: "esm",
+      dir: commonjsOutDir,
+      format: "commonjs",
+    },
+    {
+      dir: moduleOutDir,
+      format: "module",
     },
   ],
   plugins: [
     peerDepsExternal(),
     nodeResolve({
       preferBuiltins: true,
+      browser: true
     }),
     commonjs(),
     nodePolyfills(),
@@ -53,6 +63,20 @@ const mainConfig = defineConfig({
         ],
       ],
       babelHelpers: "bundled",
+    }),
+    generatePackageJson({
+      outputFolder: commonjsOutDir,
+      baseContents: () => ({
+        type: "commonjs",
+        sideEffects: false,
+      }),
+    }),
+    generatePackageJson({
+      outputFolder: moduleOutDir,
+      baseContents: () => ({
+        type: "module",
+        sideEffects: false,
+      }),
     }),
   ],
 })
