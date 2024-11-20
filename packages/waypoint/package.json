@@ -3,7 +3,7 @@
   "repository": {
     "url": "https://github.com/skymavis/waypoint-js"
   },
-  "version": "3.1.1",
+  "version": "3.2.1",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -43,6 +43,10 @@
     "./headless": {
       "types": "./dist/types/headless/index.d.ts",
       "import": "./dist/headless/index.js"
+    },
+    "./deposit": {
+      "types": "./dist/types/deposit/index.d.ts",
+      "import": "./dist/deposit/index.js"
     }
   },
   "scripts": {
