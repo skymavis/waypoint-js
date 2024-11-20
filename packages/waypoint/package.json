@@ -57,9 +57,9 @@
     "test": "vitest --typecheck"
   },
   "dependencies": {
-    "@axieinfinity/lockbox": "file:internal-libs/lockbox-2.1.8.tgz",
-    "viem": "2.21.22",
-    "ofetch": "1.4.0"
+    "@axieinfinity/lockbox": "https://github.com/skymavis/waypoint-js/raw/refs/heads/main/packages/waypoint/internal-libs/lockbox-2.1.8.tgz",
+    "ofetch": "1.4.0",
+    "viem": "2.21.22"
   },
   "devDependencies": {
     "@babel/preset-env": "7.24.4",
