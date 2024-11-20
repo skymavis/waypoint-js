@@ -294,10 +294,17 @@ importers:
         version: 8.56.12
 
   packages/waypoint:
-    devDependencies:
+    dependencies:
       '@axieinfinity/lockbox':
         specifier: file:internal-libs/lockbox-2.1.8.tgz
-        version: file:packages/waypoint/internal-libs/lockbox-2.1.8.tgz(typescript@5.4.5)(viem@2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))
+        version: file:packages/waypoint/internal-libs/lockbox-2.1.8.tgz(typescript@5.4.5)(viem@2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
+      ofetch:
+        specifier: 1.4.0
+        version: 1.4.0
+      viem:
+        specifier: 2.21.22
+        version: 2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+    devDependencies:
       '@babel/preset-env':
         specifier: 7.24.4
         version: 7.24.4(@babel/core@7.24.6)
@@ -331,9 +338,6 @@ importers:
       jsdom:
         specifier: 25.0.1
         version: 25.0.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      ofetch:
-        specifier: 1.4.0
-        version: 1.4.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -355,9 +359,6 @@ importers:
       typescript:
         specifier: 5.4.5
         version: 5.4.5
-      viem:
-        specifier: 2.21.22
-        version: 2.21.22(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8)
       vitest:
         specifier: 2.1.4
         version: 2.1.4(@types/node@20.12.11)(@vitest/ui@2.1.4)(jsdom@25.0.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
