@@ -61,12 +61,8 @@
     "clean": "rm -rf .turbo node_modules dist",
     "test": "vitest --typecheck"
   },
-  "dependencies": {
-    "@axieinfinity/lockbox": "https://github.com/skymavis/waypoint-js/raw/refs/heads/main/packages/waypoint/internal-libs/lockbox-2.1.8.tgz",
-    "ofetch": "1.4.0",
-    "viem": "2.21.22"
-  },
   "devDependencies": {
+    "@axieinfinity/lockbox": "file:internal-libs/lockbox-2.1.8.tgz",
     "@babel/preset-env": "7.24.4",
     "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-commonjs": "25.0.7",
@@ -78,6 +74,7 @@
     "fs-extra": "11.2.0",
     "glob": "11.0.0",
     "jsdom": "25.0.1",
+    "ofetch": "1.4.0",
     "prettier": "3.2.5",
     "rollup": "4.14.1",
     "rollup-plugin-generate-package-json": "^3.2.0",
@@ -86,6 +83,7 @@
     "rollup-plugin-typescript2": "0.36.0",
     "tslib": "2.6.2",
     "typescript": "5.4.5",
+    "viem": "2.21.22",
     "vitest": "2.1.4"
   }
 }
