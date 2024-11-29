@@ -41,6 +41,7 @@ Parameters for the `Deposit` class:
 | --- | --- | --- |
 | `clientId` | Required | The client ID from the Developer Console. For more information, see [Waypoint service settings](https://docs.skymavis.com/mavis/ronin-waypoint/guides/get-started#steps).|
 | `redirectUri` | Optional | Equivalent to the **REDIRECT URI** configured in [Waypoint service settings](https://docs.skymavis.com/mavis/ronin-waypoint/guides/get-started#step-3-configure-ronin-waypoint-settings). Default is `window.location.origin`. |
+| `theme` | Optional | `light` or `dark`. |
 
 ## Usage
 
