@@ -6,6 +6,8 @@ export type DepositConfig = {
   clientId: string
   waypointOrigin?: string
   redirectUri?: string
+  environment?: "development" | "production"
+  theme?: "light" | "dark"
 }
 
 type OrderSuccessMessage = {
@@ -31,6 +33,8 @@ export class Deposit {
   private readonly clientId: string
   private readonly waypointOrigin: string
   private readonly redirectUri: string
+  private readonly environment?: string
+  private readonly theme?: string
   private readonly communicateHelper: CommunicateHelper
 
   constructor(config: DepositConfig) {
@@ -38,11 +42,15 @@ export class Deposit {
       waypointOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
       redirectUri = typeof window !== "undefined" ? window.location.origin : "",
       clientId,
+      environment,
+      theme,
     } = config
 
     this.waypointOrigin = waypointOrigin
     this.clientId = clientId
     this.redirectUri = redirectUri
+    this.environment = environment
+    this.theme = theme
     this.communicateHelper = new CommunicateHelper(waypointOrigin)
   }
 
@@ -53,6 +61,8 @@ export class Deposit {
       const query = {
         state,
         email,
+        environment: this.environment,
+        theme: this.theme,
         origin: this.redirectUri,
         redirect_uri: this.redirectUri,
         wallet_address: walletAddress,
