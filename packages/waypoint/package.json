@@ -9,8 +9,8 @@
     "access": "public"
   },
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
+  "main": "dist/commonjs/index.js",
+  "module": "dist/module/index.js",
   "types": "dist/types/index.d.ts",
   "sideEffects": false,
   "files": [
@@ -25,28 +25,33 @@
     "./package.json": "./package.json",
     ".": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/module/index.js",
+      "require": "./dist/commonjs/index.js"
     },
     "./web": {
       "types": "./dist/types/web/index.d.ts",
-      "import": "./dist/web/index.js"
+      "import": "./dist/module/web/index.js",
+      "require": "./dist/commonjs/web/index.js"
     },
     "./skynet": {
       "types": "./dist/types/skynet/index.d.ts",
-      "import": "./dist/skynet/index.js"
+      "import": "./dist/module/skynet/index.js",
+      "require": "./dist/commonjs/skynet/index.js"
     },
     "./core": {
       "types": "./dist/types/core/index.d.ts",
-      "import": "./dist/core/index.js"
+      "import": "./dist/module/core/index.js",
+      "require": "./dist/commonjs/core/index.js"
     },
     "./headless": {
       "types": "./dist/types/headless/index.d.ts",
-      "import": "./dist/headless/index.js"
+      "import": "./dist/module/headless/index.js",
+      "require": "./dist/commonjs/headless/index.js"
     },
     "./deposit": {
       "types": "./dist/types/deposit/index.d.ts",
-      "import": "./dist/deposit/index.js"
+      "import": "./dist/module/deposit/index.js",
+      "require": "./dist/commonjs/deposit/index.js"
     }
   },
   "scripts": {
@@ -72,6 +77,7 @@
     "ofetch": "1.4.0",
     "prettier": "3.2.5",
     "rollup": "4.14.1",
+    "rollup-plugin-generate-package-json": "^3.2.0",
     "rollup-plugin-peer-deps-external": "2.2.4",
     "rollup-plugin-polyfill-node": "0.13.0",
     "rollup-plugin-typescript2": "0.36.0",
