@@ -5,6 +5,7 @@
     "build:packages": "turbo run build --filter='./packages/*'",
     "build:apps": "turbo run build --filter='./apps/*'",
     "dev": "turbo run dev --no-cache --parallel --continue",
+    "test": "turbo run test --no-cache --parallel --continue",
     "lint": "turbo run lint",
     "clean": "turbo run clean && rm -rf node_modules .turbo",
     "prepare": "husky install"

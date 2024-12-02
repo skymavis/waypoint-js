@@ -1,5 +1,5 @@
 import { Deferred } from "./defer"
-import { normalizeWaypointError } from "./waypoint-error"
+import { normalizeWaypointError, WaypointErrorMap } from "./waypoint-error"
 
 const DELAY_INTERVAL = 1_000
 
@@ -105,10 +105,7 @@ export class CommunicateHelper {
         this.handleResponse({
           state: requestId,
           type: "fail",
-          error: {
-            code: 1000,
-            message: "User close popup",
-          },
+          error: WaypointErrorMap.WALLET_USER_CANCEL,
         })
       }
     }, DELAY_INTERVAL)
