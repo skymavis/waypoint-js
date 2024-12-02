@@ -1,6 +1,6 @@
 import { CommunicateHelper } from "../common/communicate"
+import { RONIN_WAYPOINT_ORIGIN_PROD } from "../common/gate"
 import { openPopup } from "../common/popup"
-import { RONIN_WAYPOINT_ORIGIN_PROD } from "../web/common/gate"
 
 export type DepositConfig = {
   clientId: string
