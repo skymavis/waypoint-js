@@ -9,8 +9,8 @@ import {
   UnauthorizedProviderError,
 } from "viem"
 
-import { openPopup } from "../utils/popup"
-import { CommunicateHelper } from "./communicate"
+import { CommunicateHelper } from "../../common/communicate"
+import { openPopup } from "../../common/popup"
 
 type SignTypedDataV4Params = {
   params: [address: Address, data: TypedDataDefinition | string]

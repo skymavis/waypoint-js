@@ -1,8 +1,8 @@
 import { Hex } from "viem"
 import { describe, expect, test, vi } from "vitest"
 
-import { CommunicateHelper } from "../../../web/core/communicate"
-import { normalizeIdError } from "../../../web/utils/error"
+import { CommunicateHelper } from "../../../common/communicate"
+import { normalizeIdError } from "../../../common/error"
 import { sendTransaction } from "./../../../web/core/send-tx"
 import { CONFIG } from "./../../constants"
 

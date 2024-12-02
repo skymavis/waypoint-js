@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 
-import { normalizeIdError } from "../../../web/utils/error"
+import { normalizeWaypointError } from "../../common/waypoint-error"
 
 describe("Normalize Waypoint Error", () => {
   test("return mapped detail error message", () => {
@@ -36,7 +36,7 @@ describe("Normalize Waypoint Error", () => {
     ]
 
     testCases.forEach(({ input, detailMessage }) => {
-      expect(normalizeIdError(input).details).toBe(detailMessage)
+      expect(normalizeWaypointError(input).details).toBe(detailMessage)
     })
   })
 
@@ -57,7 +57,7 @@ describe("Normalize Waypoint Error", () => {
     ]
 
     testCases.forEach(({ input, detailMessage }) => {
-      expect(normalizeIdError(input).details).toBe(detailMessage)
+      expect(normalizeWaypointError(input).details).toBe(detailMessage)
     })
   })
 })

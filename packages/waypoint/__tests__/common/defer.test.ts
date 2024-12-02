@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 
-import { Deferred } from "./../../../web/utils/defer"
+import { Deferred } from "../../common/defer"
 
 describe("Deferred Class", () => {
   test('should have an initial state of "unresolved"', () => {

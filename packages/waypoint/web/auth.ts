@@ -1,10 +1,10 @@
 import { Address } from "viem"
 
+import { CommunicateHelper } from "../common/communicate"
+import { openPopup, replaceUrl } from "../common/popup"
 import { RONIN_WAYPOINT_ORIGIN_PROD } from "./common/gate"
 import { IdResponse } from "./common/id-response"
 import { getScopesParams, Scope } from "./common/scope"
-import { CommunicateHelper } from "./core/communicate"
-import { openPopup, replaceUrl } from "./utils/popup"
 import { validateIdAddress } from "./utils/validate-address"
 
 /**

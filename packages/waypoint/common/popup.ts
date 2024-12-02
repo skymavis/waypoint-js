@@ -9,6 +9,18 @@ type PopupConfig = {
   height?: number
 }
 
+const buildUrlWithQuery = (inputUrl: string, query?: Record<string, UrlParams>): URL => {
+  const url = new URL(inputUrl)
+  if (query) {
+    Object.entries(query).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        url.searchParams.set(key, value.toString())
+      }
+    })
+  }
+  return url
+}
+
 export const openPopup = (
   inputUrl: string,
   query?: Record<string, UrlParams>,
@@ -16,8 +28,8 @@ export const openPopup = (
 ) => {
   const { width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT } = config || {}
   if (typeof window !== "undefined" && window.top) {
-    const screenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX
-    const screenTop = window.screenTop !== undefined ? window.screenTop : window.screenY
+    const screenLeft = window.screenLeft ?? window.screenX
+    const screenTop = window.screenTop ?? window.screenY
 
     const screenWidth = window.innerWidth
     const screenHeight = window.innerHeight
@@ -25,29 +37,16 @@ export const openPopup = (
     const left = screenLeft + (screenWidth - width) / 2
     const top = screenTop + (screenHeight - height) / 2
 
-    const url = new URL(inputUrl)
-
-    if (query) {
-      Object.entries(query).forEach(([key, value]) => {
-        value !== undefined && value !== null && url.searchParams.set(key, value.toString())
-      })
-    }
+    const url = buildUrlWithQuery(inputUrl, query)
 
     const popup = window.open(
       url,
-      `_blank`,
-      `
-        scrollbars=yes,
-        width=${width},
-        height=${height},
-        top=${top},
-        left=${left}
-      `,
+      "_blank",
+      `scrollbars=yes,width=${width},height=${height},top=${top},left=${left}`,
     )
 
     if (!popup) {
-      const err = new Error("Popup window is BLOCKED by the browser")
-      throw new UserRejectedRequestError(err)
+      throw new UserRejectedRequestError(new Error("Popup window is BLOCKED by the browser"))
     }
 
     popup.focus()
@@ -56,13 +55,6 @@ export const openPopup = (
 }
 
 export const replaceUrl = (inputUrl: string, query?: Record<string, UrlParams>) => {
-  const url = new URL(inputUrl)
-
-  if (query) {
-    Object.entries(query).forEach(([key, value]) => {
-      value !== undefined && value !== null && url.searchParams.set(key, value.toString())
-    })
-  }
-
+  const url = buildUrlWithQuery(inputUrl, query)
   window.location.assign(url)
 }

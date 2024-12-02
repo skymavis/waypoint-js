@@ -1,9 +1,9 @@
 import { Hex, toHex } from "viem"
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 
-import { CommunicateHelper } from "../../web/core/communicate"
+import { CommunicateHelper } from "../../common/communicate"
+import { normalizeWaypointError } from "../../common/waypoint-error"
 import { WaypointProvider } from "../../web/provider"
-import { normalizeIdError } from "../../web/utils/error"
 import { CONFIG } from "./../constants"
 
 describe("Waypoint Provider", () => {
@@ -53,7 +53,7 @@ describe("Waypoint Provider", () => {
 
     test("should throw user reject error", async () => {
       vi.spyOn(CommunicateHelper.prototype, "sendRequest").mockRejectedValue(
-        normalizeIdError({ code: 1000, message: "User rejected" }),
+        normalizeWaypointError({ code: 1000, message: "User rejected" }),
       )
       const waypointProvider = WaypointProvider.create({
         chainId: CONFIG.CHAIN_ID,

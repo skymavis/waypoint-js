@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 
-import { openPopup, replaceUrl } from "./../../../web/utils/popup"
+import { openPopup, replaceUrl } from "../../common/popup"
 
 describe("Popup and URL functions", () => {
   beforeEach(() => {
@@ -34,13 +34,7 @@ describe("Popup and URL functions", () => {
       expect(globalThis.window.open).toHaveBeenCalledWith(
         url,
         "_blank",
-        `
-        scrollbars=yes,
-        width=480,
-        height=720,
-        top=24,
-        left=272
-      `,
+        `scrollbars=yes,width=480,height=720,top=24,left=272`,
       )
     })
 

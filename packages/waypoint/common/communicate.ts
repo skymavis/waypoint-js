@@ -1,5 +1,5 @@
-import { Deferred } from "../utils/defer"
-import { normalizeIdError } from "../utils/error"
+import { Deferred } from "./defer"
+import { normalizeWaypointError } from "./waypoint-error"
 
 const DELAY_INTERVAL = 1_000
 
@@ -78,7 +78,7 @@ export class CommunicateHelper {
 
     switch (type) {
       case "fail": {
-        const err = normalizeIdError(message.error)
+        const err = normalizeWaypointError(message.error)
         return deferredPromise.reject(err)
       }
 

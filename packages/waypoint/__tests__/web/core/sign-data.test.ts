@@ -1,8 +1,8 @@
 import { Hex } from "viem"
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 
-import { CommunicateHelper } from "../../../web/core/communicate"
-import { normalizeIdError } from "../../../web/utils/error"
+import { CommunicateHelper } from "../../../common/communicate"
+import { normalizeWaypointError } from "../../../common/waypoint-error"
 import { CONFIG } from "../../constants"
 import { signTypedDataV4 } from "./../../../web/core/sign-data"
 
@@ -179,7 +179,7 @@ describe("Sign Type Data", () => {
 
   test("should throw user reject error", async () => {
     vi.spyOn(communicateHelper, "sendRequest").mockRejectedValue(
-      normalizeIdError({ code: 1000, message: "User reject" }),
+      normalizeWaypointError({ code: 1000, message: "User reject" }),
     )
     await expect(
       signTypedDataV4({
