@@ -1,6 +1,8 @@
 import { Deferred } from "../utils/defer"
 import { normalizeIdError } from "../utils/error"
 
+const DELAY_INTERVAL = 1_000
+
 type CallbackMessage = {
   state: string
 } & (
@@ -13,106 +15,118 @@ type CallbackMessage = {
     }
   | {
       type: "success"
-      data: string
+      data: string | object
     }
 )
 
-const DELAY_INTERVAL = 1000
-
 export class CommunicateHelper {
-  protected readonly pendingRequests: Map<string, Deferred> = new Map()
-  protected readonly pendingIntervals: Map<string, number | NodeJS.Timeout> = new Map()
-  protected readonly origin: string = ""
+  private readonly pendingEvents: Map<string, Deferred> = new Map()
+  private readonly windowMonitorIntervals: Map<string, number | NodeJS.Timeout> = new Map()
+  private readonly origin!: string
+  private readonly eventHandler!: (event: MessageEvent) => void
 
   constructor(origin: string) {
-    if (typeof window === "undefined") return
+    if (typeof window === "undefined") {
+      // eslint-disable-next-line no-console
+      console.warn("CommunicateHelper can only be used in browser environment")
+      return
+    }
 
     this.origin = origin
+    this.eventHandler = this.createEventHandler()
+    this.initializeEventListeners()
+  }
 
-    const eventHandler = (event: MessageEvent) => {
+  private createEventHandler(): (event: MessageEvent) => void {
+    return (event: MessageEvent) => {
       if (event.origin !== this.origin) return
 
-      const callbackMessage = event.data
-
-      if (!callbackMessage.state) return
+      const callbackMessage = event.data as CallbackMessage
+      if (!this.isValidCallbackMessage(callbackMessage)) return
 
       this.handleResponse(callbackMessage)
     }
+  }
 
-    window.addEventListener("message", eventHandler)
+  private isValidCallbackMessage(message: unknown): message is CallbackMessage {
+    return (
+      typeof message === "object" && message !== null && "state" in message && "type" in message
+    )
+  }
+
+  private initializeEventListeners() {
+    window.addEventListener("message", this.eventHandler)
     window.addEventListener("beforeunload", () => {
-      window.removeEventListener("message", eventHandler)
+      this.cleanup()
     })
   }
 
-  handleResponse(callbackMessage: CallbackMessage) {
-    const { state: id, type } = callbackMessage
+  handleResponse(message: CallbackMessage) {
+    const { state: requestId, type } = message
 
-    const responseHandler = this.pendingRequests.get(id)
-    const intervalHandler = this.pendingIntervals.get(id)
+    const deferredPromise = this.pendingEvents.get(requestId)
+    const monitorInterval = this.windowMonitorIntervals.get(requestId)
 
-    if (!responseHandler || !(typeof responseHandler !== "function")) return
+    if (!deferredPromise || !(typeof deferredPromise !== "function")) return
 
-    if (intervalHandler) {
-      this.pendingIntervals.delete(id)
-      clearInterval(intervalHandler)
+    if (monitorInterval) {
+      this.windowMonitorIntervals.delete(requestId)
+      clearInterval(monitorInterval)
     }
 
-    this.pendingRequests.delete(id)
+    this.pendingEvents.delete(requestId)
 
     switch (type) {
       case "fail": {
-        const err = normalizeIdError(callbackMessage.error)
-
-        return responseHandler.reject(err)
+        const err = normalizeIdError(message.error)
+        return deferredPromise.reject(err)
       }
 
       default: {
-        const objectOrStringData = (() => {
-          try {
-            return JSON.parse(callbackMessage.data)
-          } catch {
-            return callbackMessage.data
-          }
-        })()
-
-        return responseHandler.resolve(objectOrStringData)
+        const objectOrStringData = this.parseSuccessResponse(message.data)
+        return deferredPromise.resolve(objectOrStringData)
       }
     }
   }
 
-  private monitorWindowClosing = (params: { window: Window; requestId: string }) => {
-    const { requestId, window } = params
-
-    const error = {
-      code: 1000,
-      message: "User rejected",
+  private parseSuccessResponse(data: string | object) {
+    try {
+      return typeof data === "string" ? JSON.parse(data) : data
+    } catch {
+      return data
     }
+  }
 
-    const intervalId = setInterval(() => {
-      const intervalHandler = this.pendingIntervals.get(requestId)
-      const responseHandler = this.pendingRequests.get(requestId)
+  private monitorWindowClosing(params: { window: Window; requestId: string }) {
+    const { requestId, window: targetWindow } = params
 
-      if (window?.closed && intervalHandler && responseHandler) {
+    const monitorInterval = setInterval(() => {
+      if (targetWindow?.closed && this.hasPendingRequest(requestId)) {
         this.handleResponse({
           state: requestId,
           type: "fail",
-          error,
+          error: {
+            code: 1000,
+            message: "User rejected",
+          },
         })
       }
     }, DELAY_INTERVAL)
 
-    this.pendingIntervals.set(requestId, intervalId)
+    this.windowMonitorIntervals.set(requestId, monitorInterval)
   }
 
-  sendRequest<T>(action: (requestId: string) => Window | undefined): Promise<T> {
+  private hasPendingRequest(requestId: string) {
+    return this.pendingEvents.has(requestId) && this.windowMonitorIntervals.has(requestId)
+  }
+
+  public sendRequest<T>(action: (requestId: string) => Window | undefined): Promise<T> {
     const id = crypto.randomUUID()
     const responseHandler = new Deferred<T>()
 
-    this.pendingRequests.set(id, responseHandler)
+    this.pendingEvents.set(id, responseHandler)
 
     const referencedWindow = action(id)
-
     if (referencedWindow) {
       this.monitorWindowClosing({
         window: referencedWindow,
@@ -121,5 +135,12 @@ export class CommunicateHelper {
     }
 
     return responseHandler.promise
+  }
+
+  public cleanup() {
+    window.removeEventListener("message", this.eventHandler)
+    this.windowMonitorIntervals.forEach(interval => clearInterval(interval))
+    this.windowMonitorIntervals.clear()
+    this.pendingEvents.clear()
   }
 }
