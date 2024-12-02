@@ -2,7 +2,7 @@ import { Hex } from "viem"
 import { describe, expect, test, vi } from "vitest"
 
 import { CommunicateHelper } from "../../../common/communicate"
-import { normalizeIdError } from "../../../common/error"
+import { normalizeWaypointError } from "../../../common/waypoint-error"
 import { sendTransaction } from "./../../../web/core/send-tx"
 import { CONFIG } from "./../../constants"
 
@@ -11,7 +11,7 @@ describe("sendTransaction", () => {
 
   test("should throw error if the sendRequest got user reject", async () => {
     vi.spyOn(communicateHelper, "sendRequest").mockRejectedValue(
-      normalizeIdError({ code: 1000, message: "User reject" }),
+      normalizeWaypointError({ code: 1000, message: "User reject" }),
     )
 
     await expect(
