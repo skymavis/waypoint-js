@@ -1,13 +1,13 @@
 import { RpcError } from "viem"
 import { describe, expect, test, vi } from "vitest"
 
-import { CommunicateHelper } from "../../../web/core/communicate"
-import { CONFIG } from "../../constants"
+import { CommunicateHelper } from "../../common/communicate"
+import { CONFIG } from "../constants"
 
 vi.stubGlobal("open", vi.fn())
 
 const mockSendRequest = () => {
-  let requestId
+  let requestId: string = ""
   const communicateHelper = new CommunicateHelper(CONFIG.WAYPOINT_ORIGIN)
   const request = communicateHelper.sendRequest(state => {
     requestId = state

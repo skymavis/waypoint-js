@@ -9,8 +9,8 @@ import {
   UnauthorizedProviderError,
 } from "viem"
 
-import { openPopup } from "../utils/popup"
-import { CommunicateHelper } from "./communicate"
+import { CommunicateHelper } from "../../common/communicate"
+import { openPopup } from "../../common/popup"
 
 type PersonalSignParams = {
   params: [data: Hex, address: Address]

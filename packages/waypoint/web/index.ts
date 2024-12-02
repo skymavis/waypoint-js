@@ -1,3 +1,3 @@
 export * from "./auth"
-export * from "./common/chain"
+export * from "./common"
 export * from "./provider"

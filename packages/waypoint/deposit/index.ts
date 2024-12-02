@@ -1,6 +1,6 @@
-import { RONIN_WAYPOINT_ORIGIN_PROD } from "../web/common/gate"
-import { CommunicateHelper } from "../web/core/communicate"
-import { openPopup } from "../web/utils/popup"
+import { CommunicateHelper } from "../common/communicate"
+import { RONIN_WAYPOINT_ORIGIN_PROD } from "../common/gate"
+import { openPopup } from "../common/popup"
 
 export type DepositConfig = {
   clientId: string

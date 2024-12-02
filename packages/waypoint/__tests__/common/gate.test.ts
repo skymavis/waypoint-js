@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 
-import { RONIN_WAYPOINT_ORIGIN_PROD } from "./../../../web/common/gate"
+import { RONIN_WAYPOINT_ORIGIN_PROD } from "./../../common/gate"
 
 describe("RONIN_WAYPOINT_ORIGIN_PROD", () => {
   test("should have the correct value", () => {

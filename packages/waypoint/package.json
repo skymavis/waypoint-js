@@ -28,6 +28,11 @@
       "import": "./dist/module/index.js",
       "require": "./dist/commonjs/index.js"
     },
+    "./common": {
+      "types": "./dist/types/common/index.d.ts",
+      "import": "./dist/module/common/index.js",
+      "require": "./dist/commonjs/common/index.js"
+    },
     "./web": {
       "types": "./dist/types/web/index.d.ts",
       "import": "./dist/module/web/index.js",
@@ -59,7 +64,7 @@
     "dev": "rm -rf dist && rollup -c --watch",
     "lint": "eslint . --ext .js,.ts --max-warnings=0",
     "clean": "rm -rf .turbo node_modules dist",
-    "test": "vitest --typecheck"
+    "test": "vitest run --typecheck"
   },
   "devDependencies": {
     "@axieinfinity/lockbox": "file:internal-libs/lockbox-2.1.8.tgz",

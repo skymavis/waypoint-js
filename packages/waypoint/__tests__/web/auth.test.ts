@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from "vitest"
 
-import { CommunicateHelper } from "../../web/core/communicate"
-import { normalizeIdError } from "../../web/utils/error"
+import { CommunicateHelper } from "../../common/communicate"
+import { normalizeWaypointError } from "../../common/waypoint-error"
 import { authorize, parseRedirectUrl } from "./../../web/auth"
 import { CONFIG } from "./../constants"
 
@@ -44,7 +44,7 @@ describe("authorize function", () => {
 
   test("should throw error when sendRequest failed", async () => {
     vi.spyOn(CommunicateHelper.prototype, "sendRequest").mockRejectedValue(
-      normalizeIdError({ code: 1000, message: "User rejected" }),
+      normalizeWaypointError({ code: 1000, message: "User rejected" }),
     )
     await expect(
       authorize({

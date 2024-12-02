@@ -6,7 +6,7 @@ import {
   UserRejectedRequestError,
 } from "viem"
 
-type IdError = {
+export type WaypointError = {
   code: number
   message: string
 }
@@ -18,7 +18,7 @@ type IdError = {
  * - Server Error: 3xxx
  * - Chain Error: 4xxx
  */
-const IdErrorMap = Object.freeze({
+export const WaypointErrorMap = Object.freeze({
   /* 1xxx */
   WALLET_USER_CANCEL: {
     code: 1000,
@@ -57,39 +57,39 @@ const IdErrorMap = Object.freeze({
   },
 } as const)
 
-export const normalizeIdError = (idErr: IdError) => {
+export const normalizeWaypointError = (idErr: WaypointError) => {
   switch (idErr.code) {
-    case IdErrorMap.WALLET_USER_CANCEL.code: {
+    case WaypointErrorMap.WALLET_USER_CANCEL.code: {
       const err = new Error("user reject action on Ronin Waypoint")
       return new UserRejectedRequestError(err)
     }
 
-    case IdErrorMap.WALLET_SIGN_NO_PARAMS.code: {
+    case WaypointErrorMap.WALLET_SIGN_NO_PARAMS.code: {
       const err = new Error("sign data is NOT valid")
       return new InvalidParamsRpcError(err)
     }
 
-    case IdErrorMap.WALLET_INVALID_PAYLOAD.code: {
+    case WaypointErrorMap.WALLET_INVALID_PAYLOAD.code: {
       const err = new Error("wallet payload is NOT valid")
       return new InvalidParamsRpcError(err)
     }
 
-    case IdErrorMap.AUTHORIZE_INVALID_PAYLOAD.code: {
+    case WaypointErrorMap.AUTHORIZE_INVALID_PAYLOAD.code: {
       const err = new Error("authorize payload is NOT valid")
       return new InvalidParamsRpcError(err)
     }
 
-    case IdErrorMap.WALLET_NO_ADDRESS_ERR.code: {
+    case WaypointErrorMap.WALLET_NO_ADDRESS_ERR.code: {
       const err = new Error("id wallet is NOT define")
       return new UnauthorizedProviderError(err)
     }
 
-    case IdErrorMap.WALLET_CANT_CREATE.code: {
+    case WaypointErrorMap.WALLET_CANT_CREATE.code: {
       const err = new Error("could NOT create wallet")
       return new UnauthorizedProviderError(err)
     }
 
-    case IdErrorMap.WALLET_CANT_SIMULATE.code: {
+    case WaypointErrorMap.WALLET_CANT_SIMULATE.code: {
       const err = new Error("transaction simulate fail")
       return new TransactionRejectedRpcError(err)
     }

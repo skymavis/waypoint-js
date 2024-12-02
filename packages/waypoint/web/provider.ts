@@ -11,17 +11,17 @@ import {
   UnauthorizedProviderError,
 } from "viem"
 
+import { CommunicateHelper } from "../common/communicate"
+import { RONIN_WAYPOINT_ORIGIN_PROD } from "../common/gate"
+import { openPopup } from "../common/popup"
 import { BaseAuthorizeOpts } from "./auth"
 import { VIEM_CHAIN_MAPPING } from "./common/chain"
 import { Eip1193EventName, Eip1193Provider, RoninWaypointRequestSchema } from "./common/eip1193"
-import { RONIN_WAYPOINT_ORIGIN_PROD } from "./common/gate"
-import { IdResponse } from "./common/id-response"
 import { getScopesParams, Scope } from "./common/scope"
-import { CommunicateHelper } from "./core/communicate"
+import { WaypointResponse } from "./common/waypoint-response"
 import { personalSign } from "./core/personal-sign"
 import { sendTransaction } from "./core/send-tx"
 import { signTypedDataV4 } from "./core/sign-data"
-import { openPopup } from "./utils/popup"
 import { getStorage, removeStorage, setStorage, STORAGE_ADDRESS_KEY } from "./utils/storage"
 import { validateIdAddress } from "./utils/validate-address"
 
@@ -148,7 +148,7 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
   connect = async () => {
     const { waypointOrigin, clientId, redirectUrl, scopes, communicateHelper, chainId } = this
 
-    const authData = await communicateHelper.sendRequest<IdResponse>(state =>
+    const authData = await communicateHelper.sendRequest<WaypointResponse>(state =>
       openPopup(`${waypointOrigin}/client/${clientId}/authorize`, {
         state,
         redirect: redirectUrl,

@@ -19,6 +19,6 @@
     "esModuleInterop": true,
     "lib": ["dom", "esnext", "ES2019.Object", "dom.iterable"]
   },
-  "include": ["web", "skynet", "core", "headless", "deposit"],
+  "include": ["common", "web", "skynet", "core", "headless", "deposit"],
   "exclude": ["node_modules", "dist", "**/__tests__", "**/*.test.ts"]
 }
