@@ -107,7 +107,7 @@ export class CommunicateHelper {
           type: "fail",
           error: {
             code: 1000,
-            message: "User rejected",
+            message: "User close popup",
           },
         })
       }
