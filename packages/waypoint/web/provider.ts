@@ -17,7 +17,7 @@ import { BaseAuthorizeOpts } from "./auth"
 import { VIEM_CHAIN_MAPPING } from "./common/chain"
 import { Eip1193EventName, Eip1193Provider, RoninWaypointRequestSchema } from "./common/eip1193"
 import { RONIN_WAYPOINT_ORIGIN_PROD } from "./common/gate"
-import { IdResponse } from "./common/id-response"
+import { WaypointResponse } from "./common/id-response"
 import { getScopesParams, Scope } from "./common/scope"
 import { personalSign } from "./core/personal-sign"
 import { sendTransaction } from "./core/send-tx"
@@ -148,7 +148,7 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
   connect = async () => {
     const { waypointOrigin, clientId, redirectUrl, scopes, communicateHelper, chainId } = this
 
-    const authData = await communicateHelper.sendRequest<IdResponse>(state =>
+    const authData = await communicateHelper.sendRequest<WaypointResponse>(state =>
       openPopup(`${waypointOrigin}/client/${clientId}/authorize`, {
         state,
         redirect: redirectUrl,

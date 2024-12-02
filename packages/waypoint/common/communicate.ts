@@ -3,7 +3,7 @@ import { normalizeWaypointError } from "./waypoint-error"
 
 const DELAY_INTERVAL = 1_000
 
-type CallbackMessage = {
+export type CallbackMessage = {
   state: string
 } & (
   | {

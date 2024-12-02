@@ -3,7 +3,7 @@ import { Address } from "viem"
 import { CommunicateHelper } from "../common/communicate"
 import { openPopup, replaceUrl } from "../common/popup"
 import { RONIN_WAYPOINT_ORIGIN_PROD } from "./common/gate"
-import { IdResponse } from "./common/id-response"
+import { WaypointResponse } from "./common/id-response"
 import { getScopesParams, Scope } from "./common/scope"
 import { validateIdAddress } from "./utils/validate-address"
 
@@ -101,7 +101,7 @@ export const authorize = async <T extends PopupAuthorizeOpts | RedirectAuthorize
 
   const helper = new CommunicateHelper(waypointOrigin)
 
-  const authData = await helper.sendRequest<IdResponse>(state =>
+  const authData = await helper.sendRequest<WaypointResponse>(state =>
     openPopup(`${waypointOrigin}/client/${clientId}/authorize`, {
       state,
       redirect: redirectUrl,

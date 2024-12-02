@@ -28,6 +28,11 @@
       "import": "./dist/module/index.js",
       "require": "./dist/commonjs/index.js"
     },
+    "./common": {
+      "types": "./dist/types/common/index.d.ts",
+      "import": "./dist/module/common/index.js",
+      "require": "./dist/commonjs/common/index.js"
+    },
     "./web": {
       "types": "./dist/types/web/index.d.ts",
       "import": "./dist/module/web/index.js",
