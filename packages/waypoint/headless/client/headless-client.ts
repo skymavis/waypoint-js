@@ -1,9 +1,9 @@
 import { type GenericTransaction, Lockbox, type LockboxProvider } from "@axieinfinity/lockbox"
 import { type Address } from "viem"
 
-import { HeadlessClientError } from "./error"
+import { RONIN_GAS_SPONSOR_TYPE } from "../common/tx"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { _defaultShardStorage, type ClientShardStorage } from "./shard-storage"
-import { RONIN_GAS_SPONSOR_TYPE } from "./tx"
 
 type TrackParams = {
   enable: boolean
@@ -45,9 +45,10 @@ export class HeadlessClient {
     try {
       this.lockbox = Lockbox.init(config)
     } catch (error) {
-      throw new HeadlessClientError(error, {
-        code: -100,
-        shortMessage: "could NOT init HeadlessClient",
+      throw new HeadlessClientError({
+        code: HeadlessClientErrorCode.InitHeadlessClientError,
+        message: "could NOT init HeadlessClient",
+        cause: error,
       })
     }
 
@@ -67,9 +68,10 @@ export class HeadlessClient {
 
       return key
     } catch (error) {
-      throw new HeadlessClientError(error, {
-        code: -200,
-        shortMessage: "could NOT get backup client shard",
+      throw new HeadlessClientError({
+        code: HeadlessClientErrorCode.GetBackupClientShardError,
+        message: "could NOT get backup client shard",
+        cause: error,
       })
     }
   }
@@ -80,9 +82,10 @@ export class HeadlessClient {
     try {
       return await lockbox.decryptClientShard(backupShard, recoveryPassword)
     } catch (error) {
-      throw new HeadlessClientError(error, {
-        code: -300,
-        shortMessage: "could NOT decrypt client shard",
+      throw new HeadlessClientError({
+        code: HeadlessClientErrorCode.DecryptClientShardError,
+        message: "could NOT decrypt client shard",
+        cause: error,
       })
     }
   }
@@ -95,9 +98,10 @@ export class HeadlessClient {
 
       return true
     } catch (error) {
-      throw new HeadlessClientError(error, {
-        code: -600,
-        shortMessage: "could NOT validate keyless wallet signature",
+      throw new HeadlessClientError({
+        code: HeadlessClientErrorCode.KeylessValidationError,
+        message: "could NOT validate keyless wallet signature",
+        cause: error,
       })
     }
   }
@@ -108,9 +112,10 @@ export class HeadlessClient {
     try {
       return lockbox.getProvider()
     } catch (error) {
-      throw new HeadlessClientError(error, {
-        code: -500,
-        shortMessage: "could NOT initialize provider",
+      throw new HeadlessClientError({
+        code: HeadlessClientErrorCode.GetLockboxProviderError,
+        message: "could NOT initialize provider",
+        cause: error,
       })
     }
   }
@@ -121,9 +126,10 @@ export class HeadlessClient {
 
   getAddress = () => {
     if (!this.address) {
-      throw new HeadlessClientError(undefined, {
-        code: -700,
-        shortMessage: "address is NOT available",
+      throw new HeadlessClientError({
+        code: HeadlessClientErrorCode.ClientIsNotConnectedError,
+        message: "address is NOT available",
+        cause: undefined,
       })
     }
 
@@ -132,9 +138,10 @@ export class HeadlessClient {
 
   getProvider = () => {
     if (!this.provider) {
-      throw new HeadlessClientError(undefined, {
-        code: -700,
-        shortMessage: "provider is NOT available",
+      throw new HeadlessClientError({
+        code: HeadlessClientErrorCode.ClientIsNotConnectedError,
+        message: "provider is NOT available",
+        cause: undefined,
       })
     }
 
@@ -176,9 +183,10 @@ export class HeadlessClient {
 
     const clientShard = storage.get()
     if (!clientShard) {
-      throw new HeadlessClientError(undefined, {
-        code: -410,
-        shortMessage: "client shard get from storage is NOT valid",
+      throw new HeadlessClientError({
+        code: HeadlessClientErrorCode.InvalidClientShardError,
+        message: "The client shard is NOT valid.",
+        cause: undefined,
       })
     }
 

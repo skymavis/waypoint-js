@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: rgb(255, 255, 255);
+}
+
+.bg-gradient {
+  background: linear-gradient(135deg, #fddb92, #d1fdff);
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

@@ -16,7 +16,7 @@ import typescript from "rollup-plugin-typescript2"
 // Ref: https://rollupjs.org/configuration-options/#input
 const input = Object.fromEntries(
   globSync("**/*.ts", {
-    ignore: ["**/__tests__/**", "**/*.test.ts", "vitest.config.ts"],
+    ignore: ["**/__tests__/**", "**/*.test.ts", "vitest.config.ts", "**/global.d.ts"],
   }).map(file => [
     path.relative("", file.slice(0, file.length - path.extname(file).length)),
     fileURLToPath(new URL(file, import.meta.url)),
@@ -41,7 +41,7 @@ const mainConfig = defineConfig({
     peerDepsExternal(),
     nodeResolve({
       preferBuiltins: true,
-      browser: true
+      browser: true,
     }),
     commonjs(),
     nodePolyfills(),

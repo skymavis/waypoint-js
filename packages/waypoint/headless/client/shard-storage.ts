@@ -1,4 +1,4 @@
-export interface ClientShardStorage {
+export type ClientShardStorage = {
   get: () => string | undefined
   set: (newShard: string) => boolean
 }

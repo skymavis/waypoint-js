@@ -1,0 +1,31 @@
+{
+  "name": "test-wasm",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@sky-mavis/waypoint": "workspace:*",
+    "clsx": "2.1.1",
+    "jwt-decode": "4.0.0",
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "swr": "2.2.5",
+    "viem": "2.21.22"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "14.2.5",
+    "postcss": "^8.4.47",
+    "tailwindcss": "3.4.1",
+    "typescript": "^5.6.3"
+  }
+}
