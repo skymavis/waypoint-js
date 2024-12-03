@@ -27,7 +27,8 @@ const packEncryptedContent = (
 }
 
 const TAG_LENGTH_BIT = 128
-const TAG_LENGTH_BYTE = TAG_LENGTH_BIT / 8
+export const TAG_LENGTH_BYTE = TAG_LENGTH_BIT / 8
+export const IV_LENGTH_BYTE = 12
 
 export type EncryptShardParams = {
   waypointToken: string
@@ -40,7 +41,7 @@ export const encryptShard = async (params: EncryptShardParams) => {
   try {
     const { waypointToken, recoveryPassword, clientShard } = params
 
-    const iv = crypto.getRandomValues(new Uint8Array(12)) // Generate a 12-byte IV for AES-GCM
+    const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH_BYTE)) // Generate a 12-byte IV for AES-GCM
     const shardInBytes = stringToBytes(clientShard)
 
     const key = await deriveKey(waypointToken, recoveryPassword)

@@ -3,7 +3,7 @@ import { fromBinary } from "@bufbuild/protobuf"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
 import { Frame, FrameSchema } from "../../proto/rpc"
 
-const DEFAULT_TIMEOUT = 3_000
+const DEFAULT_TIMEOUT = 5_000
 
 export const openSocket = (url: string, timeout = DEFAULT_TIMEOUT): Promise<WebSocket> => {
   return new Promise((resolve, reject) => {

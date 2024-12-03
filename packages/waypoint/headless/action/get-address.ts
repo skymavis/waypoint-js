@@ -1,5 +1,5 @@
 import { secp256k1 } from "@noble/curves/secp256k1"
-import { Hex } from "viem"
+import { type Hex } from "viem"
 import { type Address, publicKeyToAddress } from "viem/accounts"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
@@ -29,6 +29,24 @@ export const getAddressFromShard = (clientShard: string): Address => {
       cause: error,
       code: HeadlessClientErrorCode.InvalidClientShardError,
       message: `Unable to get address from client shard. The parameter "clientShard" with value "${clientShard}" is NOT valid."`,
+    })
+  }
+}
+
+export const getSecretFromShard = (clientShard: string): Uint8Array => {
+  try {
+    const shardInBytes = base64ToBytes(clientShard)
+    const shard = bytesToJson(shardInBytes) as ClientShard
+
+    const { secretShare: secretShareInBase64 } = shard
+    const secretShareInBytes = base64ToBytes(secretShareInBase64)
+
+    return secretShareInBytes
+  } catch (error) {
+    throw new HeadlessClientError({
+      cause: error,
+      code: HeadlessClientErrorCode.InvalidClientShardError,
+      message: `Unable to get secret from client shard. The parameter "clientShard" with value "${clientShard}" is NOT valid."`,
     })
   }
 }

@@ -1,5 +1,5 @@
 import { create, toBinary } from "@bufbuild/protobuf"
-import { type Hex, type SignableMessage, toPrefixedMessage, verifyMessage } from "viem"
+import { type Hex, keccak256, type SignableMessage, toPrefixedMessage, verifyMessage } from "viem"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { FrameSchema, Type } from "../proto/rpc"
@@ -53,6 +53,7 @@ export const personalSign = async (params: PersonalSignParams): Promise<Hex> => 
   } = params
   const address = getAddressFromShard(clientShard)
   const prefixedMessage = toPrefixedMessage(message)
+  const keccakMessage = keccak256(prefixedMessage, "bytes")
   console.debug("🔏 SIGN: start")
 
   const signHandler = await wasmGetSignHandler(wasmUrl)
@@ -62,70 +63,74 @@ export const personalSign = async (params: PersonalSignParams): Promise<Hex> => 
   const { waitAndDequeue } = createFrameQueue(socket)
   console.debug("🔏 SIGN: socket is ready")
 
-  sendAuthenticate(socket, waypointToken)
-  const authFrame = await waitAndDequeue()
-  const authData = toAuthenticateData(authFrame)
-  console.debug("🔏 SIGN: authenticated", authData.uuid)
+  try {
+    sendAuthenticate(socket, waypointToken)
+    const authFrame = await waitAndDequeue()
+    const authData = toAuthenticateData(authFrame)
+    console.debug("🔏 SIGN: authenticated", authData.uuid)
 
-  const signResultPromise = wasmTriggerSign(signHandler, prefixedMessage, clientShard)
-  console.debug("🔏 SIGN: trigger wasm sign")
+    const signResultPromise = wasmTriggerSign(signHandler, keccakMessage, clientShard)
+    console.debug("🔏 SIGN: trigger wasm sign")
 
-  sendPersonalSign(socket, prefixedMessage)
-  console.debug("🔏 SIGN: trigger socket sign")
+    sendPersonalSign(socket, prefixedMessage)
+    console.debug("🔏 SIGN: trigger socket sign")
 
-  const sessionFrame = await waitAndDequeue()
-  wasmReceiveSession(signHandler, sessionFrame)
+    const sessionFrame = await waitAndDequeue()
+    wasmReceiveSession(signHandler, sessionFrame)
 
-  const socketR1 = await waitAndDequeue()
-  wasmReceiveProtocolData(signHandler, socketR1)
-  console.debug("🔏 SIGN: socket - round 1")
+    const socketR1 = await waitAndDequeue()
+    wasmReceiveProtocolData(signHandler, socketR1)
+    console.debug("🔏 SIGN: socket - round 1")
 
-  const wasmR1 = await wasmGetProtocolData(signHandler)
-  sendProtocolData(socket, wasmR1)
-  console.debug("🔏 SIGN: wasm - round 1")
+    const wasmR1 = await wasmGetProtocolData(signHandler)
+    sendProtocolData(socket, wasmR1)
+    console.debug("🔏 SIGN: wasm - round 1")
 
-  const socketR2 = await waitAndDequeue()
-  wasmReceiveProtocolData(signHandler, socketR2)
-  console.debug("🔏 SIGN: socket - round 2")
+    const socketR2 = await waitAndDequeue()
+    wasmReceiveProtocolData(signHandler, socketR2)
+    console.debug("🔏 SIGN: socket - round 2")
 
-  const wasmR2 = await wasmGetProtocolData(signHandler)
-  sendProtocolData(socket, wasmR2)
-  console.debug("🔏 SIGN: wasm - round 2")
+    const wasmR2 = await wasmGetProtocolData(signHandler)
+    sendProtocolData(socket, wasmR2)
+    console.debug("🔏 SIGN: wasm - round 2")
 
-  const socketR3 = await waitAndDequeue()
-  wasmReceiveProtocolData(signHandler, socketR3)
-  console.debug("🔏 SIGN: socket - round 3")
+    const socketR3 = await waitAndDequeue()
+    wasmReceiveProtocolData(signHandler, socketR3)
+    console.debug("🔏 SIGN: socket - round 3")
 
-  const sessionR2Frame = await waitAndDequeue()
-  wasmReceiveSession(signHandler, sessionR2Frame)
+    const sessionR2Frame = await waitAndDequeue()
+    wasmReceiveSession(signHandler, sessionR2Frame)
 
-  const socketR4 = await waitAndDequeue()
-  wasmReceiveProtocolData(signHandler, socketR4)
-  console.debug("🔏 SIGN: socket - round 4")
+    const socketR4 = await waitAndDequeue()
+    wasmReceiveProtocolData(signHandler, socketR4)
+    console.debug("🔏 SIGN: socket - round 4")
 
-  const wasmR3 = await wasmGetProtocolData(signHandler)
-  sendProtocolData(socket, wasmR3)
-  console.debug("🔏 SIGN: wasm - round 3")
+    const wasmR3 = await wasmGetProtocolData(signHandler)
+    sendProtocolData(socket, wasmR3)
+    console.debug("🔏 SIGN: wasm - round 3")
 
-  const socketR5 = await waitAndDequeue()
-  wasmReceiveProtocolData(signHandler, socketR5)
-  console.debug("🔏 SIGN: socket - round 5")
+    const socketR5 = await waitAndDequeue()
+    wasmReceiveProtocolData(signHandler, socketR5)
+    console.debug("🔏 SIGN: socket - round 5")
 
-  const signature = await signResultPromise
-  const isValid = await verifyMessage({
-    address: address,
-    message,
-    signature,
-  })
-
-  if (!isValid) {
-    throw new HeadlessClientError({
-      cause: undefined,
-      code: HeadlessClientErrorCode.InvalidSignatureError,
-      message: `The signed message is invalid for the given address "${address}".`,
+    const signature = await signResultPromise
+    const isValid = await verifyMessage({
+      address: address,
+      message,
+      signature,
     })
-  }
 
-  console.debug("🔏 SIGN: success")
-  return signature
+    if (!isValid) {
+      throw new HeadlessClientError({
+        cause: undefined,
+        code: HeadlessClientErrorCode.InvalidSignatureError,
+        message: `The signed message is invalid for the given address "${address}".`,
+      })
+    }
+
+    console.debug("🔏 SIGN: done")
+    return signature
+  } finally {
+    socket.close()
+  }
 }

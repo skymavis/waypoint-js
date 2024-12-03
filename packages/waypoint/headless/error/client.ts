@@ -20,6 +20,9 @@ export enum HeadlessClientErrorCode {
   SocketAuthenticateError = -22202,
   SocketSendError = -22203,
 
+  // * when client do NOT process frame with type = DATA | DONE from socket
+  MissingMessageError = -22204,
+
   // wasm common error
   WebAssemblyNotSupportedError = -33300,
   InstantiateError = -33301,
@@ -31,11 +34,14 @@ export enum HeadlessClientErrorCode {
   WasmGetProtocolResultError = -33305,
   WasmReceiveSocketDataError = -33306,
   WasmTriggerSignError = -33307,
+  WasmTriggerKeygenError = -33308,
 
   // action error
   InvalidSignatureError = -44400,
+
   DecryptClientShardError = -44401,
   EncryptClientShardError = -44402,
+  BackupClientShardError = -44403,
 }
 
 type HeadlessClientErrorOpts = {

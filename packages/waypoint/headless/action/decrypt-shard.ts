@@ -2,6 +2,7 @@ import { bytesToString, concatBytes } from "viem"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { base64ToBytes } from "../utils/convertor"
+import { IV_LENGTH_BYTE, TAG_LENGTH_BYTE } from "./encrypt-shard"
 import { deriveKey } from "./helpers/key"
 
 const unpackEncryptedContent = (
@@ -15,8 +16,8 @@ const unpackEncryptedContent = (
   const l1InBase64 = bytesToString(l2InBytes)
   const content = base64ToBytes(l1InBase64)
 
-  const ivSize = content[0] // * 1st byte: iv size
-  const authTagSize = content[1] // * 2nd byte: auth tag size
+  const ivSize = content[0] ?? IV_LENGTH_BYTE // * 1st byte: iv size
+  const authTagSize = content[1] ?? TAG_LENGTH_BYTE // * 2nd byte: auth tag size
 
   const iv = content.slice(2, 2 + ivSize)
   const cipherText = content.slice(2 + ivSize, content.length - authTagSize)
@@ -27,8 +28,13 @@ const unpackEncryptedContent = (
 
 const getV1PackedContent = (encryptedData: string) => {
   const parts = encryptedData.split(".")
+  const v1Content = parts[0]
 
-  return parts[0]
+  if (!v1Content) {
+    throw "Encrypted content is empty."
+  }
+
+  return v1Content
 }
 
 export type DecryptShardParams = {

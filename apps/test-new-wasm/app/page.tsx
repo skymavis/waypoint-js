@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  backupShard,
   decryptShard,
   encryptShard,
   getAddressFromShard,
@@ -121,6 +122,22 @@ const KeygenTestPage = () => {
     console.debug(`Execution time: ${end - start} ms`)
   }
 
+  const backupKey = async () => {
+    const start = performance.now()
+    const result = await backupShard({
+      waypointToken: WAYPOINT_TOKEN,
+      clientShard: CLIENT_SHARD,
+      recoveryPassword: RECOVERY_PASSWORD,
+
+      wsUrl: LOCKBOX_STAG_WS_URL,
+    })
+
+    const end = performance.now()
+
+    console.debug("backupKey result:", result)
+    console.debug(`Execution time: ${end - start} ms`)
+  }
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-4">
       <textarea value={wpToken} onChange={e => setWpToken(e.target.value)} cols={30} rows={10} />
@@ -206,6 +223,18 @@ const KeygenTestPage = () => {
         )}
       >
         Encrypt Key
+      </button>
+
+      <button
+        onClick={backupKey}
+        className={clsx(
+          "px-8 py-4",
+          "inline-flex justify-center items-center",
+          "rounded-lg bg-sky-500 hover:bg-sky-600 active:bg-sky-600",
+          "font-semibold text-slate-100 text-lg",
+        )}
+      >
+        Backup Key
       </button>
     </div>
   )

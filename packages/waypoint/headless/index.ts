@@ -16,12 +16,13 @@ export {
 export { DEFAULT_SHARD_STORAGE_KEY, type ClientShardStorage } from "./client/shard-storage"
 export { RONIN_GAS_SPONSOR_TYPE } from "./common/tx"
 
-export { keygen } from "./action/keygen"
-
+// actions
 export { getAddressFromShard } from "./action/get-address"
-export { decryptShard } from "./action/decrypt-shard"
-export { encryptShard } from "./action/encrypt-shard"
+export { decryptShard, type DecryptShardParams } from "./action/decrypt-shard"
+export { encryptShard, type EncryptShardParams } from "./action/encrypt-shard"
+export { backupShard, type BackupShardParams } from "./action/backup-shard"
 
-export { personalSign } from "./action/personal-sign"
+export { keygen, type KeygenParams } from "./action/keygen"
+export { personalSign, type PersonalSignParams } from "./action/personal-sign"
 export { sendTransaction } from "./action/send-tx"
 export { sendSponsoredTransaction } from "./action/send-sponsored-tx"

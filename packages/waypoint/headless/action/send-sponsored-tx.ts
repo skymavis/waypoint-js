@@ -16,7 +16,7 @@ import {
   wasmReceiveProtocolData,
   wasmReceiveSession,
 } from "./helpers/send-round-data"
-import { wasmTriggerSignSponsor } from "./helpers/trigger-sign"
+import { wasmTriggerSign } from "./helpers/trigger-sign"
 import { SendTransactionParams, SendTransactionResult } from "./send-tx"
 
 const sendSponsoredTransactionRequest = (socket: WebSocket, txData: unknown) => {
@@ -101,7 +101,7 @@ export const sendSponsoredTransaction = async (
   const serializedTxMessage = fromBinary(MessageSchema, serializedTxFrame.data)
   const serializedTx = serializedTxMessage.data
 
-  const signResultPromise = wasmTriggerSignSponsor(signHandler, serializedTx, clientShard)
+  const signResultPromise = wasmTriggerSign(signHandler, serializedTx, clientShard)
   console.debug("🔏 SEND TX: trigger wasm sign")
 
   const sessionFrame = await waitAndDequeue()
@@ -147,7 +147,7 @@ export const sendSponsoredTransaction = async (
 
   const signature = await signResultPromise
 
-  console.debug("🔏 SEND TX: success")
+  console.debug("🔏 SEND TX: done")
   return {
     txHash: transaction.txHash as Hex,
     signature,

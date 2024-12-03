@@ -1,20 +1,12 @@
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
-import { toSocketError } from "../../error/socket"
+import { toServerError } from "../../error/server"
 import { Frame, FrameSchema, SessionSchema, Type } from "../../proto/rpc"
 import { base64ToBytes, bytesToBase64, bytesToJson, jsonToBytes } from "../../utils/convertor"
 import { type ActionHandler, HandlerRxResult, HandlerTxParams } from "../../wasm/types"
 
 export const wasmGetProtocolData = async (signHandler: ActionHandler) => {
-  const createError = (cause: unknown) => {
-    return new HeadlessClientError({
-      cause,
-      code: HeadlessClientErrorCode.WasmGetProtocolResultError,
-      message: `Unable to receive the round data from WASM process.`,
-    })
-  }
-
   try {
     const wasmResultInBytes = await signHandler.rx()
     const wasmResult = bytesToJson(wasmResultInBytes) as HandlerRxResult
@@ -23,66 +15,62 @@ export const wasmGetProtocolData = async (signHandler: ActionHandler) => {
     if (kind === "mpc_protocol" && data) {
       return data
     }
-  } catch (error) {
-    throw createError(error)
-  }
 
-  throw createError(undefined)
+    throw "Protocol data received from wasm is not valid."
+  } catch (error) {
+    throw new HeadlessClientError({
+      cause: error,
+      code: HeadlessClientErrorCode.WasmGetProtocolResultError,
+      message: `Unable to receive the round data from WASM process.`,
+    })
+  }
 }
 
 export const wasmReceiveProtocolData = (signHandler: ActionHandler, frame: Frame) => {
-  const createError = (cause: unknown) => {
-    return new HeadlessClientError({
-      cause,
+  try {
+    if (frame.type === Type.DATA) {
+      const txParams: HandlerTxParams = {
+        kind: "mpc_protocol",
+        data: bytesToBase64(frame.data),
+      }
+      signHandler.tx(jsonToBytes(txParams))
+
+      return
+    }
+
+    throw toServerError(frame)
+  } catch (error) {
+    throw new HeadlessClientError({
+      cause: error,
       code: HeadlessClientErrorCode.WasmReceiveSocketDataError,
       message: `Unable to transfer the protocol data from the socket to WASM.`,
     })
   }
-
-  try {
-    if (frame.type !== Type.DATA) {
-      throw createError(toSocketError(frame))
-    }
-
-    const txParams: HandlerTxParams = {
-      kind: "mpc_protocol",
-      data: bytesToBase64(frame.data),
-    }
-    signHandler.tx(jsonToBytes(txParams))
-
-    return
-  } catch (error) {
-    throw createError(error)
-  }
 }
 
 export const wasmReceiveSession = (signHandler: ActionHandler, frame: Frame) => {
-  const createError = (cause: unknown) => {
-    return new HeadlessClientError({
-      cause,
+  try {
+    if (frame.type === Type.DATA) {
+      const session = fromBinary(SessionSchema, frame.data)
+
+      const txParams: HandlerTxParams = {
+        kind: "mpc_protocol",
+        data: {
+          sessionID: session.sessionId,
+        },
+      }
+      signHandler.tx(jsonToBytes(txParams))
+
+      return
+    }
+
+    throw toServerError(frame)
+  } catch (error) {
+    throw new HeadlessClientError({
+      cause: error,
       code: HeadlessClientErrorCode.WasmReceiveSocketDataError,
       message: `Unable to transfer the session data from the socket to WASM.`,
     })
-  }
-
-  try {
-    if (frame.type !== Type.DATA) {
-      throw createError(toSocketError(frame))
-    }
-
-    const session = fromBinary(SessionSchema, frame.data)
-
-    const txParams: HandlerTxParams = {
-      kind: "mpc_protocol",
-      data: {
-        sessionID: session.sessionId,
-      },
-    }
-    signHandler.tx(jsonToBytes(txParams))
-
-    return
-  } catch (error) {
-    throw createError(error)
   }
 }
 

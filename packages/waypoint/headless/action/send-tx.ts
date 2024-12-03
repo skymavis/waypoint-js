@@ -6,6 +6,7 @@ import {
   hexToBigInt,
   hexToNumber,
   http,
+  keccak256,
   serializeTransaction,
   toHex,
   TransactionSerializable,
@@ -104,6 +105,7 @@ export const sendTransaction = async (
     chainId: hexToNumber(txData.chainId),
   }
   const serializedTx = serializeTransaction(viemTxData)
+  const keccakSerializedTx = keccak256(serializedTx, "bytes")
   console.debug("🔏 SEND TX: start")
 
   const signHandler = await wasmGetSignHandler(wasmUrl)
@@ -117,7 +119,7 @@ export const sendTransaction = async (
   const authData = toAuthenticateData(authFrame)
   console.debug("🔏 SEND TX: authenticated", authData.uuid)
 
-  const signResultPromise = wasmTriggerSign(signHandler, serializedTx, clientShard)
+  const signResultPromise = wasmTriggerSign(signHandler, keccakSerializedTx, clientShard)
   console.debug("🔏 SEND TX: trigger wasm sign")
 
   startSocketSign(socket, txData)
@@ -165,7 +167,7 @@ export const sendTransaction = async (
 
   const signature = await signResultPromise
 
-  console.debug("🔏 SEND TX: success")
+  console.debug("🔏 SEND TX: done")
   return {
     txHash: transaction.txHash as Hex,
     signature,
