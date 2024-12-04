@@ -12,7 +12,7 @@ import {
 } from "@sky-mavis/waypoint/headless"
 import clsx from "clsx"
 import { useState } from "react"
-import { getAddress, toHex } from "viem"
+import { getAddress } from "viem"
 import { saigon } from "viem/chains"
 
 const WASM_URL = "/mpc.wasm"

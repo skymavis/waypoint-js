@@ -1,11 +1,8 @@
-import { create, toBinary } from "@bufbuild/protobuf"
 import { keccak256 } from "viem"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
 import { toServerError } from "../../error/server"
-import { FrameSchema, Type } from "../../proto/rpc"
-import { SignRequestSchema, SignType } from "../../proto/sign"
-import { jsonToBytes } from "../../utils/convertor"
+import { Type } from "../../proto/rpc"
 import { getAddressFromShard } from "../get-address"
 import { sendAuthenticate, toAuthenticateData } from "../helpers/authenticate"
 import { wasmGetSignHandler } from "../helpers/get-sign-handler"
@@ -17,30 +14,10 @@ import {
   wasmReceiveSession,
 } from "../helpers/send-round-data"
 import { wasmTriggerSign } from "../helpers/trigger-sign"
-import type { ChainParams, SendTransactionParams, SendTransactionResult } from "./common"
-import { toTxHash } from "./get-tx-hash"
-import { prepareLegacyTransaction } from "./prepare-tx"
-
-const startSocketSign = (socket: WebSocket, txData: unknown, chain: ChainParams) => {
-  const signTxParam = {
-    tx: txData,
-    clientParams: {
-      url: chain.rpcUrl,
-      chainId: chain.chainId,
-    },
-  }
-  const signRequest = create(SignRequestSchema, {
-    params: jsonToBytes(signTxParam),
-    type: SignType.TRANSACTION,
-  })
-  const requestInFrame = create(FrameSchema, {
-    data: toBinary(SignRequestSchema, signRequest),
-    type: Type.DATA,
-  })
-  const requestInBuffer = toBinary(FrameSchema, requestInFrame)
-
-  socket.send(requestInBuffer)
-}
+import type { SendTransactionParams, SendTransactionResult } from "./common"
+import { serializeLegacyTransaction, toTransactionInServerFormat } from "./prepare-tx"
+import { sendTransactionRequest } from "./send-tx-request"
+import { toTxHash } from "./to-tx-hash"
 
 export const sendLegacyTransaction = async (
   params: SendTransactionParams,
@@ -48,7 +25,6 @@ export const sendLegacyTransaction = async (
   const {
     waypointToken,
     clientShard,
-
     transaction,
     chain,
 
@@ -56,16 +32,18 @@ export const sendLegacyTransaction = async (
     wsUrl,
   } = params
   const address = getAddressFromShard(clientShard)
-  const { serializedTx, txInServerFormat } = await prepareLegacyTransaction({
+  const txInServerFormat = await toTransactionInServerFormat({
     chain,
     transaction,
     currentAddress: address,
   })
+  const serializedTx = serializeLegacyTransaction(txInServerFormat)
   const keccakSerializedTx = keccak256(serializedTx, "bytes")
   console.debug("🔏 SEND TX: start")
 
   const signHandler = await wasmGetSignHandler(wasmUrl)
   console.debug("🔏 SEND TX: wasm is ready")
+
   const socket = await openSocket(`${wsUrl}/v1/public/ws/send`)
   const { waitAndDequeue } = createFrameQueue(socket)
   console.debug("🔏 SEND TX: socket is ready")
@@ -79,8 +57,9 @@ export const sendLegacyTransaction = async (
     const signResultPromise = wasmTriggerSign(signHandler, keccakSerializedTx, clientShard)
     console.debug("🔏 SEND TX: trigger wasm sign")
 
-    startSocketSign(socket, txInServerFormat, chain)
+    sendTransactionRequest(socket, txInServerFormat, chain)
     console.debug("🔏 SEND TX: trigger socket sign")
+
     const sessionFrame = await waitAndDequeue()
     wasmReceiveSession(signHandler, sessionFrame)
 

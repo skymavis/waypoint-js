@@ -1,11 +1,9 @@
-import { create, fromBinary, toBinary } from "@bufbuild/protobuf"
+import { fromBinary } from "@bufbuild/protobuf"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
 import { toServerError } from "../../error/server"
 import { MessageSchema } from "../../proto/message"
-import { FrameSchema, Type } from "../../proto/rpc"
-import { SignRequestSchema, SignType } from "../../proto/sign"
-import { jsonToBytes } from "../../utils/convertor"
+import { Frame, Type } from "../../proto/rpc"
 import { getAddressFromShard } from "../get-address"
 import { sendAuthenticate, toAuthenticateData } from "../helpers/authenticate"
 import { wasmGetSignHandler } from "../helpers/get-sign-handler"
@@ -17,33 +15,27 @@ import {
   wasmReceiveSession,
 } from "../helpers/send-round-data"
 import { wasmTriggerSign } from "../helpers/trigger-sign"
-import { type ChainParams, SendTransactionParams, SendTransactionResult } from "./common"
-import { toTxHash } from "./get-tx-hash"
-import { prepareSponsoredTransaction } from "./prepare-tx"
+import { SendTransactionParams, SendTransactionResult } from "./common"
+import { toTransactionInServerFormat } from "./prepare-tx"
+import { sendTransactionRequest } from "./send-tx-request"
+import { toTxHash } from "./to-tx-hash"
 
-const sendSponsoredTransactionRequest = (
-  socket: WebSocket,
-  txData: unknown,
-  chain: ChainParams,
-) => {
-  const signTxParam = {
-    tx: txData,
-    clientParams: {
-      url: chain.rpcUrl,
-      chainId: chain.chainId,
-    },
+export const toSerializedSponsoredTransaction = (frame: Frame): Uint8Array => {
+  try {
+    if (frame.type === Type.DATA) {
+      const message = fromBinary(MessageSchema, frame.data)
+
+      return message.data
+    }
+
+    throw toServerError(frame)
+  } catch (error) {
+    throw new HeadlessClientError({
+      code: HeadlessClientErrorCode.SendTransactionError,
+      message: `Unable to get the serialized transaction from the server.`,
+      cause: error,
+    })
   }
-  const signRequest = create(SignRequestSchema, {
-    params: jsonToBytes(signTxParam),
-    type: SignType.TRANSACTION,
-  })
-  const requestInFrame = create(FrameSchema, {
-    data: toBinary(SignRequestSchema, signRequest),
-    type: Type.DATA,
-  })
-  const requestInBuffer = toBinary(FrameSchema, requestInFrame)
-
-  socket.send(requestInBuffer)
 }
 
 export const sendSponsoredTransaction = async (
@@ -52,7 +44,6 @@ export const sendSponsoredTransaction = async (
   const {
     waypointToken,
     clientShard,
-
     chain,
     transaction,
 
@@ -60,7 +51,7 @@ export const sendSponsoredTransaction = async (
     wsUrl,
   } = params
   const address = getAddressFromShard(clientShard)
-  const txInServerFormat = await prepareSponsoredTransaction({
+  const txInServerFormat = await toTransactionInServerFormat({
     chain,
     transaction,
     currentAddress: address,
@@ -80,12 +71,11 @@ export const sendSponsoredTransaction = async (
     const authData = toAuthenticateData(authFrame)
     console.debug("🔏 SEND TX: authenticated", authData.uuid)
 
-    sendSponsoredTransactionRequest(socket, txInServerFormat, chain)
+    sendTransactionRequest(socket, txInServerFormat, chain)
     console.debug("🔏 SEND TX: trigger socket sign")
 
     const serializedTxFrame = await waitAndDequeue()
-    const serializedTxMessage = fromBinary(MessageSchema, serializedTxFrame.data)
-    const serializedTx = serializedTxMessage.data
+    const serializedTx = toSerializedSponsoredTransaction(serializedTxFrame)
 
     const signResultPromise = wasmTriggerSign(signHandler, serializedTx, clientShard)
     console.debug("🔏 SEND TX: trigger wasm sign")

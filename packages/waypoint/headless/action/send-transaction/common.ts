@@ -1,8 +1,14 @@
 import { type AccessList, type Address, type Hex, numberToHex, parseGwei } from "viem"
 
-export const LEGACY_TYPE = "0x0" as const
+export const LEGACY_TYPE = "0x0"
 export const RONIN_GAS_SPONSOR_TYPE = "0x64"
 export const RONIN_GAS_PRICE = numberToHex(parseGwei("20"))
+
+export const PAYER_INFO = {
+  s: "0x3caeb99cc6659c5ca4c66b91b1686a86fe0493e1122bdd09f2babdf72e54041a",
+  r: "0xdbdbd0989f595c0921acaf9c80342bbeff3b8ea6d2a9ad3167e63010715de3fd",
+  v: "0x1",
+} as const
 
 export type TransactionParams = {
   // * "0x64" for ronin gas sponsor
@@ -54,4 +60,30 @@ export type SendTransactionParams = {
 export type SendTransactionResult = {
   txHash: Hex
   signature: Hex
+}
+
+export type TransactionInServerFormat = {
+  type: "0x0" | "0x64"
+  from: Address
+  to: Address
+  value: Hex
+  input: Hex
+  gasPrice: Hex
+
+  gas: Hex
+  nonce: Hex
+
+  // chainId for processing the transaction
+  chainId: Hex
+
+  // placeholder fields
+  r: Hex
+  v: Hex
+  s: Hex
+  payerS: Hex
+  payerR: Hex
+  payerV: Hex
+  maxFeePerGas: Hex
+  maxPriorityFeePerGas: Hex
+  expiredTime: Hex
 }

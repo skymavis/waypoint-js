@@ -15,11 +15,15 @@ export type ServerErrorType = ServerError & {
 export class ServerError extends Error {
   override name = "MpcServerError"
   code: number
+  shortMessage: string
 
   constructor({ code, message }: ServerErrorOpts) {
-    super(message)
+    const fullMessage = ["", `code: ${code}`, `message: ${message}`].join("\n• ")
+
+    super(fullMessage)
 
     this.code = code
+    this.shortMessage = message
   }
 }
 
