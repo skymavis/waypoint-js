@@ -28,7 +28,7 @@ export const getAddressFromShard = (clientShard: string): Address => {
     throw new HeadlessClientError({
       cause: error,
       code: HeadlessClientErrorCode.InvalidClientShardError,
-      message: `Unable to get address from client shard. The parameter "clientShard" with value "${clientShard}" is NOT valid."`,
+      message: `Unable to get address from client shard. The parameter clientShard="${clientShard}" is NOT valid."`,
     })
   }
 }
@@ -46,7 +46,7 @@ export const getSecretFromShard = (clientShard: string): Uint8Array => {
     throw new HeadlessClientError({
       cause: error,
       code: HeadlessClientErrorCode.InvalidClientShardError,
-      message: `Unable to get secret from client shard. The parameter "clientShard" with value "${clientShard}" is NOT valid."`,
+      message: `Unable to get secret from client shard. The parameter clientShard="${clientShard}" is NOT valid."`,
     })
   }
 }

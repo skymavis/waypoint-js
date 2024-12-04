@@ -1,11 +1,12 @@
-import { type Hex, type SignableMessage, toPrefixedMessage, verifyMessage } from "viem"
+import { type Hex, type TypedDataDefinition, verifyTypedData } from "viem"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { getAddressFromShard } from "./get-address"
+import { prepareTypedData } from "./helpers/prepare-typed-data"
 import { _sign } from "./sign"
 
-export type PersonalSignParams = {
-  message: SignableMessage
+export type SignTypedDataParams = {
+  typedData: TypedDataDefinition
 
   waypointToken: string
   clientShard: string
@@ -14,15 +15,15 @@ export type PersonalSignParams = {
   wsUrl: string
 }
 
-export const personalSign = async (params: PersonalSignParams): Promise<Hex> => {
-  const { message, ...restParams } = params
+export const signTypedData = async (params: SignTypedDataParams): Promise<Hex> => {
+  const { typedData, ...restParams } = params
   const address = getAddressFromShard(params.clientShard)
-  const prefixedMessage = toPrefixedMessage(message)
+  const rawMessage = prepareTypedData(typedData)
 
-  const signature = await _sign({ ...restParams, rawMessage: prefixedMessage })
-  const isValid = await verifyMessage({
+  const signature = await _sign({ ...restParams, rawMessage: rawMessage })
+  const isValid = await verifyTypedData({
+    ...typedData,
     address: address,
-    message,
     signature,
   })
 

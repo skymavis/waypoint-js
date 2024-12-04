@@ -15,7 +15,7 @@ import {
   wasmReceiveSession,
 } from "../helpers/send-round-data"
 import { wasmTriggerSign } from "../helpers/trigger-sign"
-import { SendTransactionParams, SendTransactionResult } from "./common"
+import type { SendTransactionParams, SendTransactionResult } from "./common"
 import { toTransactionInServerFormat } from "./prepare-tx"
 import { sendTransactionRequest } from "./send-tx-request"
 import { toTxHash } from "./to-tx-hash"

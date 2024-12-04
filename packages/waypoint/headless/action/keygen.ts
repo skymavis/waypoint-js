@@ -1,6 +1,6 @@
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { bytesToJson } from "../utils/convertor"
-import { type ActionHandler, KeygenHandlerDoResponse } from "../wasm/types"
+import { type ActionHandler, type KeygenHandlerDoResponse } from "../wasm/types"
 import { sendAuthenticate, toAuthenticateData } from "./helpers/authenticate"
 import { wasmGetKeygenHandler } from "./helpers/get-keygen-handler"
 import { createFrameQueue, openSocket } from "./helpers/open-socket"
