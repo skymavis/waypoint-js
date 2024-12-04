@@ -7,11 +7,13 @@ import {
   getAddressFromShard,
   keygen,
   personalSign,
+  sendLegacyTransaction,
   sendSponsoredTransaction,
-  sendTransaction,
 } from "@sky-mavis/waypoint/headless"
 import clsx from "clsx"
 import { useState } from "react"
+import { getAddress, toHex } from "viem"
+import { saigon } from "viem/chains"
 
 const WASM_URL = "/mpc.wasm"
 const LOCKBOX_STAG_WS_URL = "wss://project-x.skymavis.one"
@@ -66,9 +68,20 @@ const KeygenTestPage = () => {
 
   const handleSignTx = async () => {
     const start = performance.now()
-    const result = await sendTransaction({
+    const result = await sendLegacyTransaction({
       clientShard: CLIENT_SHARD,
       waypointToken: WAYPOINT_TOKEN,
+
+      chain: {
+        chainId: saigon.id,
+        rpcUrl: saigon.rpcUrls.default.http[0],
+      },
+      transaction: {
+        type: "0x0",
+        to: getAddress("0xcd3cf91e7f0601ab98c95dd18b4f99221bcf0b20"),
+        value: "0x23af16b18000",
+      },
+
       wasmUrl: WASM_URL,
       wsUrl: LOCKBOX_STAG_WS_URL,
     })
@@ -83,6 +96,17 @@ const KeygenTestPage = () => {
     const result = await sendSponsoredTransaction({
       clientShard: CLIENT_SHARD,
       waypointToken: WAYPOINT_TOKEN,
+
+      chain: {
+        chainId: saigon.id,
+        rpcUrl: saigon.rpcUrls.default.http[0],
+      },
+      transaction: {
+        type: "0x64",
+        to: getAddress("0xcd3cf91e7f0601ab98c95dd18b4f99221bcf0b20"),
+        value: "0x23af16b18000",
+      },
+
       wasmUrl: WASM_URL,
       wsUrl: LOCKBOX_STAG_WS_URL,
     })

@@ -42,6 +42,8 @@ export enum HeadlessClientErrorCode {
   DecryptClientShardError = -44401,
   EncryptClientShardError = -44402,
   BackupClientShardError = -44403,
+
+  SendTransactionError = -44404,
 }
 
 type HeadlessClientErrorOpts = {

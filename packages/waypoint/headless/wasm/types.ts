@@ -36,7 +36,7 @@ export type SignHandlerDoResult = {
   }
 }
 
-export interface KeygenHandlerDoResponse {
+export type KeygenHandlerDoResponse = {
   data: {
     key: string
   }

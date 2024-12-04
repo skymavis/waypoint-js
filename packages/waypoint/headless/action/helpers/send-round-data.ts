@@ -79,7 +79,6 @@ export const sendProtocolData = (socket: WebSocket, base64Data: string) => {
     const requestInFrame = create(FrameSchema, {
       type: Type.DATA,
       data: base64ToBytes(base64Data),
-      id: 3,
     })
     const requestInBuffer = toBinary(FrameSchema, requestInFrame)
 

@@ -1,7 +1,7 @@
 import { type GenericTransaction, Lockbox, type LockboxProvider } from "@axieinfinity/lockbox"
 import { type Address } from "viem"
 
-import { RONIN_GAS_SPONSOR_TYPE } from "../common/tx"
+import { RONIN_GAS_SPONSOR_TYPE } from "../action/send-transaction/common"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { _defaultShardStorage, type ClientShardStorage } from "./shard-storage"
 

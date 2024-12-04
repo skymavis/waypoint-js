@@ -23,7 +23,6 @@ const sendPersonalSign = (socket: WebSocket, prefixedMessage: Hex) => {
     type: SignType.MESSAGE,
   })
   const requestInFrame = create(FrameSchema, {
-    id: 1,
     type: Type.DATA,
     data: toBinary(SignRequestSchema, signRequest),
   })

@@ -4,7 +4,10 @@ import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client
 import { toServerError } from "../../error/server"
 import { AuthenticateRequestSchema, AuthenticateResponseSchema } from "../../proto/auth"
 import { Frame, FrameSchema, Type } from "../../proto/rpc"
-import { addBearerPrefix } from "../../utils/validate-param"
+
+const addBearerPrefix = (waypointToken: string) => {
+  return waypointToken.startsWith("Bearer ") ? waypointToken : "Bearer " + waypointToken
+}
 
 export const sendAuthenticate = (socket: WebSocket, waypointToken: string) => {
   const authRequest = create(AuthenticateRequestSchema, {
