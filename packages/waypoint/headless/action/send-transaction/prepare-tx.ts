@@ -24,7 +24,7 @@ import {
 type FormatTransactionParams = {
   transaction: TransactionParams
   chain: ChainParams
-  currentAddress: Address
+  currentAddress?: Address
 }
 export const toTransactionInServerFormat = async (params: FormatTransactionParams) => {
   const {
@@ -61,6 +61,14 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
     })
   }
 
+  if (!from) {
+    throw new HeadlessClientError({
+      cause: undefined,
+      code: HeadlessClientErrorCode.PrepareTransactionError,
+      message: `The transaction with from="${from}" is not valid.`,
+    })
+  }
+
   try {
     const publicClient = createPublicClient({
       transport: http(rpcUrl),
@@ -68,7 +76,7 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
 
     const filledNonce = nonce
       ? hexToNumber(nonce)
-      : await publicClient.getTransactionCount({ address: currentAddress, blockTag: "pending" })
+      : await publicClient.getTransactionCount({ address: from, blockTag: "pending" })
 
     const filledGas = gas
       ? hexToBigInt(gas)

@@ -4,10 +4,7 @@ import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client
 import { toServerError } from "../../error/server"
 import { AuthenticateRequestSchema, AuthenticateResponseSchema } from "../../proto/auth"
 import { Frame, FrameSchema, Type } from "../../proto/rpc"
-
-const addBearerPrefix = (waypointToken: string) => {
-  return waypointToken.startsWith("Bearer ") ? waypointToken : "Bearer " + waypointToken
-}
+import { addBearerPrefix } from "../../utils/token"
 
 export const sendAuthenticate = (socket: WebSocket, waypointToken: string) => {
   const authRequest = create(AuthenticateRequestSchema, {
@@ -35,7 +32,7 @@ export const toAuthenticateData = (authFrame: Frame) => {
     throw toServerError(authFrame)
   } catch (error) {
     throw new HeadlessClientError({
-      code: HeadlessClientErrorCode.SocketAuthenticateError,
+      code: HeadlessClientErrorCode.AuthenticateError,
       message: `Unable to authenticate the user with the server.`,
       cause: error,
     })

@@ -1,13 +1,22 @@
 /* eslint-disable simple-import-sort/exports */
 
 // client
+// export {
+//   HeadlessClient,
+//   type ConnectParam,
+//   type CreateHeadlessClientOpts,
+//   type ReconnectParams,
+//   type ValidateSponsorTxParams,
+// } from "./client/headless-client"
+// storage
+// export { DEFAULT_SHARD_STORAGE_KEY, type ClientShardStorage } from "./client/shard-storage"
+
+export { BaseClient, type CreateBaseClientOpts } from "./client/base-client"
 export {
-  HeadlessClient,
-  type ConnectParam,
-  type CreateHeadlessClientOpts,
-  type ReconnectParams,
-  type ValidateSponsorTxParams,
-} from "./client/headless-client"
+  BaseProvider,
+  type BaseProviderSchema,
+  type BaseProviderType,
+} from "./client/base-provider"
 
 // actions
 export { getAddressFromShard } from "./action/get-address"
@@ -30,6 +39,22 @@ export {
   type TransactionParams,
 } from "./action/send-transaction/common"
 
+export {
+  getBackupClientShard,
+  type GetBackupClientShardParams,
+  type GetBackupClientShardResult,
+} from "./action/get-backup-shard"
+export {
+  getUserProfile,
+  type GetUserProfileParams,
+  type GetUserProfileResult,
+} from "./action/get-user-profile"
+export {
+  validateSponsorTransaction,
+  type ValidateSponsorTransactionParams,
+  type ValidateSponsorTransactionResult,
+} from "./action/validate-sponsor-tx"
+
 // error
 export {
   HeadlessClientError,
@@ -37,6 +62,3 @@ export {
   type HeadlessClientErrorType,
 } from "./error/client"
 export { ServerError, type ServerErrorType } from "./error/server"
-
-// storage
-export { DEFAULT_SHARD_STORAGE_KEY, type ClientShardStorage } from "./client/shard-storage"

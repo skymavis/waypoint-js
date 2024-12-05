@@ -75,20 +75,10 @@ export const wasmReceiveSession = (signHandler: ActionHandler, frame: Frame) => 
 }
 
 export const sendProtocolData = (socket: WebSocket, base64Data: string) => {
-  try {
-    const requestInFrame = create(FrameSchema, {
-      type: Type.DATA,
-      data: base64ToBytes(base64Data),
-    })
-    const requestInBuffer = toBinary(FrameSchema, requestInFrame)
+  const frame = create(FrameSchema, {
+    type: Type.DATA,
+    data: base64ToBytes(base64Data),
+  })
 
-    socket.send(requestInBuffer)
-    return
-  } catch (error) {
-    throw new HeadlessClientError({
-      cause: error,
-      code: HeadlessClientErrorCode.SocketSendError,
-      message: `Unable to send the WASM round data to socket.`,
-    })
-  }
+  socket.send(toBinary(FrameSchema, frame))
 }

@@ -5,11 +5,14 @@ import {
   decryptShard,
   encryptShard,
   getAddressFromShard,
+  getBackupClientShard,
+  getUserProfile,
   keygen,
   personalSign,
   sendLegacyTransaction,
   sendSponsoredTransaction,
   signTypedData,
+  validateSponsorTransaction,
 } from "@sky-mavis/waypoint/headless"
 import { useState } from "react"
 import { getAddress, TypedDataDefinition } from "viem"
@@ -20,6 +23,10 @@ import { Divider } from "./divider"
 import { calcExecutionTime } from "./performance"
 
 const WASM_URL = "/mpc.wasm"
+// const LOCKBOX_PROD_HTTP_URL = "https://lockbox.skymavis.com"
+// const LOCKBOX_PROD_WS_URL = "wss://lockbox.skymavis.com"
+
+const LOCKBOX_STAG_HTTP_URL = "https://project-x.skymavis.one"
 const LOCKBOX_STAG_WS_URL = "wss://project-x.skymavis.one"
 
 const CLIENT_SHARD =
@@ -30,6 +37,7 @@ const RECOVERY_PASSWORD = "123123123"
 const BACKUP_DATA =
   "REJESCtyN0xCeW5tb1VUVFF4QTZBaTFIMWhNUEdJVGp5UXpobVczanBGUUs4aG42QWlhTVVJR3didTZHNDZ6d2l5K2NSTlFIaWNEUlFNUzdQTE14Zm93OE1ZNCtwMW1qNXhPQldqTzY2UCtkaHNyS1JkMFpEVG5TRHJlZlVEWGN0akw3MjM3MjVsUDAxR2RGdWxEOHVvQ1l6d081SUVwSHA5enZqNlB6MCsyNkpxL0tha282TEp3b3VNSlJjUzdVVkxvSU54cFBESEo1RHhaSGVybTAxWXhldDY3b3RpRml4eitYaVIwcE1LTndrc2s5RkpiM0UvZWdCbUFmSm1QNkdKUW8vOGVvVWhWWWszKzhBS1V4Y3Ftb1pyQktwdkpQeG9pcm42UWtzM0oxTUJ6Mlc3ZENwVkIrdHZ6dEJBelpxSFJYWUxJNU5iVzRHdUdacHo5TURBcG1XQ2lTT1BjbUVCc2MxS2xYRVdxRk5CbVpFQ1lMR3hualJyUTJFQT09"
 
+const ADDRESS = getAddressFromShard(CLIENT_SHARD)
 const SAMPLE_TYPED_DATA: TypedDataDefinition = {
   types: {
     Asset: [
@@ -195,6 +203,43 @@ const KeygenTestPage = () => {
     )
   }
 
+  const handleValidateSponsorTransaction = async () => {
+    calcExecutionTime("Validate Sponsored Tx", () =>
+      validateSponsorTransaction({
+        waypointToken: WAYPOINT_TOKEN,
+
+        chain: {
+          chainId: saigon.id,
+          rpcUrl: saigon.rpcUrls.default.http[0],
+        },
+        transaction: {
+          from: ADDRESS,
+          type: "0x64",
+          to: getAddress("0xcd3cf91e7f0601ab98c95dd18b4f99221bcf0b20"),
+          value: "0x23af16b18000",
+        },
+
+        httpUrl: LOCKBOX_STAG_HTTP_URL,
+      }),
+    )
+  }
+  const handleGetUserProfile = async () => {
+    calcExecutionTime("Get User Profile", () =>
+      getUserProfile({
+        waypointToken: WAYPOINT_TOKEN,
+        httpUrl: LOCKBOX_STAG_HTTP_URL,
+      }),
+    )
+  }
+  const handleGetBackupClientShard = async () => {
+    calcExecutionTime("Get Backup Client Shard", () =>
+      getBackupClientShard({
+        waypointToken: WAYPOINT_TOKEN,
+        httpUrl: LOCKBOX_STAG_HTTP_URL,
+      }),
+    )
+  }
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-2">
       <textarea
@@ -219,6 +264,10 @@ const KeygenTestPage = () => {
       <Divider />
       <Button onClick={handleSendLegacyTransaction}>Send legacy transaction</Button>
       <Button onClick={handleSendSponsoredTransaction}>Send sponsored transaction</Button>
+      <Divider />
+      <Button onClick={handleValidateSponsorTransaction}>Validate sponsored transaction</Button>
+      <Button onClick={handleGetUserProfile}>Get user profile</Button>
+      <Button onClick={handleGetBackupClientShard}>Get backup shard</Button>
     </div>
   )
 }

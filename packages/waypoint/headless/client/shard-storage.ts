@@ -1,5 +1,5 @@
 export type ClientShardStorage = {
-  get: () => string | undefined
+  get: () => string
   set: (newShard: string) => boolean
 }
 
@@ -10,10 +10,10 @@ const isStorageAvailable = () => typeof sessionStorage !== "undefined"
 export const _defaultShardStorage: ClientShardStorage = {
   get: () => {
     if (!isStorageAvailable()) {
-      return undefined
+      return ""
     }
 
-    return sessionStorage.getItem(DEFAULT_SHARD_STORAGE_KEY) ?? undefined
+    return sessionStorage.getItem(DEFAULT_SHARD_STORAGE_KEY) ?? ""
   },
   set: newShard => {
     if (!isStorageAvailable()) {
