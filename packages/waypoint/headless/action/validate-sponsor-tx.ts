@@ -3,7 +3,7 @@ import { Address } from "viem"
 import { RawServerError } from "../error/raw-server"
 import { ServerError } from "../error/server"
 import { request } from "./helpers/request/request"
-import { ChainParams, TransactionParams } from "./send-transaction/common"
+import { ChainParams, RONIN_GAS_SPONSOR_TYPE, TransactionParams } from "./send-transaction/common"
 import { toTransactionInServerFormat } from "./send-transaction/prepare-tx"
 
 type ValidateSponsorTransactionApiResponse = {
@@ -28,9 +28,13 @@ export type ValidateSponsorTransactionResult = {
 export const validateSponsorTransaction = async (params: ValidateSponsorTransactionParams) => {
   const { httpUrl, waypointToken, transaction, chain, currentAddress } = params
 
+  const sponsoredTx = {
+    ...transaction,
+    type: RONIN_GAS_SPONSOR_TYPE,
+  } as const
   const serverTxData = await toTransactionInServerFormat({
     chain,
-    transaction,
+    transaction: sponsoredTx,
     currentAddress,
   })
 

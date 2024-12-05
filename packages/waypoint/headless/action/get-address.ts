@@ -13,6 +13,14 @@ type ClientShard = {
 }
 
 export const getAddressFromShard = (clientShard: string): Address => {
+  if (!clientShard) {
+    throw new HeadlessClientError({
+      cause: undefined,
+      code: HeadlessClientErrorCode.InvalidClientShardError,
+      message: `Unable to get address from client shard. The parameter clientShard="${clientShard}" is NOT valid."`,
+    })
+  }
+
   try {
     const shardInBytes = base64ToBytes(clientShard)
     const shard = bytesToJson(shardInBytes) as ClientShard

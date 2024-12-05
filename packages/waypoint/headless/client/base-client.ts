@@ -23,7 +23,7 @@ import { sendSponsoredTransaction } from "../action/send-transaction/send-sponso
 import { signTypedData } from "../action/sign-typed-data"
 import { validateSponsorTransaction } from "../action/validate-sponsor-tx"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
-import { getServiceUrls, type ServiceUrls } from "../utils/service-url"
+import { getServiceUrls, type ServiceEnv } from "../utils/service-url"
 import { BaseProvider } from "./base-provider"
 
 export type CreateBaseClientOpts = {
@@ -33,7 +33,7 @@ export type CreateBaseClientOpts = {
   chainId: number
   overrideRpcUrl?: string
 
-  serviceEnv?: ServiceUrls
+  serviceEnv?: ServiceEnv
   wasmUrl?: string
 }
 

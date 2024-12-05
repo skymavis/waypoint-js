@@ -36,7 +36,7 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
     type = LEGACY_TYPE,
     from = currentAddress,
     to,
-    value = "0x",
+    value = "0x0",
     data = "0x",
     input,
     gasPrice = RONIN_GAS_PRICE,
@@ -78,6 +78,7 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
       ? hexToNumber(nonce)
       : await publicClient.getTransactionCount({ address: from, blockTag: "pending" })
 
+    // TODO: test sponsored transaction case - when gas is not provided
     const filledGas = gas
       ? hexToBigInt(gas)
       : await publicClient.estimateGas({
