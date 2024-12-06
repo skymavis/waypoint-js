@@ -19,7 +19,7 @@ export const openSocket = (url: string, timeout = DEFAULT_TIMEOUT): Promise<WebS
         new HeadlessClientError({
           cause: undefined,
           code: HeadlessClientErrorCode.OpenSocketError,
-          message: `Unable to open WebSocket with URL "${url}". The connection has reached the timeout of ${timeout}ms.`,
+          message: `Unable to open WebSocket with url="${url}". The connection has reached the timeout of ${timeout}ms.`,
         }),
       )
     }, timeout)

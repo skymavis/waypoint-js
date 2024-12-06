@@ -28,7 +28,7 @@ const wasmBrowserInstantiate = async (wasmModuleUrl: string, importObject: WebAs
   } catch (error) {
     throw new HeadlessClientError({
       code: HeadlessClientErrorCode.InstantiateError,
-      message: `Unable to instantiate WASM module with url ${wasmModuleUrl}.`,
+      message: `Unable to instantiate WASM module with url="${wasmModuleUrl}".`,
       cause: error,
     })
   }

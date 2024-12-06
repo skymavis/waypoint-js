@@ -17,6 +17,6 @@ export const wasmGetSignHandler = async (wasmUrl: string) => {
   throw new HeadlessClientError({
     cause: undefined,
     code: HeadlessClientErrorCode.HandlerNotFoundError,
-    message: `Unable to get the sign handler. This could be due to a wrong version of WASM with URL "${wasmUrl}"`,
+    message: `Unable to get the sign handler. This could be due to a wrong version of WASM with url"${wasmUrl}"`,
   })
 }

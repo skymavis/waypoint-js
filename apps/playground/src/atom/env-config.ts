@@ -10,6 +10,10 @@ const CLIENT_ID_MAP: Record<WaypointOrigin, string> = {
 const _waypointOriginAtom = atomWithStorage<WaypointOrigin>(
   "RONIN_WAYPOINT_ORIGIN",
   "https://waypoint.roninchain.com",
+  undefined,
+  {
+    getOnInit: true,
+  },
 )
 
 export const waypointConfigAtom = atom(get => {

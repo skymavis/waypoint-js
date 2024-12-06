@@ -105,7 +105,7 @@ export class BaseProvider extends EventEmitter implements BaseProviderType {
     }
 
     try {
-      return await this.baseClient.signMessage(data)
+      return await this.baseClient.signMessage({ raw: data })
     } catch (err) {
       if (err instanceof Error) {
         throw new InternalRpcError(err)

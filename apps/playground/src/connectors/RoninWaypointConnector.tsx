@@ -49,13 +49,28 @@ export class RoninWaypointConnector extends BaseConnector<WaypointProvider> {
       chainId: chainId,
     })
 
-    const accounts = await newProvider.request<string[]>({ method: "eth_requestAccounts" })
+    const currentAccounts = await newProvider.request<string[]>({
+      method: "eth_accounts",
+    })
 
-    if (accounts.length) {
+    if (currentAccounts.length) {
       this.provider = newProvider
 
       return {
-        account: accounts[0],
+        account: currentAccounts[0],
+        chainId: chainId,
+        provider: newProvider,
+      }
+    }
+    const newAccounts = await newProvider.request<string[]>({
+      method: "eth_requestAccounts",
+    })
+
+    if (newAccounts.length) {
+      this.provider = newProvider
+
+      return {
+        account: newAccounts[0],
         chainId: chainId,
         provider: newProvider,
       }
