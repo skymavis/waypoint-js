@@ -85,7 +85,7 @@ export class BaseClient {
         throw new HeadlessClientError({
           cause: undefined,
           code: HeadlessClientErrorCode.UnsupportedChainIdError,
-          message: `Unsupported chainId. Unable to find rpcUrl for chainId="${chainId}". Please provide an "overrideRpcUrl" parameter.`,
+          message: `Unsupported chain. Unable to find rpcUrl for chainId="${chainId}". Please provide an "overrideRpcUrl" parameter.`,
         })
       }
 

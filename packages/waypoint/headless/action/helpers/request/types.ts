@@ -5,7 +5,6 @@ export type RequestRoute = `${RequestMethod} ${Route}`
 export type RequestHeaders = {
   contentType?: string
   authorization?: string
-  authorizationPayer?: string
 }
 
 export type RequestOption = Omit<RequestInit, "headers" | "body"> & {

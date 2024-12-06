@@ -16,7 +16,7 @@ export const wasmGetProtocolData = async (signHandler: ActionHandler) => {
       return data
     }
 
-    throw "Protocol data received from wasm is not valid."
+    throw "Protocol data received from WASM is not valid."
   } catch (error) {
     throw new HeadlessClientError({
       cause: error,

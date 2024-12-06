@@ -20,16 +20,11 @@ export const request = async <R = unknown, E = unknown>(
 
   // ? Request `header` initialization & validation
   const requestHeaders = new Headers({ Accept: "application/json" })
-  const { contentType = DEFAULT_CONTENT_TYPE, authorization, authorizationPayer } = headers
+  const { contentType = DEFAULT_CONTENT_TYPE, authorization } = headers
 
   // ? Request `Authorization` setting
   if (authorization) {
     requestHeaders.set("Authorization", addBearerPrefix(authorization))
-  }
-
-  // ? Set payer access token. Specific for Mpc payer
-  if (authorizationPayer) {
-    requestHeaders.set("Authorization", addBearerPrefix(authorizationPayer))
   }
 
   // ? Request `Content-Type` setting
