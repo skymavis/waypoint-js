@@ -1,4 +1,6 @@
+export * from "./chain"
 export * from "./communicate"
 export * from "./defer"
+export * from "./gate"
 export * from "./popup"
 export * from "./waypoint-error"

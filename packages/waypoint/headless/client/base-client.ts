@@ -8,7 +8,7 @@ import {
   type TypedDataDefinition,
 } from "viem"
 
-import { VIEM_CHAIN_MAPPING } from "../../web"
+import { VIEM_CHAIN_MAPPING } from "../../common"
 import { backupShard } from "../action/backup-shard"
 import { decryptShard } from "../action/decrypt-shard"
 import { encryptShard } from "../action/encrypt-shard"

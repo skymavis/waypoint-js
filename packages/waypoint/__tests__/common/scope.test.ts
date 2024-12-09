@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 
-import { getScopesParams, Scope } from "../../../web/common/scope"
+import { getScopesParams, Scope } from "../../common/scope"
 
 describe("getScopesParams", () => {
   test("returns multiple scopes as a space-separated string", () => {

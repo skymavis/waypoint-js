@@ -1,7 +1,7 @@
-import { goerli, mainnet, ronin, saigon } from "viem/chains"
+import { goerli, mainnet, ronin, saigon, sepolia } from "viem/chains"
 import { describe, expect, test } from "vitest"
 
-import { VIEM_CHAIN_MAPPING } from "./../../../web/common/chain"
+import { VIEM_CHAIN_MAPPING } from "../../common/chain"
 
 describe("VIEM_CHAIN_MAPPING", () => {
   test("should map the correct chain for ronin", () => {
@@ -20,8 +20,12 @@ describe("VIEM_CHAIN_MAPPING", () => {
     expect(VIEM_CHAIN_MAPPING[goerli.id]).toBe(goerli)
   })
 
+  test("should map the correct chain for sepolia", () => {
+    expect(VIEM_CHAIN_MAPPING[sepolia.id]).toBe(sepolia)
+  })
+
   test("should map all expected chains", () => {
-    const expectedChains = [ronin, saigon, mainnet, goerli]
+    const expectedChains = [ronin, saigon, mainnet, goerli, sepolia]
     expectedChains.forEach(chain => {
       expect(VIEM_CHAIN_MAPPING[chain.id]).toBe(chain)
     })

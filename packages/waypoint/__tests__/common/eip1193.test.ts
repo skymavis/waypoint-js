@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 
-import { Eip1193EventName } from "../../../web/common/eip1193"
+import { Eip1193EventName } from "../../common/eip1193"
 
 describe("Eip1193EventName Enum", () => {
   test("should have the correct values", () => {
