@@ -1,5 +1,2 @@
-export * from "../../common/gate"
-export * from "./chain"
-export * from "./eip1193"
-export * from "./scope"
+export * from "../../common" // Note: Keep backward compatibility
 export * from "./waypoint-response"

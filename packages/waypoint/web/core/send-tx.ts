@@ -2,7 +2,7 @@ import { type Address } from "viem"
 
 import { CommunicateHelper } from "../../common/communicate"
 import { openPopup } from "../../common/popup"
-import { GenericTransaction } from "../common/tx"
+import { GenericTransaction } from "../../common/tx"
 
 type SendTransactionParams = {
   params: [transaction: GenericTransaction]

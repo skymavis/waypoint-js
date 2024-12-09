@@ -3,7 +3,7 @@ import { Address } from "viem"
 import { CommunicateHelper } from "../common/communicate"
 import { RONIN_WAYPOINT_ORIGIN_PROD } from "../common/gate"
 import { openPopup, replaceUrl } from "../common/popup"
-import { getScopesParams, Scope } from "./common/scope"
+import { getScopesParams, Scope } from "../common/scope"
 import { WaypointResponse } from "./common/waypoint-response"
 import { validateIdAddress } from "./utils/validate-address"
 

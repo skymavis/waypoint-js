@@ -11,13 +11,13 @@ import {
   UnauthorizedProviderError,
 } from "viem"
 
+import { VIEM_CHAIN_MAPPING } from "../common/chain"
 import { CommunicateHelper } from "../common/communicate"
+import { Eip1193EventName, Eip1193Provider, RoninWaypointRequestSchema } from "../common/eip1193"
 import { RONIN_WAYPOINT_ORIGIN_PROD } from "../common/gate"
 import { openPopup } from "../common/popup"
+import { getScopesParams, Scope } from "../common/scope"
 import { BaseAuthorizeOpts } from "./auth"
-import { VIEM_CHAIN_MAPPING } from "./common/chain"
-import { Eip1193EventName, Eip1193Provider, RoninWaypointRequestSchema } from "./common/eip1193"
-import { getScopesParams, Scope } from "./common/scope"
 import { WaypointResponse } from "./common/waypoint-response"
 import { personalSign } from "./core/personal-sign"
 import { sendTransaction } from "./core/send-tx"
