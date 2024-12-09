@@ -69,6 +69,8 @@
   "devDependencies": {
     "@axieinfinity/lockbox": "file:internal-libs/lockbox-2.1.8.tgz",
     "@babel/preset-env": "7.24.4",
+    "@bufbuild/protobuf": "2.2.2",
+    "@noble/curves": "1.6.0",
     "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-commonjs": "25.0.7",
     "@rollup/plugin-node-resolve": "15.2.3",
@@ -79,6 +81,7 @@
     "fs-extra": "11.2.0",
     "glob": "11.0.0",
     "jsdom": "25.0.1",
+    "jwt-decode": "4.0.0",
     "ofetch": "1.4.0",
     "prettier": "3.2.5",
     "rollup": "4.14.1",

@@ -30,7 +30,9 @@ export const WalletProvider: FC<Props> = props => {
   const [email, setEmail] = useState<string>()
   const [expiration, setExpiration] = useState<number>()
 
-  const [walletClient, setWalletClient] = useState<WalletClient<CustomTransport, typeof saigon>>()
+  const [walletClient, setWalletClient] = useState<
+    WalletClient<CustomTransport, typeof saigon> | undefined
+  >(undefined)
   const [isOpen, setOpen] = useState<boolean>(false)
   const [error, setError] = useState<string>()
 
@@ -73,7 +75,6 @@ export const WalletProvider: FC<Props> = props => {
     }
 
     // * reconnect to headless client
-
     reconnectHeadless()
       .then(client => {
         setWalletClient(client)
