@@ -8,7 +8,7 @@ import type {
   TypedDataDefinition,
 } from "viem"
 
-import type { GenericTransaction } from "../web/common/tx"
+import type { GenericTransaction } from "./tx"
 
 export interface Eip1193Provider extends EIP1193Events {
   request: <ReturnType = unknown>(
