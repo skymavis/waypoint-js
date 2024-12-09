@@ -43,11 +43,6 @@
       "import": "./dist/module/skynet/index.js",
       "require": "./dist/commonjs/skynet/index.js"
     },
-    "./core": {
-      "types": "./dist/types/core/index.d.ts",
-      "import": "./dist/module/core/index.js",
-      "require": "./dist/commonjs/core/index.js"
-    },
     "./headless": {
       "types": "./dist/types/headless/index.d.ts",
       "import": "./dist/module/headless/index.js",
@@ -67,7 +62,6 @@
     "test": "vitest run --typecheck"
   },
   "devDependencies": {
-    "@axieinfinity/lockbox": "file:internal-libs/lockbox-2.1.8.tgz",
     "@babel/preset-env": "7.24.4",
     "@bufbuild/protobuf": "2.2.2",
     "@noble/curves": "1.6.0",
