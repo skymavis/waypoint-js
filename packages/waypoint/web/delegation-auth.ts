@@ -1,30 +1,35 @@
 import { CommunicateHelper, openPopup, replaceUrl } from "../common"
-import { getScopesParams } from "../common/scope"
-import { PopupAuthorizeData, PopupAuthorizeOpts, RedirectAuthorizeOpts } from "./auth"
-import { RONIN_WAYPOINT_ORIGIN_PROD, TransferClientShardResponse } from "./common"
+import { getDelegationScopesParams, getScopesParams } from "../common/scope"
+import {
+  parseRedirectUrl as parseRedirectUrlForAuthData,
+  PopupAuthorizeData,
+  PopupAuthorizeOpts,
+  RedirectAuthorizeOpts,
+} from "./auth"
+import { DelegationAuthorizeResponse, RONIN_WAYPOINT_ORIGIN_PROD } from "./common"
 import {
   buildPrivateKey,
   decryptClientShard,
   generateKeyPair,
   KeyPair,
   stringifyKeyPair,
-} from "./utils/generate-key"
-import { getStorage, setStorage, STORAGE_KEYS_OF_TRANSFER_SHARD_KEY } from "./utils/storage"
+} from "./utils/key-helper"
+import { getStorage, setStorage, STORAGE_SHARD_TRANSFER_KEY } from "./utils/storage"
 import { validateIdAddress } from "./utils/validate-address"
 
-export type TransferClientShardOpts = PopupAuthorizeOpts | RedirectAuthorizeOpts
+export type DelegationAuthorizeOpts = PopupAuthorizeOpts | RedirectAuthorizeOpts
 
-export type PopupTransferClientShardData = {
+export type PopupDelegationAuthorizeData = {
   clientShard: string
 } & PopupAuthorizeData
 
-export type TransferClientShardData<T> = T extends PopupAuthorizeOpts
-  ? PopupTransferClientShardData
+export type DelegationAuthorizeData<T> = T extends PopupAuthorizeOpts
+  ? PopupDelegationAuthorizeData
   : undefined
 
-export const transferClientShard = async <T extends TransferClientShardOpts>(
+export const delegationAuthorize = async <T extends DelegationAuthorizeOpts>(
   opts: T,
-): Promise<TransferClientShardData<T>> => {
+): Promise<DelegationAuthorizeData<T>> => {
   const {
     mode,
     clientId,
@@ -37,20 +42,20 @@ export const transferClientShard = async <T extends TransferClientShardOpts>(
   const stringifiedKeyPair = await stringifyKeyPair(keyPair)
 
   if (mode === "redirect") {
-    setStorage(STORAGE_KEYS_OF_TRANSFER_SHARD_KEY, JSON.stringify(stringifiedKeyPair))
+    setStorage(STORAGE_SHARD_TRANSFER_KEY, JSON.stringify(stringifiedKeyPair))
 
     replaceUrl(`${waypointOrigin}/client/${clientId}/authorize`, {
       redirect: redirectUrl,
       state: opts.state ?? crypto.randomUUID(),
-      scope: getScopesParams(scopes),
+      scope: getDelegationScopesParams(scopes),
       publicKey: stringifiedKeyPair.publicKey,
     })
-    return undefined as TransferClientShardData<T>
+    return undefined as DelegationAuthorizeData<T>
   }
 
   const helper = new CommunicateHelper(waypointOrigin)
 
-  const authData = await helper.sendRequest<TransferClientShardResponse>(state =>
+  const authData = await helper.sendRequest<DelegationAuthorizeResponse>(state =>
     openPopup(`${waypointOrigin}/client/${clientId}/authorize`, {
       state,
       redirect: redirectUrl,
@@ -74,10 +79,10 @@ export const transferClientShard = async <T extends TransferClientShardOpts>(
     address: validateIdAddress(rawAddress),
     secondaryAddress: validateIdAddress(secondaryAddress),
     clientShard,
-  } as TransferClientShardData<T>
+  } as DelegationAuthorizeData<T>
 }
 
-export const parseTransferShardFromRedirectUrl = async () => {
+const parseClientShard = async () => {
   const url = new URL(window.location.href)
 
   const method = url.searchParams.get("method")
@@ -96,7 +101,7 @@ export const parseTransferShardFromRedirectUrl = async () => {
     throw "parseRedirectUrl: encrypted shard not found"
   }
 
-  const keyPair = getStorage(STORAGE_KEYS_OF_TRANSFER_SHARD_KEY)
+  const keyPair = getStorage(STORAGE_SHARD_TRANSFER_KEY)
 
   if (!keyPair) {
     throw "parseRedirectUrl: client shard key pair not found"
@@ -107,6 +112,15 @@ export const parseTransferShardFromRedirectUrl = async () => {
   const clientShard = await decryptClientShard(encryptedShard, builtPrivateKey)
 
   return {
+    clientShard,
+  }
+}
+
+export const parseRedirectUrlWithShard = async () => {
+  const authData = parseRedirectUrlForAuthData()
+  const { clientShard } = await parseClientShard()
+  return {
+    ...authData,
     clientShard,
   }
 }

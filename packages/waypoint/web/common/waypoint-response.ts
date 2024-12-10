@@ -4,6 +4,6 @@ export type WaypointResponse = {
   secondary_address?: string
 }
 
-export type TransferClientShardResponse = WaypointResponse & {
+export type DelegationAuthorizeResponse = WaypointResponse & {
   wallet_key: string
 }
