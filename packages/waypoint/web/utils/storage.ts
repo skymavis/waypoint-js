@@ -1,4 +1,5 @@
 export const STORAGE_ADDRESS_KEY = "ADDRESS"
+export const STORAGE_KEYS_OF_TRANSFER_SHARD_KEY = "KEYS_OF_TRANSFER_SHARD"
 export const STORAGE_PREFIX = "RONIN.WAYPOINT"
 
 const isStorageAvailable = () => typeof window !== "undefined" && "localStorage" in window
