@@ -82,19 +82,10 @@ export const delegationAuthorize = async <T extends DelegationAuthorizeOpts>(
   } as DelegationAuthorizeData<T>
 }
 
-const parseClientShard = async () => {
+export const parseRedirectUrlWithShard = async () => {
+  const authData = parseRedirectUrlForAuthData()
+
   const url = new URL(window.location.href)
-
-  const method = url.searchParams.get("method")
-  if (method !== "auth") {
-    throw "parseRedirectUrl: invalid method"
-  }
-
-  const type = url.searchParams.get("type")
-  if (type !== "success") {
-    throw "parseRedirectUrl: authorization failed"
-  }
-
   const encryptedShard = url.searchParams.get("wallet_key")
 
   if (!encryptedShard) {
@@ -111,14 +102,6 @@ const parseClientShard = async () => {
   const builtPrivateKey = await buildPrivateKey(privateKey)
   const clientShard = await decryptClientShard(encryptedShard, builtPrivateKey)
 
-  return {
-    clientShard,
-  }
-}
-
-export const parseRedirectUrlWithShard = async () => {
-  const authData = parseRedirectUrlForAuthData()
-  const { clientShard } = await parseClientShard()
   return {
     ...authData,
     clientShard,
