@@ -296,7 +296,7 @@ export const setupGoWasmEnv = () => {
 					"syscall/js.finalizeRef": (v_ref) => {
 						// Note: TinyGo does not support finalizers so this should never be
 						// called.
-						console.error('syscall/js.finalizeRef not implemented');
+						console.warn('syscall/js.finalizeRef not implemented');
 					},
 
 					// func stringVal(value string) ref

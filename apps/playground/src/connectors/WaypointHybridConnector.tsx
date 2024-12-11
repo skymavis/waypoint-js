@@ -1,12 +1,14 @@
 import { AutoConnectPriority, BaseConnector, IConnectResult } from "@roninnetwork/walletgo"
 import { delegationAuthorize } from "@sky-mavis/waypoint"
-import { BaseProvider, BaseProviderType, HeadlessClient } from "@sky-mavis/waypoint/headless"
+import { HeadlessClient, HeadlessProvider } from "@sky-mavis/waypoint/headless"
 import { ServiceEnv } from "@sky-mavis/waypoint/headless/utils/service-url"
 
 import { RoninLogo } from "./RoninLogo"
 
 const RONIN_LOGO = <RoninLogo />
 const SUB_LABEL = <span style={{ color: "#f59e0b" }}>Hybrid Flow</span>
+
+const SHARD_KEY = "WP_SHARD"
 const TOKEN_KEY = "WP_TOKEN"
 const STORAGE_PREFIX = "HYBRID_CONNECTOR"
 
@@ -18,7 +20,7 @@ const setStorage = (key: string, value: string) =>
 const removeStorage = (key: string) =>
   isStorageAvailable() ? localStorage.removeItem(`${STORAGE_PREFIX}:${key}`) : null
 
-export class WaypointHybridConnector extends BaseConnector<BaseProviderType> {
+export class WaypointHybridConnector extends BaseConnector<HeadlessProvider> {
   clientId: string
   waypointOrigin: string
   headlessEnv: ServiceEnv
@@ -29,7 +31,7 @@ export class WaypointHybridConnector extends BaseConnector<BaseProviderType> {
 
   hidden = false
 
-  provider?: BaseProvider
+  provider?: HeadlessProvider
 
   constructor(clientId: string, waypointOrigin: string, headlessEnv: ServiceEnv) {
     super(
@@ -47,21 +49,22 @@ export class WaypointHybridConnector extends BaseConnector<BaseProviderType> {
   }
 
   async shouldAutoConnect(): Promise<boolean> {
-    const savedWaypointToken = getStorage(TOKEN_KEY)
-
-    return !!savedWaypointToken
+    return false
   }
 
-  async connect(chainId: number): Promise<IConnectResult<BaseProviderType>> {
-    const baseHeadlessClient = HeadlessClient.create({
+  async connect(chainId: number): Promise<IConnectResult<HeadlessProvider>> {
+    const client = HeadlessClient.create({
       chainId: chainId,
       serviceEnv: this.headlessEnv,
     })
 
     const savedWaypointToken = getStorage(TOKEN_KEY) ?? ""
+    const savedClientShard = getStorage(SHARD_KEY) ?? ""
+
     try {
-      const { address, provider } = await baseHeadlessClient.reconnect({
+      const { address, provider } = await client.connect({
         waypointToken: savedWaypointToken,
+        clientShard: savedClientShard,
       })
 
       return {
@@ -77,14 +80,15 @@ export class WaypointHybridConnector extends BaseConnector<BaseProviderType> {
       mode: "popup",
       clientId: this.clientId,
       waypointOrigin: this.waypointOrigin,
-      scopes: ["email", "openid", "profile", "wallet"],
     })
-    const { address, provider } = await baseHeadlessClient.connectWithShard({
+    const { address, provider } = await client.connect({
       clientShard,
       waypointToken,
     })
 
     setStorage(TOKEN_KEY, waypointToken)
+    setStorage(SHARD_KEY, clientShard)
+
     return {
       account: address,
       chainId: chainId,

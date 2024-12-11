@@ -1,25 +1,15 @@
 /* eslint-disable simple-import-sort/exports */
 
 // simple client
-export {
-  HeadlessClient,
-  type ConnectParams,
-  type ConnectWithShardParams,
-  type CreateHeadlessClientOpts,
-  type ReconnectParams,
-  type ValidateSponsorTxParams,
-} from "./client/headless-client"
+export { HeadlessClient, type CreateHeadlessClientOpts } from "./client/client"
 
-// base client
-export { BaseClient, type CreateBaseClientOpts } from "./client/base-client"
+// headless core
+export { HeadlessCore, type CreateHeadlessCoreOpts } from "./client/core"
 export {
-  BaseProvider,
-  type BaseProviderSchema,
-  type BaseProviderType,
-} from "./client/base-provider"
-
-// storage
-export { DEFAULT_SHARD_STORAGE_KEY, type ClientShardStorage } from "./client/shard-storage"
+  HeadlessProvider,
+  type HeadlessProviderSchema,
+  type HeadlessProviderType,
+} from "./client/provider"
 
 // actions
 export { getAddressFromShard } from "./action/get-address"
