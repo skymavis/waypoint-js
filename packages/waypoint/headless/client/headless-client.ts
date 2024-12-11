@@ -1,4 +1,5 @@
 import { TransactionParams } from "../action/send-transaction/common"
+import { ServiceEnv } from "../utils/service-url"
 import { BaseClient } from "./base-client"
 import { _defaultShardStorage, type ClientShardStorage } from "./shard-storage"
 
@@ -7,6 +8,7 @@ export type CreateHeadlessClientOpts = {
   overrideRpcUrl?: string
   wasmUrl?: string
   storage?: ClientShardStorage
+  serviceEnv?: ServiceEnv
 }
 
 export type BaseParams = {
@@ -28,14 +30,20 @@ export class HeadlessClient {
   private storage: ClientShardStorage
 
   protected constructor(opts: CreateHeadlessClientOpts) {
-    const { chainId, overrideRpcUrl, wasmUrl, storage = _defaultShardStorage } = opts
+    const {
+      chainId,
+      overrideRpcUrl,
+      wasmUrl,
+      storage = _defaultShardStorage,
+      serviceEnv = "prod",
+    } = opts
 
     this.storage = storage
     this.baseClient = BaseClient.create({
       chainId,
       overrideRpcUrl,
       wasmUrl,
-      serviceEnv: "prod",
+      serviceEnv,
     })
   }
 
