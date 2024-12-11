@@ -1,3 +1,5 @@
+"use client"
+
 import { Intro } from "src/components/Intro"
 import { UserAction } from "src/components/UserAction"
 

@@ -8,12 +8,10 @@ import { WaypointProvider } from "@sky-mavis/waypoint"
 
 import { RoninLogo } from "./RoninLogo"
 
-export const RONIN_WAYPOINT_URL = "https://waypoint.roninchain.com"
 const STORAGE_KEY = "RONIN.WAYPOINT:ADDRESS"
+const RONIN_LOGO = <RoninLogo />
 
-const Logo = <RoninLogo />
-
-export class RoninWaypointConnector extends BaseConnector<WaypointProvider> {
+export class WaypointConnector extends BaseConnector<WaypointProvider> {
   clientId: string
   waypointOrigin: string
 
@@ -29,8 +27,8 @@ export class RoninWaypointConnector extends BaseConnector<WaypointProvider> {
     super(
       "RONIN_WAYPOINT_CONNECTOR",
       "Ronin Waypoint",
-      { default: RONIN_WAYPOINT_URL, external: RONIN_WAYPOINT_URL },
-      Logo,
+      { default: waypointOrigin, external: waypointOrigin },
+      RONIN_LOGO,
       false,
     )
 
