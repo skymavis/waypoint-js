@@ -24,9 +24,9 @@ import { signTypedData } from "../action/sign-typed-data"
 import { validateSponsorTransaction } from "../action/validate-sponsor-tx"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { getServiceUrls, type ServiceEnv } from "../utils/service-url"
-import { BaseProvider } from "./base-provider"
+import { HeadlessProvider } from "./provider"
 
-export type CreateBaseClientOpts = {
+export type CreateHeadlessCoreOpts = {
   waypointToken?: string
   clientShard?: string
 
@@ -38,7 +38,7 @@ export type CreateBaseClientOpts = {
 }
 
 // ! Keep the same interface with internal libs
-export class BaseClient {
+export class HeadlessCore {
   readonly chainId: number
   readonly rpcUrl: string
   readonly publicClient: Client
@@ -52,7 +52,7 @@ export class BaseClient {
 
   private cachedAddress: Address | undefined
 
-  protected constructor(opts: CreateBaseClientOpts) {
+  protected constructor(opts: CreateHeadlessCoreOpts) {
     const {
       chainId,
       overrideRpcUrl,
@@ -97,8 +97,8 @@ export class BaseClient {
     }
   }
 
-  static create = (opts: CreateBaseClientOpts) => {
-    return new BaseClient(opts)
+  static create = (opts: CreateHeadlessCoreOpts) => {
+    return new HeadlessCore(opts)
   }
 
   setWaypointToken = (newToken: string) => {
@@ -275,6 +275,6 @@ export class BaseClient {
   }
 
   getProvider = () => {
-    return BaseProvider.fromBaseClient(this)
+    return HeadlessProvider.fromHeadlessCore(this)
   }
 }

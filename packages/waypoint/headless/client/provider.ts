@@ -12,15 +12,15 @@ import { InternalRpcError, isAddressEqual, toHex, UnauthorizedProviderError } fr
 
 import type { TransactionParams } from "../action/send-transaction/common"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
-import { BaseClient } from "./base-client"
+import { HeadlessCore } from "./core"
 
-export type BaseProviderType = EIP1193Events & {
+export type HeadlessProviderType = EIP1193Events & {
   request: <ReturnType = unknown>(
-    args: EIP1193Parameters<BaseProviderSchema>,
+    args: EIP1193Parameters<HeadlessProviderSchema>,
   ) => Promise<ReturnType>
 }
 
-export type BaseProviderSchema = [
+export type HeadlessProviderSchema = [
   ...PublicRpcSchema,
 
   {
@@ -51,22 +51,22 @@ export type BaseProviderSchema = [
 ]
 
 // ! Keep the same interface with internal libs
-export class BaseProvider extends EventEmitter implements BaseProviderType {
-  private baseClient: BaseClient
+export class HeadlessProvider extends EventEmitter implements HeadlessProviderType {
+  private core: HeadlessCore
 
-  protected constructor(baseClient: BaseClient) {
+  protected constructor(core: HeadlessCore) {
     super()
 
-    this.baseClient = baseClient
+    this.core = core
   }
 
-  static fromBaseClient = (baseClient: BaseClient) => {
-    return new BaseProvider(baseClient) as BaseProviderType
+  static fromHeadlessCore = (core: HeadlessCore) => {
+    return new HeadlessProvider(core)
   }
 
   getAccounts = async () => {
     try {
-      const address = await this.baseClient.getAddress()
+      const address = await this.core.getAddress()
 
       return [address]
     } catch (error) {
@@ -76,8 +76,8 @@ export class BaseProvider extends EventEmitter implements BaseProviderType {
 
   requestAccounts = async () => {
     try {
-      const address = await this.baseClient.getAddress()
-      const signable = this.baseClient.isSignable()
+      const address = await this.core.getAddress()
+      const signable = this.core.isSignable()
 
       if (address && signable) {
         return [address] as const
@@ -105,7 +105,7 @@ export class BaseProvider extends EventEmitter implements BaseProviderType {
     }
 
     try {
-      return await this.baseClient.signMessage({ raw: data })
+      return await this.core.signMessage({ raw: data })
     } catch (err) {
       if (err instanceof Error) {
         throw new InternalRpcError(err)
@@ -150,7 +150,7 @@ export class BaseProvider extends EventEmitter implements BaseProviderType {
     }
 
     try {
-      return await this.baseClient.signTypedData(typedData)
+      return await this.core.signTypedData(typedData)
     } catch (err) {
       if (err instanceof Error) {
         throw new InternalRpcError(err)
@@ -165,7 +165,7 @@ export class BaseProvider extends EventEmitter implements BaseProviderType {
     }
   }
 
-  request = async <ReturnType = unknown>(args: EIP1193Parameters<BaseProviderSchema>) => {
+  request = async <ReturnType = unknown>(args: EIP1193Parameters<HeadlessProviderSchema>) => {
     const { params, method } = args
 
     switch (method) {
@@ -181,7 +181,7 @@ export class BaseProvider extends EventEmitter implements BaseProviderType {
       }
 
       case "eth_chainId": {
-        return toHex(this.baseClient.chainId) as ReturnType
+        return toHex(this.core.chainId) as ReturnType
       }
 
       case "personal_sign": {
@@ -196,7 +196,7 @@ export class BaseProvider extends EventEmitter implements BaseProviderType {
         try {
           const [tx] = params as [transaction: TransactionParams]
 
-          const transaction = await this.baseClient.sendTransaction(tx)
+          const transaction = await this.core.sendTransaction(tx)
           return transaction.txHash as ReturnType
         } catch (err) {
           if (err instanceof Error) {
@@ -214,7 +214,7 @@ export class BaseProvider extends EventEmitter implements BaseProviderType {
 
       default:
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return this.baseClient.publicClient.request(args as any) as ReturnType
+        return this.core.publicClient.request(args as any) as ReturnType
     }
   }
 }
