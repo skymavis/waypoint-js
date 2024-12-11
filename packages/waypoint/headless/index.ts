@@ -3,7 +3,8 @@
 // simple client
 export {
   HeadlessClient,
-  type ConnectParam,
+  type ConnectParams,
+  type ConnectWithShardParams,
   type CreateHeadlessClientOpts,
   type ReconnectParams,
   type ValidateSponsorTxParams,
