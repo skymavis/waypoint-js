@@ -1,18 +1,18 @@
 import { authorize } from "@sky-mavis/waypoint"
 import { useAtomValue } from "jotai"
 import { Button } from "src/@/components/ui/button"
-import { waypointConfigAtom } from "src/atom/env-config"
+import { environmentConfigAtom } from "src/atom/env-config"
 import { useWrapToast } from "src/hooks/useWrapToast"
 
 export const Authorize = () => {
-  const { clientId, origin } = useAtomValue(waypointConfigAtom)
+  const { clientId, waypointOrigin } = useAtomValue(environmentConfigAtom)
   const { toastSuccess } = useWrapToast()
 
   const handleAuthorize = async () => {
     const result = await authorize({
       mode: "popup",
       clientId,
-      waypointOrigin: origin,
+      waypointOrigin,
     })
 
     console.debug("🚀 | Authorization Result:", result)
