@@ -2,18 +2,18 @@ import { authorize, parseRedirectUrl } from "@sky-mavis/waypoint"
 import { useAtomValue } from "jotai"
 import { useEffect } from "react"
 import { Button } from "src/@/components/ui/button"
-import { waypointConfigAtom } from "src/atom/env-config"
+import { environmentConfigAtom } from "src/atom/env-config"
 import { useWrapToast } from "src/hooks/useWrapToast"
 
 export const RedirectAuthorize = () => {
-  const { clientId, origin } = useAtomValue(waypointConfigAtom)
+  const { clientId, waypointOrigin } = useAtomValue(environmentConfigAtom)
   const { toastSuccess } = useWrapToast()
 
   const handleRedirectAuthorize = async () => {
     authorize({
       mode: "redirect",
       clientId,
-      waypointOrigin: origin,
+      waypointOrigin,
     })
   }
 
