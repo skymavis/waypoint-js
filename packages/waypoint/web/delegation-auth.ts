@@ -1,5 +1,5 @@
 import { CommunicateHelper, openPopup, replaceUrl } from "../common"
-import { getDelegationScopesParams, getScopesParams } from "../common/scope"
+import { getDelegationScopesParams } from "../common/scope"
 import {
   parseRedirectUrl as parseRedirectUrlForAuthData,
   PopupAuthorizeData,
@@ -60,7 +60,7 @@ export const delegationAuthorize = async <T extends DelegationAuthorizeOpts>(
       state,
       redirect: redirectUrl,
       origin: window.location.origin,
-      scope: getScopesParams(scopes),
+      scope: getDelegationScopesParams(scopes),
       publicKey: stringifiedKeyPair.publicKey,
     }),
   )
