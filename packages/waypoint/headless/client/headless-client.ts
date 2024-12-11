@@ -12,8 +12,11 @@ export type CreateHeadlessClientOpts = {
 export type BaseParams = {
   waypointToken: string
 }
-export type ConnectParam = BaseParams & {
+export type ConnectParams = BaseParams & {
   recoveryPassword: string
+}
+export type ConnectWithShardParams = BaseParams & {
+  clientShard: string
 }
 export type ReconnectParams = BaseParams
 export type ValidateSponsorTxParams = BaseParams & {
@@ -52,7 +55,7 @@ export class HeadlessClient {
     return this.baseClient.getProvider()
   }
 
-  connect = async (params: ConnectParam) => {
+  connect = async (params: ConnectParams) => {
     const { recoveryPassword, waypointToken } = params
     const { baseClient, storage } = this
 
@@ -60,6 +63,24 @@ export class HeadlessClient {
 
     const { key: backupShard } = await baseClient.getBackupClientShard()
     const clientShard = await baseClient.decryptClientShard(backupShard, recoveryPassword)
+    const address = await baseClient.getAddressFromClientShard()
+    const provider = await baseClient.getProvider()
+
+    storage.set(clientShard)
+
+    return {
+      address,
+      provider,
+    }
+  }
+
+  connectWithShard = async (params: ConnectWithShardParams) => {
+    const { clientShard, waypointToken } = params
+    const { baseClient, storage } = this
+
+    baseClient.setWaypointToken(waypointToken)
+    baseClient.setClientShard(clientShard)
+
     const address = await baseClient.getAddressFromClientShard()
     const provider = await baseClient.getProvider()
 
