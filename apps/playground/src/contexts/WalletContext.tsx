@@ -8,8 +8,9 @@ import {
 } from "@roninnetwork/walletgo"
 import { useAtomValue } from "jotai"
 import { createContext, FC, ReactNode, useCallback, useState } from "react"
-import { waypointConfigAtom } from "src/atom/env-config"
-import { RoninWaypointConnector } from "src/connectors/RoninWaypointConnector"
+import { environmentConfigAtom } from "src/atom/env-config"
+import { WaypointConnector } from "src/connectors/WaypointConnector"
+import { WaypointHybridConnector } from "src/connectors/WaypointHybridConnector"
 
 export const EXPLORER_DOMAIN = "https://saigon-app.roninchain.com"
 export const EXPLORER_CDN_URL = "https://cdn.skymavis.com/explorer-cdn"
@@ -47,15 +48,19 @@ interface IProviderProps {
 }
 
 export const WalletContext: FC<IProviderProps> = ({ children }) => {
-  const { clientId, origin } = useAtomValue(waypointConfigAtom)
-  const idConnector = new RoninWaypointConnector(clientId, origin)
+  const { clientId, waypointOrigin, env } = useAtomValue(environmentConfigAtom)
+
+  const waypointConnector = new WaypointConnector(clientId, waypointOrigin)
+  const waypointHybridConnector = new WaypointHybridConnector(clientId, waypointOrigin, env)
+  const wallets =
+    env === "prod"
+      ? [waypointConnector, ...DEFAULT_WALLETS]
+      : [waypointHybridConnector, waypointConnector, ...DEFAULT_WALLETS]
 
   const [open, setOpen] = useState(false)
-
   const handleOpen = useCallback(() => {
     setOpen(true)
   }, [setOpen])
-
   const handleClose = useCallback(() => {
     setOpen(false)
   }, [setOpen])
@@ -63,12 +68,7 @@ export const WalletContext: FC<IProviderProps> = ({ children }) => {
   return (
     <WalletgoProvider defaultChainId={SupportedChainIds.RoninTestnet}>
       <WalletgoDialogContext.Provider value={{ open, setOpen }}>
-        <WalletWidget
-          wallets={[idConnector, ...DEFAULT_WALLETS]}
-          isOpen={open}
-          onOpen={handleOpen}
-          onClose={handleClose}
-        />
+        <WalletWidget wallets={wallets} isOpen={open} onOpen={handleOpen} onClose={handleClose} />
         {children}
       </WalletgoDialogContext.Provider>
     </WalletgoProvider>
