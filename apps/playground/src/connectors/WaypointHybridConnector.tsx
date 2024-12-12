@@ -66,6 +66,11 @@ export class WaypointHybridConnector extends BaseConnector<HeadlessProvider> {
         waypointToken: savedWaypointToken,
         clientShard: savedClientShard,
       })
+      const signable = client.isSignable()
+
+      if (!signable) {
+        throw "Client is not signable"
+      }
 
       return {
         account: address,
@@ -85,6 +90,11 @@ export class WaypointHybridConnector extends BaseConnector<HeadlessProvider> {
       clientShard,
       waypointToken,
     })
+    const signable = client.isSignable()
+
+    if (!signable) {
+      throw "Client is not signable"
+    }
 
     setStorage(TOKEN_KEY, waypointToken)
     setStorage(SHARD_KEY, clientShard)
@@ -98,6 +108,7 @@ export class WaypointHybridConnector extends BaseConnector<HeadlessProvider> {
 
   async disconnect(): Promise<boolean> {
     removeStorage(TOKEN_KEY)
+    removeStorage(SHARD_KEY)
     return true
   }
 

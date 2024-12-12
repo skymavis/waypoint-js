@@ -19,9 +19,6 @@ type ConnectParams = BaseParams & {
 type ConnectWithPasswordParams = BaseParams & {
   recoveryPassword: string
 }
-type ValidateSponsorTxParams = BaseParams & {
-  txRequest: TransactionParams
-}
 
 export class HeadlessClient {
   private core: HeadlessCore
@@ -41,18 +38,6 @@ export class HeadlessClient {
     return new HeadlessClient(opts)
   }
 
-  isConnected = () => {
-    return this.core.isSignable()
-  }
-
-  getAddress = () => {
-    return this.core.getAddressFromClientShard()
-  }
-
-  getProvider = () => {
-    return this.core.getProvider()
-  }
-
   connect = (params: ConnectParams) => {
     const { clientShard, waypointToken } = params
     const { core } = this
@@ -60,7 +45,7 @@ export class HeadlessClient {
     core.setWaypointToken(waypointToken)
     core.setClientShard(clientShard)
 
-    const address = core.getAddressFromClientShard()
+    const address = core.getAddress()
     const provider = core.getProvider()
 
     return {
@@ -77,7 +62,7 @@ export class HeadlessClient {
 
     const { key: backupShard } = await core.getBackupClientShard()
     const clientShard = await core.decryptClientShard(backupShard, recoveryPassword)
-    const address = core.getAddressFromClientShard()
+    const address = core.getAddress()
     const provider = core.getProvider()
 
     return {
@@ -87,11 +72,23 @@ export class HeadlessClient {
     }
   }
 
-  validateSponsorTx = (params: ValidateSponsorTxParams) => {
-    const { txRequest, waypointToken } = params
-    const { core } = this
+  isSignable = () => {
+    return this.core.isSignable()
+  }
 
-    core.setWaypointToken(waypointToken)
-    return core.validateSponsorTx(txRequest)
+  getAddress = () => {
+    return this.core.getAddress()
+  }
+
+  getProvider = () => {
+    return this.core.getProvider()
+  }
+
+  getUserProfile = () => {
+    return this.core.getUserProfile()
+  }
+
+  validateSponsorTx = (transaction: TransactionParams) => {
+    return this.core.validateSponsorTx(transaction)
   }
 }

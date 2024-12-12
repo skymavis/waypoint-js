@@ -1,5 +1,4 @@
 import {
-  Address,
   type Client,
   createClient,
   http,
@@ -24,6 +23,7 @@ import { signTypedData } from "../action/sign-typed-data"
 import { validateSponsorTransaction } from "../action/validate-sponsor-tx"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { getServiceUrls, type ServiceEnv } from "../utils/service-url"
+import { validateToken } from "../utils/token"
 import { HeadlessProvider } from "./provider"
 
 export type CreateHeadlessCoreOpts = {
@@ -49,8 +49,6 @@ export class HeadlessCore {
   private readonly httpUrl: string
   private readonly wsUrl: string
   private readonly wasmUrl: string
-
-  private cachedAddress: Address | undefined
 
   protected constructor(opts: CreateHeadlessCoreOpts) {
     const {
@@ -103,8 +101,6 @@ export class HeadlessCore {
 
   setWaypointToken = (newToken: string) => {
     this.waypointToken = newToken
-
-    this.cachedAddress = undefined
   }
 
   setClientShard = (newShard: string) => {
@@ -112,11 +108,13 @@ export class HeadlessCore {
   }
 
   isSignable = () => {
-    const { getAddressFromClientShard } = this
-    try {
-      const address = getAddressFromClientShard()
+    const { waypointToken, clientShard } = this
 
-      return isAddress(address)
+    try {
+      const isValidShard = isAddress(getAddressFromShard(clientShard))
+      const isValidToken = validateToken(waypointToken)
+
+      return isValidShard && isValidToken
     } catch (error) {
       /* empty */
     }
@@ -171,38 +169,10 @@ export class HeadlessCore {
     })
   }
 
-  getBackupClientShard = () => {
-    const { httpUrl, waypointToken } = this
-    return getBackupClientShard({ httpUrl, waypointToken })
-  }
-
-  getUserProfile = () => {
-    const { httpUrl, waypointToken } = this
-    return getUserProfile({ httpUrl, waypointToken })
-  }
-
-  getAddressFromClientShard = () => {
+  getAddress = () => {
     const { clientShard } = this
 
     return getAddressFromShard(clientShard)
-  }
-
-  getAddress = async () => {
-    try {
-      return await this.getAddressFromClientShard()
-    } catch (error) {
-      /* empty */
-    }
-
-    // ? fallback to get address from user profile
-    // * only using address from profile when client shard is valid
-    if (this.cachedAddress) {
-      return this.cachedAddress
-    }
-
-    const userProfile = await this.getUserProfile()
-    this.cachedAddress = userProfile.address
-    return userProfile.address
   }
 
   signMessage = (message: SignableMessage) => {
@@ -231,7 +201,7 @@ export class HeadlessCore {
     })
   }
 
-  sendTransaction = async (transaction: TransactionParams) => {
+  sendTransaction = (transaction: TransactionParams) => {
     const { clientShard, waypointToken, wsUrl, wasmUrl, chainId, rpcUrl } = this
 
     if (transaction.type === RONIN_GAS_SPONSOR_TYPE) {
@@ -261,10 +231,20 @@ export class HeadlessCore {
     })
   }
 
+  getBackupClientShard = () => {
+    const { httpUrl, waypointToken } = this
+    return getBackupClientShard({ httpUrl, waypointToken })
+  }
+
+  getUserProfile = () => {
+    const { httpUrl, waypointToken } = this
+    return getUserProfile({ httpUrl, waypointToken })
+  }
+
   validateSponsorTx = async (transaction: TransactionParams) => {
     const { httpUrl, waypointToken, chainId, rpcUrl, getAddress } = this
 
-    const currentAddress = await getAddress()
+    const currentAddress = getAddress()
     return await validateSponsorTransaction({
       httpUrl,
       waypointToken,

@@ -1,10 +1,11 @@
 import {
   type Address,
   createPublicClient,
-  getAddress,
   hexToBigInt,
   hexToNumber,
   http,
+  isAddress,
+  isHex,
   numberToHex,
   serializeTransaction,
   type TransactionSerializableLegacy,
@@ -53,7 +54,7 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
     })
   }
 
-  if (!to) {
+  if (!to || !isAddress(to)) {
     throw new HeadlessClientError({
       cause: undefined,
       code: HeadlessClientErrorCode.UnsupportedTransactionTypeError,
@@ -61,7 +62,7 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
     })
   }
 
-  if (!from) {
+  if (!from || !isAddress(from)) {
     throw new HeadlessClientError({
       cause: undefined,
       code: HeadlessClientErrorCode.PrepareTransactionError,
@@ -69,27 +70,52 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
     })
   }
 
+  const publicClient = createPublicClient({
+    transport: http(rpcUrl),
+  })
+
+  const fillNonce = async () => {
+    try {
+      if (isHex(nonce)) {
+        return hexToNumber(nonce)
+      }
+
+      return await publicClient.getTransactionCount({ address: from, blockTag: "pending" })
+    } catch (error) {
+      throw new HeadlessClientError({
+        cause: error,
+        code: HeadlessClientErrorCode.PrepareTransactionError,
+        message: `Unable to get nonce when preparing the transaction. This could be due to a slow network or an RPC status.`,
+      })
+    }
+  }
+  const filledNonce = await fillNonce()
+
+  const fillGas = async () => {
+    try {
+      if (isHex(gas)) {
+        return hexToNumber(gas)
+      }
+
+      return await publicClient.estimateGas({
+        type: "legacy",
+        nonce: filledNonce,
+        to,
+        gasPrice: hexToBigInt(gasPrice),
+        value: hexToBigInt(value),
+        data: input ?? data,
+      })
+    } catch (error) {
+      throw new HeadlessClientError({
+        cause: error,
+        code: HeadlessClientErrorCode.PrepareTransactionError,
+        message: `Unable to estimate gas when preparing the transaction. This could be due to a slow network or an RPC status.`,
+      })
+    }
+  }
+  const filledGas = await fillGas()
+
   try {
-    const publicClient = createPublicClient({
-      transport: http(rpcUrl),
-    })
-
-    const filledNonce = nonce
-      ? hexToNumber(nonce)
-      : await publicClient.getTransactionCount({ address: from, blockTag: "pending" })
-
-    // TODO: test sponsored transaction case - when gas is not provided
-    const filledGas = gas
-      ? hexToBigInt(gas)
-      : await publicClient.estimateGas({
-          nonce: filledNonce,
-          type: "legacy",
-          to: getAddress(to),
-          gasPrice: hexToBigInt(gasPrice),
-          value: hexToBigInt(value),
-          data: input ?? data,
-        })
-
     const formattedTransaction: TransactionInServerFormat = {
       type,
       from,
@@ -119,7 +145,7 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
     throw new HeadlessClientError({
       cause: error,
       code: HeadlessClientErrorCode.PrepareTransactionError,
-      message: `Unable to get additional transaction information (nonce, gasLimit,...). This could be due to a slow network or an RPC status.`,
+      message: `Unable to transform transaction data to server format.`,
     })
   }
 }

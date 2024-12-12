@@ -64,19 +64,24 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
     return new HeadlessProvider(core)
   }
 
-  getAccounts = async () => {
+  getAccounts = () => {
     try {
-      const address = await this.core.getAddress()
+      const address = this.core.getAddress()
+      const signable = this.core.isSignable()
 
-      return [address]
+      if (address && signable) {
+        return [address] as const
+      }
     } catch (error) {
-      return []
+      /* empty */
     }
+
+    return []
   }
 
-  requestAccounts = async () => {
+  requestAccounts = () => {
     try {
-      const address = await this.core.getAddress()
+      const address = this.core.getAddress()
       const signable = this.core.isSignable()
 
       if (address && signable) {
@@ -88,12 +93,12 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
       }
     }
 
-    throw new UnauthorizedProviderError(new Error("The base client is not signable."))
+    throw new UnauthorizedProviderError(new Error("The headless core is not signable."))
   }
 
   personalSign = async (params: [data: Hex, address: Address]) => {
     const [data, address] = params
-    const [currentAddress] = await this.requestAccounts()
+    const [currentAddress] = this.requestAccounts()
 
     if (!isAddressEqual(address, currentAddress)) {
       const notMatchError = new HeadlessClientError({
@@ -139,7 +144,7 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
       throw new InternalRpcError(parseError)
     }
 
-    const [currentAddress] = await this.requestAccounts()
+    const [currentAddress] = this.requestAccounts()
     if (!isAddressEqual(address, currentAddress)) {
       const notMatchError = new HeadlessClientError({
         cause: undefined,
@@ -170,7 +175,7 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
 
     switch (method) {
       case "eth_accounts": {
-        const result = await this.getAccounts()
+        const result = this.getAccounts()
         return result as ReturnType
       }
 
