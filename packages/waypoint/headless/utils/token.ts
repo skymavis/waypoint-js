@@ -6,6 +6,7 @@ export const addBearerPrefix = (waypointToken: string) => {
   return waypointToken.startsWith("Bearer ") ? waypointToken : "Bearer " + waypointToken
 }
 
+const BUFFER = 10
 export const validateToken = (waypointToken: string) => {
   try {
     const { sub, exp } = jwtDecode(waypointToken)
@@ -14,7 +15,7 @@ export const validateToken = (waypointToken: string) => {
     if (!exp) throw "Token does not have an expiration time (exp field)"
 
     const currentUTCTime = new Date().getTime() / 1000
-    if (currentUTCTime > exp) {
+    if (currentUTCTime > exp - BUFFER) {
       throw `Token expired at ${new Date(exp * 1000).toString()} (exp="${exp}")`
     }
 
