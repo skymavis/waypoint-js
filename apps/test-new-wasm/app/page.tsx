@@ -203,6 +203,22 @@ const KeygenTestPage = () => {
     )
   }
 
+  const handleGetUserProfile = async () => {
+    calcExecutionTime("Get User Profile", () =>
+      getUserProfile({
+        waypointToken: WAYPOINT_TOKEN,
+        httpUrl: LOCKBOX_STAG_HTTP_URL,
+      }),
+    )
+  }
+  const handleGetBackupClientShard = async () => {
+    calcExecutionTime("Get Backup Client Shard", () =>
+      getBackupClientShard({
+        waypointToken: WAYPOINT_TOKEN,
+        httpUrl: LOCKBOX_STAG_HTTP_URL,
+      }),
+    )
+  }
   const handleValidateSponsorTransaction = async () => {
     calcExecutionTime("Validate Sponsored Tx", () =>
       validateSponsorTransaction({
@@ -223,23 +239,6 @@ const KeygenTestPage = () => {
       }),
     )
   }
-  const handleGetUserProfile = async () => {
-    calcExecutionTime("Get User Profile", () =>
-      getUserProfile({
-        waypointToken: WAYPOINT_TOKEN,
-        httpUrl: LOCKBOX_STAG_HTTP_URL,
-      }),
-    )
-  }
-  const handleGetBackupClientShard = async () => {
-    calcExecutionTime("Get Backup Client Shard", () =>
-      getBackupClientShard({
-        waypointToken: WAYPOINT_TOKEN,
-        httpUrl: LOCKBOX_STAG_HTTP_URL,
-      }),
-    )
-  }
-
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-2">
       <textarea
@@ -265,9 +264,9 @@ const KeygenTestPage = () => {
       <Button onClick={handleSendLegacyTransaction}>Send legacy transaction</Button>
       <Button onClick={handleSendSponsoredTransaction}>Send sponsored transaction</Button>
       <Divider />
-      <Button onClick={handleValidateSponsorTransaction}>Validate sponsored transaction</Button>
       <Button onClick={handleGetUserProfile}>Get user profile</Button>
       <Button onClick={handleGetBackupClientShard}>Get backup shard</Button>
+      <Button onClick={handleValidateSponsorTransaction}>Validate sponsored transaction</Button>
     </div>
   )
 }

@@ -55,3 +55,5 @@ export {
   type HeadlessClientErrorType,
 } from "./error/client"
 export { ServerError, type ServerErrorType } from "./error/server"
+
+export { validateToken } from "./utils/token"
