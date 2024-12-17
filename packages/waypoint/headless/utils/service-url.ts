@@ -27,3 +27,11 @@ export const getServiceUrls = (env: ServiceEnv): ServiceUrls => {
       return env
   }
 }
+
+export const isProd = (productionFactor: string | boolean): boolean => {
+  if (typeof productionFactor === "boolean") {
+    return productionFactor
+  }
+
+  return productionFactor === LOCKBOX_PROD_WS_URL || productionFactor === LOCKBOX_PROD_HTTP_URL
+}

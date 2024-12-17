@@ -1,6 +1,7 @@
 import { type Hex, type SignableMessage, toPrefixedMessage, verifyMessage } from "viem"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
+import { createTracker, HeadlessEventName } from "../track/track"
 import { getAddressFromShard } from "./get-address"
 import { _sign } from "./sign"
 
@@ -15,21 +16,38 @@ export type PersonalSignParams = {
 }
 
 export const personalSign = async (params: PersonalSignParams): Promise<Hex> => {
-  const { message, ...restParams } = params
-  const address = getAddressFromShard(params.clientShard)
-  const prefixedMessage = toPrefixedMessage(message)
-
-  const signature = await _sign({ ...restParams, rawMessage: prefixedMessage })
-  const isValid = await verifyMessage({
-    address: address,
-    message,
-    signature,
+  const tracker = createTracker({
+    event: HeadlessEventName.personalSign,
+    waypointToken: params.waypointToken,
+    productionFactor: params.wsUrl,
+    wasmUrl: params.wasmUrl,
   })
 
-  if (isValid) return signature
-  throw new HeadlessClientError({
-    cause: undefined,
-    code: HeadlessClientErrorCode.InvalidSignatureError,
-    message: `Unable to verify the signature="${signature}" with the given address="${address}".`,
-  })
+  try {
+    const { message, ...restParams } = params
+    const address = getAddressFromShard(params.clientShard)
+    const prefixedMessage = toPrefixedMessage(message)
+
+    const signature = await _sign({ ...restParams, rawMessage: prefixedMessage })
+    const isValid = await verifyMessage({
+      address: address,
+      message,
+      signature,
+    })
+
+    if (!isValid)
+      throw new HeadlessClientError({
+        cause: undefined,
+        code: HeadlessClientErrorCode.InvalidSignatureError,
+        message: `Unable to verify the signature="${signature}" with the given address="${address}".`,
+      })
+
+    tracker.trackOk({
+      request: { message },
+    })
+    return signature
+  } catch (error) {
+    tracker.trackError(error)
+    throw error
+  }
 }

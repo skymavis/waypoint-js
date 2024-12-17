@@ -1,4 +1,5 @@
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
+import { createTracker, HeadlessEventName } from "../track/track"
 import { bytesToJson } from "../utils/convertor"
 import { type ActionHandler, type KeygenHandlerDoResponse } from "../wasm/types"
 import { sendAuthenticate, toAuthenticateData } from "./helpers/authenticate"
@@ -33,7 +34,7 @@ export type KeygenParams = {
   wsUrl: string
 }
 
-export const keygen = async (params: KeygenParams): Promise<string> => {
+const _keygen = async (params: KeygenParams): Promise<string> => {
   const {
     waypointToken,
 
@@ -86,5 +87,25 @@ export const keygen = async (params: KeygenParams): Promise<string> => {
     return keygenResult.data.key
   } finally {
     socket.close()
+  }
+}
+
+export const keygen = async (params: KeygenParams): Promise<string> => {
+  const { waypointToken, wasmUrl, wsUrl } = params
+  const tracker = createTracker({
+    event: HeadlessEventName.keygen,
+    waypointToken,
+    productionFactor: wsUrl,
+    wasmUrl,
+  })
+
+  try {
+    const result = await _keygen(params)
+    tracker.trackOk({})
+
+    return result
+  } catch (error) {
+    tracker.trackError(error)
+    throw error
   }
 }
