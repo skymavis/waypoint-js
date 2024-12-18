@@ -147,7 +147,7 @@ export const backupShard = async (params: BackupShardParams): Promise<string> =>
   try {
     const result = await _backupShard(params)
     tracker.trackOk({
-      request: { isWeakPassword: recoveryPassword === "" },
+      request: { isWeakSecurity: recoveryPassword === "" },
     })
 
     return result
