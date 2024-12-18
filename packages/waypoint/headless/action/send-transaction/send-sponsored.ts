@@ -4,6 +4,7 @@ import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client
 import { toServerError } from "../../error/server"
 import { MessageSchema } from "../../proto/message"
 import { Frame, Type } from "../../proto/rpc"
+import { createTracker, HeadlessEventName } from "../../track/track"
 import { getAddressFromShard } from "../get-address"
 import { sendAuthenticate, toAuthenticateData } from "../helpers/authenticate"
 import { wasmGetSignHandler } from "../helpers/get-sign-handler"
@@ -38,7 +39,7 @@ export const toSerializedSponsoredTransaction = (frame: Frame): Uint8Array => {
   }
 }
 
-export const sendSponsoredTransaction = async (
+const _sendSponsoredTransaction = async (
   params: SendTransactionParams,
 ): Promise<SendTransactionResult> => {
   const {
@@ -139,5 +140,31 @@ export const sendSponsoredTransaction = async (
     })
   } finally {
     socket.close()
+  }
+}
+
+export const sendSponsoredTransaction = async (
+  params: SendTransactionParams,
+): Promise<SendTransactionResult> => {
+  const { chain, transaction, wasmUrl, waypointToken, wsUrl } = params
+  const tracker = createTracker({
+    event: HeadlessEventName.sendSponsoredTransaction,
+    waypointToken,
+    productionFactor: wsUrl,
+    wasmUrl,
+  })
+
+  try {
+    const result = await _sendSponsoredTransaction(params)
+    const { txHash } = result
+    tracker.trackOk({
+      request: { transaction, chain },
+      response: { txHash },
+    })
+
+    return result
+  } catch (error) {
+    tracker.trackError(error)
+    throw error
   }
 }

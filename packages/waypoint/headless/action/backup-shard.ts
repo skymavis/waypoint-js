@@ -12,6 +12,7 @@ import {
   CreateBackupParamsSchema,
 } from "../proto/backup"
 import { Frame, FrameSchema, Type } from "../proto/rpc"
+import { createTracker, HeadlessEventName } from "../track/track"
 import { bytesToBase64 } from "../utils/convertor"
 import { encryptShard } from "./encrypt-shard"
 import { getSecretFromShard } from "./get-address"
@@ -88,7 +89,7 @@ const signChallenge = (signChallenge: Uint8Array, secret: Uint8Array) => {
   }
 }
 
-export const backupShard = async (params: BackupShardParams): Promise<string> => {
+const _backupShard = async (params: BackupShardParams): Promise<string> => {
   const {
     waypointToken,
     clientShard,
@@ -132,5 +133,26 @@ export const backupShard = async (params: BackupShardParams): Promise<string> =>
     })
   } finally {
     socket.close()
+  }
+}
+
+export const backupShard = async (params: BackupShardParams): Promise<string> => {
+  const { recoveryPassword, waypointToken, wsUrl } = params
+  const tracker = createTracker({
+    event: HeadlessEventName.backupShard,
+    waypointToken,
+    productionFactor: wsUrl,
+  })
+
+  try {
+    const result = await _backupShard(params)
+    tracker.trackOk({
+      request: { isWeakSecurity: recoveryPassword === "" },
+    })
+
+    return result
+  } catch (error) {
+    tracker.trackError(error)
+    throw error
   }
 }

@@ -3,6 +3,7 @@ import { keccak256 } from "viem"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
 import { toServerError } from "../../error/server"
 import { Type } from "../../proto/rpc"
+import { createTracker, HeadlessEventName } from "../../track/track"
 import { getAddressFromShard } from "../get-address"
 import { sendAuthenticate, toAuthenticateData } from "../helpers/authenticate"
 import { wasmGetSignHandler } from "../helpers/get-sign-handler"
@@ -19,7 +20,7 @@ import { serializeLegacyTransaction, toTransactionInServerFormat } from "./prepa
 import { sendTransactionRequest } from "./send-tx-request"
 import { toTxHash } from "./to-tx-hash"
 
-export const sendLegacyTransaction = async (
+const _sendLegacyTransaction = async (
   params: SendTransactionParams,
 ): Promise<SendTransactionResult> => {
   const {
@@ -119,5 +120,31 @@ export const sendLegacyTransaction = async (
     })
   } finally {
     socket.close()
+  }
+}
+
+export const sendLegacyTransaction = async (
+  params: SendTransactionParams,
+): Promise<SendTransactionResult> => {
+  const { chain, transaction, wasmUrl, waypointToken, wsUrl } = params
+  const tracker = createTracker({
+    event: HeadlessEventName.sendLegacyTransaction,
+    waypointToken,
+    productionFactor: wsUrl,
+    wasmUrl,
+  })
+
+  try {
+    const result = await _sendLegacyTransaction(params)
+    const { txHash } = result
+    tracker.trackOk({
+      request: { transaction, chain },
+      response: { txHash },
+    })
+
+    return result
+  } catch (error) {
+    tracker.trackError(error)
+    throw error
   }
 }

@@ -56,4 +56,6 @@ export {
 } from "./error/client"
 export { ServerError, type ServerErrorType } from "./error/server"
 
+// utils
 export { validateToken } from "./utils/token"
+export { WASM_URL } from "./wasm/cdn"
