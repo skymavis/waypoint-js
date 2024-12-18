@@ -2,14 +2,14 @@ import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { createTracker, HeadlessEventName } from "../track/track"
 import { bytesToJson } from "../utils/convertor"
 import { type ActionHandler, type KeygenHandlerDoResponse } from "../wasm/types"
-import { sendAuthenticate, toAuthenticateData } from "./helpers/authenticate"
+import { decodeAuthenticateData, sendAuthenticate } from "./helpers/authenticate"
 import { wasmGetKeygenHandler } from "./helpers/get-keygen-handler"
 import { createFrameQueue, openSocket } from "./helpers/open-socket"
 import {
+  decodeProtocolDataAndTransferToWasm,
+  decodeSessionAndTransferToWasm,
   sendProtocolData,
   wasmGetProtocolData,
-  wasmReceiveProtocolData,
-  wasmReceiveSession,
 } from "./helpers/send-round-data"
 
 const wasmTriggerKeygen = async (keygenHandler: ActionHandler) => {
@@ -53,17 +53,17 @@ const _keygen = async (params: KeygenParams): Promise<string> => {
   try {
     sendAuthenticate(socket, waypointToken)
     const authFrame = await waitAndDequeue()
-    const authData = toAuthenticateData(authFrame)
+    const authData = decodeAuthenticateData(authFrame)
     console.debug("🔐 KEYGEN: authenticated", authData.uuid)
 
     const keygenResultPromise = wasmTriggerKeygen(keygenHandler)
     console.debug("🔐 KEYGEN: trigger wasm keygen")
 
     const sessionFrame = await waitAndDequeue()
-    wasmReceiveSession(keygenHandler, sessionFrame)
+    decodeSessionAndTransferToWasm(keygenHandler, sessionFrame)
 
     const socketR1 = await waitAndDequeue()
-    wasmReceiveProtocolData(keygenHandler, socketR1)
+    decodeProtocolDataAndTransferToWasm(keygenHandler, socketR1)
     console.debug("🔐 KEYGEN: socket - round 1")
 
     const wasmR1 = await wasmGetProtocolData(keygenHandler)
@@ -71,7 +71,7 @@ const _keygen = async (params: KeygenParams): Promise<string> => {
     console.debug("🔐 KEYGEN: wasm - round 1")
 
     const socketR2 = await waitAndDequeue()
-    wasmReceiveProtocolData(keygenHandler, socketR2)
+    decodeProtocolDataAndTransferToWasm(keygenHandler, socketR2)
     console.debug("🔐 KEYGEN: socket - round 2")
 
     const wasmR2 = await wasmGetProtocolData(keygenHandler)
@@ -79,7 +79,7 @@ const _keygen = async (params: KeygenParams): Promise<string> => {
     console.debug("🔐 KEYGEN: wasm - round 2")
 
     const socketR3 = await waitAndDequeue()
-    wasmReceiveProtocolData(keygenHandler, socketR3)
+    decodeProtocolDataAndTransferToWasm(keygenHandler, socketR3)
     console.debug("🔐 KEYGEN: socket - round 3")
 
     const keygenResult = await keygenResultPromise

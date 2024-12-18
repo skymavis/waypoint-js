@@ -1,7 +1,7 @@
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
-import { toServerError } from "../../error/server"
+import { decodeServerError } from "../../error/server"
 import { Frame, FrameSchema, SessionSchema, Type } from "../../proto/rpc"
 import { base64ToBytes, bytesToBase64, bytesToJson, jsonToBytes } from "../../utils/convertor"
 import { type ActionHandler, HandlerRxResult, HandlerTxParams } from "../../wasm/types"
@@ -26,19 +26,17 @@ export const wasmGetProtocolData = async (signHandler: ActionHandler) => {
   }
 }
 
-export const wasmReceiveProtocolData = (signHandler: ActionHandler, frame: Frame) => {
+export const decodeProtocolDataAndTransferToWasm = (signHandler: ActionHandler, frame: Frame) => {
+  if (frame.type !== Type.DATA) throw decodeServerError(frame)
+
   try {
-    if (frame.type === Type.DATA) {
-      const txParams: HandlerTxParams = {
-        kind: "mpc_protocol",
-        data: bytesToBase64(frame.data),
-      }
-      signHandler.tx(jsonToBytes(txParams))
-
-      return
+    const txParams: HandlerTxParams = {
+      kind: "mpc_protocol",
+      data: bytesToBase64(frame.data),
     }
+    signHandler.tx(jsonToBytes(txParams))
 
-    throw toServerError(frame)
+    return
   } catch (error) {
     throw new HeadlessClientError({
       cause: error,
@@ -48,23 +46,20 @@ export const wasmReceiveProtocolData = (signHandler: ActionHandler, frame: Frame
   }
 }
 
-export const wasmReceiveSession = (signHandler: ActionHandler, frame: Frame) => {
+export const decodeSessionAndTransferToWasm = (signHandler: ActionHandler, frame: Frame) => {
+  if (frame.type !== Type.DATA) throw decodeServerError(frame)
+
   try {
-    if (frame.type === Type.DATA) {
-      const session = fromBinary(SessionSchema, frame.data)
-
-      const txParams: HandlerTxParams = {
-        kind: "mpc_protocol",
-        data: {
-          sessionID: session.sessionId,
-        },
-      }
-      signHandler.tx(jsonToBytes(txParams))
-
-      return
+    const session = fromBinary(SessionSchema, frame.data)
+    const txParams: HandlerTxParams = {
+      kind: "mpc_protocol",
+      data: {
+        sessionID: session.sessionId,
+      },
     }
+    signHandler.tx(jsonToBytes(txParams))
 
-    throw toServerError(frame)
+    return
   } catch (error) {
     throw new HeadlessClientError({
       cause: error,

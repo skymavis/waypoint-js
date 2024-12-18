@@ -27,7 +27,7 @@ export class ServerError extends Error {
   }
 }
 
-export const toServerError = (frame: Frame) => {
+export const decodeServerError = (frame: Frame) => {
   if (frame.type === Type.ERROR) {
     const error = fromBinary(ErrorSchema, frame.data)
 

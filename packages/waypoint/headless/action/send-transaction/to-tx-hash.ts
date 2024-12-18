@@ -2,27 +2,24 @@ import { fromBinary } from "@bufbuild/protobuf"
 import { Hex, isHash } from "viem"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
-import { toServerError } from "../../error/server"
+import { decodeServerError } from "../../error/server"
 import { Frame, Type } from "../../proto/rpc"
 import { SendTransactionResponseSchema } from "../../proto/sign"
 
 export const toTxHash = (sendTxResponseFrame: Frame): Hex => {
+  if (sendTxResponseFrame.type !== Type.DATA) throw decodeServerError(sendTxResponseFrame)
+
   try {
-    if (sendTxResponseFrame.type === Type.DATA) {
-      const { txHash } = fromBinary(SendTransactionResponseSchema, sendTxResponseFrame.data)
+    const { txHash } = fromBinary(SendTransactionResponseSchema, sendTxResponseFrame.data)
 
-      if (!isHash(txHash)) {
-        throw "Invalid transaction hash"
-      }
-
-      return txHash
+    if (!isHash(txHash)) {
+      throw "Invalid transaction hash"
     }
-
-    throw toServerError(sendTxResponseFrame)
+    return txHash
   } catch (error) {
     throw new HeadlessClientError({
       code: HeadlessClientErrorCode.SendTransactionError,
-      message: `Unable to get the transaction hash from the server.`,
+      message: `Unable to decode frame data received from the server. The data should be in a transaction hash schema.`,
       cause: error,
     })
   }

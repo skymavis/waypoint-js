@@ -3,7 +3,7 @@ import { secp256k1 } from "@noble/curves/secp256k1"
 import { keccak256, stringToBytes } from "viem"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
-import { toServerError } from "../error/server"
+import { decodeServerError } from "../error/server"
 import {
   BackupRequestSchema,
   BackupResponseSchema,
@@ -16,7 +16,7 @@ import { createTracker, HeadlessEventName } from "../track/track"
 import { bytesToBase64 } from "../utils/convertor"
 import { encryptShard } from "./encrypt-shard"
 import { getSecretFromShard } from "./get-address"
-import { sendAuthenticate, toAuthenticateData } from "./helpers/authenticate"
+import { decodeAuthenticateData, sendAuthenticate } from "./helpers/authenticate"
 import { createFrameQueue, openSocket } from "./helpers/open-socket"
 
 export type BackupShardParams = {
@@ -56,21 +56,19 @@ const sendEncryptedShard = (socket: WebSocket, encryptedShard: string, signature
   socket.send(toBinary(FrameSchema, frame))
 }
 
-const toSignChallenge = (challengeResponseFrame: Frame) => {
+const decodeSignChallenge = (challengeResponseFrame: Frame) => {
+  if (challengeResponseFrame.type !== Type.DATA) throw decodeServerError(challengeResponseFrame)
+
   try {
-    if (challengeResponseFrame.type === Type.DATA) {
-      const challengeResponse = fromBinary(BackupResponseSchema, challengeResponseFrame.data)
-      const { challengeString } = fromBinary(ChallengeInfoSchema, challengeResponse.result)
-      const signChallenge = keccak256(stringToBytes(challengeString), "bytes")
+    const challengeResponse = fromBinary(BackupResponseSchema, challengeResponseFrame.data)
+    const { challengeString } = fromBinary(ChallengeInfoSchema, challengeResponse.result)
+    const signChallenge = keccak256(stringToBytes(challengeString), "bytes")
 
-      return signChallenge
-    }
-
-    throw toServerError(challengeResponseFrame)
+    return signChallenge
   } catch (error) {
     throw new HeadlessClientError({
       code: HeadlessClientErrorCode.BackupClientShardError,
-      message: `Unable to get the sign challenge from the server.`,
+      message: `Unable to decode frame data received from the server. The data should be in a sign challenge schema.`,
       cause: error,
     })
   }
@@ -109,28 +107,19 @@ const _backupShard = async (params: BackupShardParams): Promise<string> => {
   try {
     sendAuthenticate(socket, waypointToken)
     const authFrame = await waitAndDequeue()
-    const authData = toAuthenticateData(authFrame)
+    const authData = decodeAuthenticateData(authFrame)
     console.debug("🔐 BACKUP: authenticated", authData.uuid)
 
     sendBackupRequest(socket)
     const challengeFrame = await waitAndDequeue()
-    const challenge = toSignChallenge(challengeFrame)
-
+    const challenge = decodeSignChallenge(challengeFrame)
     const signature = signChallenge(challenge, secret)
+
     sendEncryptedShard(socket, encryptedShard, signature)
-
     const doneFrame = await waitAndDequeue()
-    if (doneFrame.type === Type.DONE) {
-      console.debug("🔐 BACKUP: done")
-
-      return encryptedShard
-    }
-
-    throw new HeadlessClientError({
-      code: HeadlessClientErrorCode.BackupClientShardError,
-      message: `Unable to get the backup status from the server.`,
-      cause: toServerError(doneFrame),
-    })
+    if (doneFrame.type !== Type.DONE) throw decodeServerError(doneFrame)
+    console.debug("🔐 BACKUP: done")
+    return encryptedShard
   } finally {
     socket.close()
   }

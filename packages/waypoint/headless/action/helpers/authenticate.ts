@@ -1,7 +1,7 @@
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
-import { toServerError } from "../../error/server"
+import { decodeServerError } from "../../error/server"
 import { AuthenticateRequestSchema, AuthenticateResponseSchema } from "../../proto/auth"
 import { Frame, FrameSchema, Type } from "../../proto/rpc"
 import { addBearerPrefix } from "../../utils/token"
@@ -21,19 +21,17 @@ export const sendAuthenticate = (socket: WebSocket, waypointToken: string) => {
   socket.send(toBinary(FrameSchema, frame))
 }
 
-export const toAuthenticateData = (authFrame: Frame) => {
+export const decodeAuthenticateData = (authFrame: Frame) => {
+  if (authFrame.type !== Type.DATA) throw decodeServerError(authFrame)
+
   try {
-    if (authFrame.type === Type.DATA) {
-      const authResponse = fromBinary(AuthenticateResponseSchema, authFrame.data)
+    const authResponse = fromBinary(AuthenticateResponseSchema, authFrame.data)
 
-      return authResponse
-    }
-
-    throw toServerError(authFrame)
+    return authResponse
   } catch (error) {
     throw new HeadlessClientError({
       code: HeadlessClientErrorCode.AuthenticateError,
-      message: `Unable to authenticate the user with the server.`,
+      message: `Unable to decode frame data received from the server. The data should be in a authenticate response schema.`,
       cause: error,
     })
   }
