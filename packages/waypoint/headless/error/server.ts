@@ -104,7 +104,7 @@ export const decodeServerError = (frame: Frame) => {
 
   if (frame.type === Type.UNSPECIFIED) {
     return new ServerError({
-      code: -1,
+      code: ServerErrorCode.Unknown,
       message: "unspecified server response",
     })
   }
