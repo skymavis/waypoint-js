@@ -21,7 +21,7 @@ export const wasmGetProtocolData = async (signHandler: ActionHandler) => {
     throw new HeadlessClientError({
       cause: error,
       code: HeadlessClientErrorCode.WasmGetProtocolResultError,
-      message: `Unable to receive the round data from WASM process.`,
+      message: `Unable to receive the protocol round data from WASM process.`,
     })
   }
 }
