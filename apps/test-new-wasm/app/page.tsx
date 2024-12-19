@@ -15,7 +15,7 @@ import {
   validateSponsorTransaction,
 } from "@sky-mavis/waypoint/headless"
 import { useState } from "react"
-import { getAddress, TypedDataDefinition } from "viem"
+import { getAddress, toHex, TypedDataDefinition } from "viem"
 import { saigon } from "viem/chains"
 
 import { Button } from "./button"
@@ -174,6 +174,7 @@ const KeygenTestPage = () => {
           type: "0x0",
           to: getAddress("0xcd3cf91e7f0601ab98c95dd18b4f99221bcf0b20"),
           value: "0x23af16b18000",
+          gas: toHex(1000000),
         },
 
         wasmUrl: WASM_URL,
@@ -195,6 +196,7 @@ const KeygenTestPage = () => {
           type: "0x64",
           to: getAddress("0xcd3cf91e7f0601ab98c95dd18b4f99221bcf0b20"),
           value: "0x23af16b18000",
+          gas: toHex(100000),
         },
 
         wasmUrl: WASM_URL,
