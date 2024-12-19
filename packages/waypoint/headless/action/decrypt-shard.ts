@@ -1,8 +1,10 @@
 import { bytesToString, concatBytes } from "viem"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
+import { createTracker, HeadlessEventName } from "../track/track"
 import { base64ToBytes } from "../utils/convertor"
 import { IV_LENGTH_BYTE, TAG_LENGTH_BYTE } from "./encrypt-shard"
+import { checkWeakBk } from "./helpers/check-weak-bk"
 import { deriveKey } from "./helpers/key"
 
 const unpackEncryptedContent = (
@@ -45,9 +47,15 @@ export type DecryptShardParams = {
 }
 
 export const decryptShard = async (params: DecryptShardParams) => {
-  try {
-    const { waypointToken, recoveryPassword, encryptedData } = params
+  const { waypointToken, recoveryPassword, encryptedData } = params
+  const tracker = createTracker({
+    event: HeadlessEventName.decryptShard,
+    waypointToken,
+    // * decrypt function is not environment dependent - always track as production
+    productionFactor: true,
+  })
 
+  try {
     const v1PackedContent = getV1PackedContent(encryptedData)
     const { authTag, cipherText, iv } = unpackEncryptedContent(v1PackedContent)
 
@@ -59,6 +67,9 @@ export const decryptShard = async (params: DecryptShardParams) => {
     )
     const shardInBase64 = bytesToString(new Uint8Array(shardInBytes))
 
+    tracker.trackOk({
+      request: { isWeakBk: checkWeakBk(recoveryPassword) },
+    })
     return shardInBase64
   } catch (error) {
     throw new HeadlessClientError({

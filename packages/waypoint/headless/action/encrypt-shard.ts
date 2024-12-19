@@ -36,7 +36,8 @@ export type EncryptShardParams = {
 
   clientShard: string
 }
-
+// ! DO NOT tracking on ecrypt shard
+// * Already tracking on backup shard
 export const encryptShard = async (params: EncryptShardParams) => {
   try {
     const { waypointToken, recoveryPassword, clientShard } = params

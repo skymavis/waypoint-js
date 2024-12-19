@@ -9,10 +9,12 @@ import { ASAccessTokenPayload, WaypointTokenPayload } from "../utils/token"
 
 const CONTENT_TYPE = "application/json"
 const TRACK_URL = "https://x.skymavis.com/track"
-const AUTHORIZATION = "Basic ODZkMTNkMmYtYWFmYy00M2YyLWJhZDctNDI2NTBiYmJmZTJlOg=="
+const AUTHORIZATION_PROD = "Basic ODZkMTNkMmYtYWFmYy00M2YyLWJhZDctNDI2NTBiYmJmZTJlOg=="
+const AUTHORIZATION_STAG = "Basic ZDU1ODQyODYtOWIwYS00MzE3LWI3YjktOWRjOTQwNmFiMzJlOg=="
 
 export enum HeadlessEventName {
   backupShard = "backupShard",
+  decryptShard = "decryptShard",
   keygen = "keygen",
   personalSign = "personalSign",
   signTypedData = "signTypedData",
@@ -76,9 +78,9 @@ type TrackEvent = {
   data: TrackData
 }
 
-const track = (events: TrackEvent[]) => {
+const track = (events: TrackEvent[], isProdEnv: boolean) => {
   const headers = new Headers({})
-  headers.set("Authorization", AUTHORIZATION)
+  headers.set("Authorization", isProdEnv ? AUTHORIZATION_PROD : AUTHORIZATION_STAG)
   headers.set("Content-Type", CONTENT_TYPE)
   headers.set("Accept", CONTENT_TYPE)
 
@@ -162,6 +164,7 @@ type CreateTrackerParams = {
 export const createTracker = (params: CreateTrackerParams) => {
   const { event, waypointToken, wasmUrl = "", productionFactor = false } = params
   const startTime = performance.now()
+  const isProdEnv = isProd(productionFactor)
 
   const _getCommonData = () => {
     const endTime = performance.now()
@@ -199,10 +202,6 @@ export const createTracker = (params: CreateTrackerParams) => {
   }
 
   const trackOk = (okProperties: OkProperties) => {
-    if (!isProd(productionFactor)) {
-      return
-    }
-
     try {
       const { commonActionProperties, ...restCommonData } = _getCommonData()
       const { request, response } = okProperties
@@ -222,17 +221,13 @@ export const createTracker = (params: CreateTrackerParams) => {
         data: trackData,
       }
 
-      track([trackEvent])
+      track([trackEvent], isProdEnv)
     } catch (error) {
       /* empty */
     }
   }
 
   const trackError = (error: unknown) => {
-    if (!isProd(productionFactor)) {
-      return
-    }
-
     try {
       const { commonActionProperties, ...restCommonData } = _getCommonData()
       const errorProperties = toErrorProperties(error)
@@ -250,7 +245,7 @@ export const createTracker = (params: CreateTrackerParams) => {
         data: trackData,
       }
 
-      track([trackEvent])
+      track([trackEvent], isProdEnv)
     } catch (error) {
       /* empty */
     }

@@ -17,6 +17,7 @@ import { bytesToBase64 } from "../utils/convertor"
 import { encryptShard } from "./encrypt-shard"
 import { getSecretFromShard } from "./get-address"
 import { decodeAuthenticateData, sendAuthenticate } from "./helpers/authenticate"
+import { checkWeakBk } from "./helpers/check-weak-bk"
 import { createFrameQueue, openSocket } from "./helpers/open-socket"
 
 export type BackupShardParams = {
@@ -136,7 +137,7 @@ export const backupShard = async (params: BackupShardParams): Promise<string> =>
   try {
     const result = await _backupShard(params)
     tracker.trackOk({
-      request: { isWeakSecurity: recoveryPassword === "" },
+      request: { isWeakBk: checkWeakBk(recoveryPassword) },
     })
 
     return result
