@@ -1,6 +1,6 @@
 import {
   type Address,
-  createPublicClient,
+  createClient,
   hexToBigInt,
   hexToNumber,
   http,
@@ -10,6 +10,7 @@ import {
   serializeTransaction,
   type TransactionSerializableLegacy,
 } from "viem"
+import { getTransactionCount } from "viem/actions"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
 import {
@@ -70,9 +71,13 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
     })
   }
 
-  const publicClient = createPublicClient({
-    transport: http(rpcUrl),
-  })
+  if (!gas || !isHex(gas)) {
+    throw new HeadlessClientError({
+      cause: undefined,
+      code: HeadlessClientErrorCode.PrepareTransactionError,
+      message: `The transaction with gas="${gas}" is not valid.`,
+    })
+  }
 
   const fillNonce = async () => {
     try {
@@ -80,7 +85,11 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
         return hexToNumber(nonce)
       }
 
-      return await publicClient.getTransactionCount({ address: from, blockTag: "pending" })
+      const client = createClient({
+        transport: http(rpcUrl),
+      })
+
+      return await getTransactionCount(client, { address: from, blockTag: "pending" })
     } catch (error) {
       throw new HeadlessClientError({
         cause: error,
@@ -91,30 +100,6 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
   }
   const filledNonce = await fillNonce()
 
-  const fillGas = async () => {
-    try {
-      if (isHex(gas)) {
-        return hexToNumber(gas)
-      }
-
-      return await publicClient.estimateGas({
-        type: "legacy",
-        nonce: filledNonce,
-        to,
-        gasPrice: hexToBigInt(gasPrice),
-        value: hexToBigInt(value),
-        data: input ?? data,
-      })
-    } catch (error) {
-      throw new HeadlessClientError({
-        cause: error,
-        code: HeadlessClientErrorCode.PrepareTransactionError,
-        message: `Unable to estimate gas when preparing the transaction. This could be due to a slow network or an RPC status.`,
-      })
-    }
-  }
-  const filledGas = await fillGas()
-
   try {
     const formattedTransaction: TransactionInServerFormat = {
       type,
@@ -124,7 +109,7 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
       input: input ?? data,
       gasPrice,
 
-      gas: numberToHex(filledGas),
+      gas,
       nonce: numberToHex(filledNonce),
 
       chainId: numberToHex(chainId),
