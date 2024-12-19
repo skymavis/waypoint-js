@@ -24,6 +24,7 @@ import { validateSponsorTransaction } from "../action/validate-sponsor-tx"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { getServiceUrls, type ServiceEnv } from "../utils/service-url"
 import { validateToken } from "../utils/token"
+import { WASM_URL } from "../wasm/cdn"
 import { HeadlessProvider } from "./provider"
 
 export type CreateHeadlessCoreOpts = {
@@ -59,7 +60,7 @@ export class HeadlessCore {
       clientShard = "",
 
       serviceEnv = "prod",
-      wasmUrl = "https://storage.googleapis.com/thien-cdn/mpc/wasm/staging/mpc.wasm",
+      wasmUrl = WASM_URL,
     } = opts
     const { httpUrl, wsUrl } = getServiceUrls(serviceEnv)
 

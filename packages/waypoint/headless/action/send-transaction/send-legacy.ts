@@ -1,18 +1,17 @@
 import { keccak256 } from "viem"
 
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
-import { toServerError } from "../../error/server"
+import { decodeServerError } from "../../error/server"
 import { Type } from "../../proto/rpc"
 import { createTracker, HeadlessEventName } from "../../track/track"
 import { getAddressFromShard } from "../get-address"
-import { sendAuthenticate, toAuthenticateData } from "../helpers/authenticate"
+import { decodeAuthenticateData, sendAuthenticate } from "../helpers/authenticate"
 import { wasmGetSignHandler } from "../helpers/get-sign-handler"
 import { createFrameQueue, openSocket } from "../helpers/open-socket"
 import {
+  decodeProtocolDataAndTransferToWasm,
+  decodeSessionAndTransferToWasm,
   sendProtocolData,
   wasmGetProtocolData,
-  wasmReceiveProtocolData,
-  wasmReceiveSession,
 } from "../helpers/send-round-data"
 import { wasmTriggerSign } from "../helpers/trigger-sign"
 import type { SendTransactionParams, SendTransactionResult } from "./common"
@@ -52,7 +51,7 @@ const _sendLegacyTransaction = async (
   try {
     sendAuthenticate(socket, waypointToken)
     const authFrame = await waitAndDequeue()
-    const authData = toAuthenticateData(authFrame)
+    const authData = decodeAuthenticateData(authFrame)
     console.debug("🔏 SEND TX: authenticated", authData.uuid)
 
     const signResultPromise = wasmTriggerSign(signHandler, keccakSerializedTx, clientShard)
@@ -62,10 +61,10 @@ const _sendLegacyTransaction = async (
     console.debug("🔏 SEND TX: trigger socket sign")
 
     const sessionFrame = await waitAndDequeue()
-    wasmReceiveSession(signHandler, sessionFrame)
+    decodeSessionAndTransferToWasm(signHandler, sessionFrame)
 
     const socketR1 = await waitAndDequeue()
-    wasmReceiveProtocolData(signHandler, socketR1)
+    decodeProtocolDataAndTransferToWasm(signHandler, socketR1)
     console.debug("🔏 SEND TX: socket - round 1")
 
     const wasmR1 = await wasmGetProtocolData(signHandler)
@@ -73,7 +72,7 @@ const _sendLegacyTransaction = async (
     console.debug("🔏 SEND TX: wasm - round 1")
 
     const socketR2 = await waitAndDequeue()
-    wasmReceiveProtocolData(signHandler, socketR2)
+    decodeProtocolDataAndTransferToWasm(signHandler, socketR2)
     console.debug("🔏 SEND TX: socket - round 2")
 
     const wasmR2 = await wasmGetProtocolData(signHandler)
@@ -81,14 +80,14 @@ const _sendLegacyTransaction = async (
     console.debug("🔏 SEND TX: wasm - round 2")
 
     const socketR3 = await waitAndDequeue()
-    wasmReceiveProtocolData(signHandler, socketR3)
+    decodeProtocolDataAndTransferToWasm(signHandler, socketR3)
     console.debug("🔏 SEND TX: socket - round 3")
 
     const sessionR2Frame = await waitAndDequeue()
-    wasmReceiveSession(signHandler, sessionR2Frame)
+    decodeSessionAndTransferToWasm(signHandler, sessionR2Frame)
 
     const socketR4 = await waitAndDequeue()
-    wasmReceiveProtocolData(signHandler, socketR4)
+    decodeProtocolDataAndTransferToWasm(signHandler, socketR4)
     console.debug("🔏 SEND TX: socket - round 4")
 
     const wasmR3 = await wasmGetProtocolData(signHandler)
@@ -96,28 +95,21 @@ const _sendLegacyTransaction = async (
     console.debug("🔏 SEND TX: wasm - round 3")
 
     const socketR5 = await waitAndDequeue()
-    wasmReceiveProtocolData(signHandler, socketR5)
+    decodeProtocolDataAndTransferToWasm(signHandler, socketR5)
     console.debug("🔏 SEND TX: socket - round 5")
 
     const sendTransactionResponseFrame = await waitAndDequeue()
     const txHash = toTxHash(sendTransactionResponseFrame)
 
     const doneFrame = await waitAndDequeue()
-    if (doneFrame.type === Type.DONE) {
-      const signature = await signResultPromise
+    if (doneFrame.type !== Type.DONE) throw decodeServerError(doneFrame)
 
-      console.debug("🔏 SEND TX: done")
-      return {
-        txHash: txHash,
-        signature,
-      }
+    const signature = await signResultPromise
+    console.debug("🔏 SEND TX: done")
+    return {
+      txHash: txHash,
+      signature,
     }
-
-    throw new HeadlessClientError({
-      code: HeadlessClientErrorCode.SendTransactionError,
-      message: `Unable to get the transaction status from the server.`,
-      cause: toServerError(doneFrame),
-    })
   } finally {
     socket.close()
   }

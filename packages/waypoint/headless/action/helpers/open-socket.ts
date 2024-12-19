@@ -19,7 +19,7 @@ export const openSocket = (url: string, timeout = DEFAULT_TIMEOUT): Promise<WebS
         new HeadlessClientError({
           cause: undefined,
           code: HeadlessClientErrorCode.OpenSocketError,
-          message: `Unable to open WebSocket with url="${url}". The connection has reached the timeout of ${timeout}ms.`,
+          message: `Unable to open WebSocket with url="${url}". The connection has reached the timeout="${timeout}ms".`,
         }),
       )
     }, timeout)
@@ -44,7 +44,7 @@ export const createFrameQueue = (socket: WebSocket) => {
           new HeadlessClientError({
             cause: undefined,
             code: HeadlessClientErrorCode.ListenSocketMessageError,
-            message: `Unable to retrieve message from WebSocket. The progress has reached the timeout of ${timeout}ms.`,
+            message: `Unable to retrieve message from WebSocket. The progress has reached the timeout="${timeout}ms".`,
           }),
         )
       }, timeout)

@@ -13,15 +13,9 @@ const AUTHORIZATION = "Basic ODZkMTNkMmYtYWFmYy00M2YyLWJhZDctNDI2NTBiYmJmZTJlOg=
 
 export enum HeadlessEventName {
   backupShard = "backupShard",
-  decryptShard = "decryptShard",
-  encryptShard = "encryptShard",
-  getAddressFromShard = "getAddressFromShard",
-  getBackupClientShard = "getBackupClientShard",
-  getUserProfile = "getUserProfile",
   keygen = "keygen",
   personalSign = "personalSign",
   signTypedData = "signTypedData",
-  validateSponsorTransaction = "validateSponsorTransaction,",
   sendLegacyTransaction = "sendLegacyTransaction,",
   sendSponsoredTransaction = "sendSponsoredTransaction,",
 }

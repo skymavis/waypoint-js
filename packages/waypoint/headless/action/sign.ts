@@ -5,14 +5,14 @@ import { FrameSchema, Type } from "../proto/rpc"
 import { SignRequestSchema, SignType } from "../proto/sign"
 import { hexToBase64, jsonToBytes } from "../utils/convertor"
 import { toEthereumSignature } from "../utils/signature"
-import { sendAuthenticate, toAuthenticateData } from "./helpers/authenticate"
+import { decodeAuthenticateData, sendAuthenticate } from "./helpers/authenticate"
 import { wasmGetSignHandler } from "./helpers/get-sign-handler"
 import { createFrameQueue, openSocket } from "./helpers/open-socket"
 import {
+  decodeProtocolDataAndTransferToWasm,
+  decodeSessionAndTransferToWasm,
   sendProtocolData,
   wasmGetProtocolData,
-  wasmReceiveProtocolData,
-  wasmReceiveSession,
 } from "./helpers/send-round-data"
 import { wasmTriggerSign } from "./helpers/trigger-sign"
 
@@ -61,7 +61,7 @@ export const _sign = async (params: SignParams): Promise<Hex> => {
   try {
     sendAuthenticate(socket, waypointToken)
     const authFrame = await waitAndDequeue()
-    const authData = toAuthenticateData(authFrame)
+    const authData = decodeAuthenticateData(authFrame)
     console.debug("🔏 SIGN: authenticated", authData.uuid)
 
     const signResultPromise = wasmTriggerSign(signHandler, keccakMessage, clientShard)
@@ -71,10 +71,10 @@ export const _sign = async (params: SignParams): Promise<Hex> => {
     console.debug("🔏 SIGN: trigger socket sign")
 
     const sessionFrame = await waitAndDequeue()
-    wasmReceiveSession(signHandler, sessionFrame)
+    decodeSessionAndTransferToWasm(signHandler, sessionFrame)
 
     const socketR1 = await waitAndDequeue()
-    wasmReceiveProtocolData(signHandler, socketR1)
+    decodeProtocolDataAndTransferToWasm(signHandler, socketR1)
     console.debug("🔏 SIGN: socket - round 1")
 
     const wasmR1 = await wasmGetProtocolData(signHandler)
@@ -82,7 +82,7 @@ export const _sign = async (params: SignParams): Promise<Hex> => {
     console.debug("🔏 SIGN: wasm - round 1")
 
     const socketR2 = await waitAndDequeue()
-    wasmReceiveProtocolData(signHandler, socketR2)
+    decodeProtocolDataAndTransferToWasm(signHandler, socketR2)
     console.debug("🔏 SIGN: socket - round 2")
 
     const wasmR2 = await wasmGetProtocolData(signHandler)
@@ -90,14 +90,14 @@ export const _sign = async (params: SignParams): Promise<Hex> => {
     console.debug("🔏 SIGN: wasm - round 2")
 
     const socketR3 = await waitAndDequeue()
-    wasmReceiveProtocolData(signHandler, socketR3)
+    decodeProtocolDataAndTransferToWasm(signHandler, socketR3)
     console.debug("🔏 SIGN: socket - round 3")
 
     const sessionR2Frame = await waitAndDequeue()
-    wasmReceiveSession(signHandler, sessionR2Frame)
+    decodeSessionAndTransferToWasm(signHandler, sessionR2Frame)
 
     const socketR4 = await waitAndDequeue()
-    wasmReceiveProtocolData(signHandler, socketR4)
+    decodeProtocolDataAndTransferToWasm(signHandler, socketR4)
     console.debug("🔏 SIGN: socket - round 4")
 
     const wasmR3 = await wasmGetProtocolData(signHandler)
@@ -105,7 +105,7 @@ export const _sign = async (params: SignParams): Promise<Hex> => {
     console.debug("🔏 SIGN: wasm - round 3")
 
     const socketR5 = await waitAndDequeue()
-    wasmReceiveProtocolData(signHandler, socketR5)
+    decodeProtocolDataAndTransferToWasm(signHandler, socketR5)
     console.debug("🔏 SIGN: socket - round 5")
 
     const signature = await signResultPromise
