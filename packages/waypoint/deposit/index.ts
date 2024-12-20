@@ -23,6 +23,7 @@ type StartDepositParams = {
   email?: string
   walletAddress?: string
   fiatCurrency?: string
+  fiatAmount?: number
   cryptoCurrency?: string
 }
 
@@ -56,7 +57,7 @@ export class Deposit {
 
   start = async (params?: StartDepositParams) => {
     const response = await this.communicateHelper.sendRequest<OrderSuccessMessage>(state => {
-      const { email, walletAddress, fiatCurrency, cryptoCurrency } = params ?? {}
+      const { email, walletAddress, fiatCurrency, cryptoCurrency, fiatAmount } = params ?? {}
 
       const query = {
         state,
@@ -68,6 +69,7 @@ export class Deposit {
         wallet_address: walletAddress,
         fiat_currency: fiatCurrency,
         crypto_currency: cryptoCurrency,
+        fiat_amount: fiatAmount,
       }
 
       const popupConfig = {
