@@ -8,16 +8,21 @@ type PopupConfig = {
   width?: number
   height?: number
 }
+export const HASHED_PARAMS = ["data"]
 
-const buildUrlWithQuery = (inputUrl: string, query?: Record<string, UrlParams>): URL => {
+export const buildUrlWithQuery = (inputUrl: string, query?: Record<string, UrlParams>): URL => {
   const url = new URL(inputUrl)
-  if (query) {
-    Object.entries(query).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        url.searchParams.set(key, value.toString())
-      }
-    })
-  }
+  if (!query) return url
+  Object.entries(query).forEach(([key, value]) => {
+    if (value === null || value === undefined) return
+    if (HASHED_PARAMS.includes(key)) {
+      url.hash = `${key}=${encodeURIComponent(
+        typeof value === "object" ? JSON.stringify(value) : value.toString(),
+      )}`
+      return
+    }
+    url.searchParams.set(key, value.toString())
+  })
   return url
 }
 
