@@ -94,15 +94,6 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
 
   private addDefaultScopes(scopes: Scope[]): Scope[] {
     const newScopes = [...scopes]
-
-    if (!newScopes.includes("openid")) {
-      newScopes.push("openid")
-    }
-
-    if (!newScopes.includes("wallet")) {
-      newScopes.push("wallet")
-    }
-
     return newScopes
   }
 
