@@ -243,6 +243,7 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
       connect,
       getIdAddress,
       getIdAddressOrConnect,
+      popupCloseDelay,
     } = this
     const { method, params } = args
 
@@ -273,6 +274,7 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
           clientId,
           waypointOrigin,
           communicateHelper,
+          popupCloseDelay,
         }) as ReturnType
       }
 
@@ -286,6 +288,7 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
           clientId,
           waypointOrigin,
           communicateHelper,
+          popupCloseDelay,
         }) as ReturnType
       }
 
@@ -299,6 +302,7 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
           clientId,
           waypointOrigin,
           communicateHelper,
+          popupCloseDelay,
         }) as ReturnType
       }
 
