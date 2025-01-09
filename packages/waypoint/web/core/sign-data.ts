@@ -14,12 +14,13 @@ import { openPopup } from "../../common/popup"
 
 type SignTypedDataV4Params = {
   params: [address: Address, data: TypedDataDefinition | string]
-  expectAddress: Address
+  expectAddress?: Address
 
   clientId: string
   chainId: number
   waypointOrigin: string
   communicateHelper: CommunicateHelper
+  popupCloseDelay?: number
 }
 
 const REQUIRED_PROPERTIES = ["types", "domain", "primaryType", "message"]
@@ -78,12 +79,13 @@ export const signTypedDataV4 = async ({
   chainId,
   waypointOrigin,
   communicateHelper,
+  popupCloseDelay,
 }: SignTypedDataV4Params) => {
   const [address, data] = params
 
   if (!data) throw new InvalidParamsRpcError(new Error("eth_signTypedData_v4: data is NOT define"))
 
-  if (!isAddressEqual(address, expectAddress)) {
+  if (address && expectAddress && !isAddressEqual(address, expectAddress)) {
     throw new UnauthorizedProviderError(
       new Error("eth_signTypedData_v4: current address is different from required address"),
     )
@@ -95,8 +97,8 @@ export const signTypedDataV4 = async ({
     const signature = await communicateHelper.sendRequest<string>(state =>
       openPopup(`${waypointOrigin}/wallet/sign`, {
         state,
-
         clientId,
+        popupCloseDelay,
         origin: window.location.origin,
 
         chainId,

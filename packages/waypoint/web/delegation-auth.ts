@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid"
+
 import { CommunicateHelper, openPopup, replaceUrl } from "../common"
 import { getDelegationScopesParams } from "../common/scope"
 import {
@@ -46,7 +48,7 @@ export const delegationAuthorize = async <T extends DelegationAuthorizeOpts>(
 
     replaceUrl(`${waypointOrigin}/client/${clientId}/authorize`, {
       redirect: redirectUrl,
-      state: opts.state ?? crypto.randomUUID(),
+      state: opts.state ?? uuidv4(),
       scope: getDelegationScopesParams(scopes),
       publicKey: stringifiedKeyPair.publicKey,
     })

@@ -1,4 +1,5 @@
 import { jwtDecode } from "jwt-decode"
+import { v4 as uuidv4 } from "uuid"
 import { sha256, stringToHex } from "viem"
 
 import { version } from "../../common/version"
@@ -179,7 +180,7 @@ export const createTracker = (params: CreateTrackerParams) => {
 
     return {
       event,
-      uuid: crypto.randomUUID(),
+      uuid: uuidv4(),
       offset: getOffset(),
       timestamp: getUTCTime(),
       session_id: sid,

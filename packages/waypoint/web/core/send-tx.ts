@@ -8,11 +8,12 @@ type SendTransactionParams = {
   params: [transaction: GenericTransaction]
 
   chainId: number
-  expectAddress: Address
+  expectAddress?: Address
 
   clientId: string
   waypointOrigin: string
   communicateHelper: CommunicateHelper
+  popupCloseDelay?: number
 }
 
 export const sendTransaction = async ({
@@ -24,6 +25,7 @@ export const sendTransaction = async ({
   clientId,
   waypointOrigin,
   communicateHelper,
+  popupCloseDelay,
 }: SendTransactionParams): Promise<string> => {
   const [transaction] = params
 
@@ -31,6 +33,7 @@ export const sendTransaction = async ({
     openPopup(`${waypointOrigin}/wallet/send`, {
       state,
       clientId,
+      popupCloseDelay,
       origin: window.location.origin,
 
       chainId,
