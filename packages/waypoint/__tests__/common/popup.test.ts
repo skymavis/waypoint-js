@@ -92,7 +92,7 @@ describe("Popup and URL functions", () => {
 
       expect(globalThis.window.open).toHaveBeenCalledWith(
         url,
-        "_blank",
+        "Ronin Waypoint",
         `scrollbars=yes,width=480,height=720,top=24,left=272`,
       )
     })

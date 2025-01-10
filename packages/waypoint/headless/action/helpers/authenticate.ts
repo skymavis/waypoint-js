@@ -1,4 +1,5 @@
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf"
+import { v4 as uuidv4 } from "uuid"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
 import { decodeServerError } from "../../error/server"
@@ -10,7 +11,7 @@ export const sendAuthenticate = (socket: WebSocket, waypointToken: string) => {
   const authRequest = create(AuthenticateRequestSchema, {
     token: addBearerPrefix(waypointToken),
     optionalData: {
-      requestId: crypto.randomUUID(),
+      requestId: uuidv4(),
     },
   })
   const frame = create(FrameSchema, {

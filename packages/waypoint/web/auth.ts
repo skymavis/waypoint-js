@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid"
 import { Address } from "viem"
 
 import { CommunicateHelper } from "../common/communicate"
@@ -93,7 +94,7 @@ export const authorize = async <T extends PopupAuthorizeOpts | RedirectAuthorize
   if (mode === "redirect") {
     replaceUrl(`${waypointOrigin}/client/${clientId}/authorize`, {
       redirect: redirectUrl,
-      state: opts.state ?? crypto.randomUUID(),
+      state: opts.state ?? uuidv4(),
       scope: getScopesParams(scopes),
     })
     return undefined as AuthorizeData<T>

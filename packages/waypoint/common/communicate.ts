@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid"
+
 import { Deferred } from "./defer"
 import { normalizeWaypointError, WaypointErrorMap } from "./waypoint-error"
 
@@ -118,7 +120,7 @@ export class CommunicateHelper {
   }
 
   public sendRequest<T>(action: (requestId: string) => Window | undefined): Promise<T> {
-    const id = crypto.randomUUID()
+    const id = uuidv4()
     const responseHandler = new Deferred<T>()
 
     this.pendingEvents.set(id, responseHandler)

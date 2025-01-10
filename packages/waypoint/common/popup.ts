@@ -2,12 +2,14 @@ import { UserRejectedRequestError } from "viem"
 
 const DEFAULT_WIDTH = 480
 const DEFAULT_HEIGHT = 720
+const DEFAULT_TITLE = "Ronin Waypoint"
 
 type UrlParams = string | number | object | undefined | null
 type PopupConfig = {
   width?: number
   height?: number
 }
+
 export const HASHED_PARAMS = ["data"]
 
 export const buildUrlWithQuery = (inputUrl: string, query?: Record<string, UrlParams>): URL => {
@@ -46,7 +48,7 @@ export const openPopup = (
 
     const popup = window.open(
       url,
-      "_blank",
+      DEFAULT_TITLE,
       `scrollbars=yes,width=${width},height=${height},top=${top},left=${left}`,
     )
 

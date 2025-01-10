@@ -14,11 +14,12 @@ import { openPopup } from "../../common/popup"
 
 type PersonalSignParams = {
   params: [data: Hex, address: Address]
-  expectAddress: Address
+  expectAddress?: Address
 
   clientId: string
   waypointOrigin: string
   communicateHelper: CommunicateHelper
+  popupCloseDelay?: number
 }
 
 export const personalSign = async ({
@@ -28,10 +29,11 @@ export const personalSign = async ({
   clientId,
   waypointOrigin,
   communicateHelper,
+  popupCloseDelay,
 }: PersonalSignParams) => {
   const [data, address] = params
 
-  if (!isAddressEqual(address, expectAddress)) {
+  if (address && expectAddress && !isAddressEqual(address, expectAddress)) {
     const err = new Error("personal_sign: current address is different from required address")
     throw new UnauthorizedProviderError(err)
   }
@@ -48,6 +50,7 @@ export const personalSign = async ({
     openPopup(`${waypointOrigin}/wallet/sign`, {
       state,
       clientId,
+      popupCloseDelay,
       origin: window.location.origin,
 
       expectAddress,
