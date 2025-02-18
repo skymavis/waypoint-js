@@ -6,6 +6,10 @@ export type WaypointResponse = {
   secondary_address?: string
 }
 
+export type WaypointPKCEResponse = {
+  authorization_code: string
+}
+
 export type WaypointResponseWithWallet = Prettify<RequiredBy<WaypointResponse, "address">>
 
 export type DelegationAuthorizeResponse = WaypointResponse & {
