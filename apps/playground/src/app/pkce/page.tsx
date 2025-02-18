@@ -26,7 +26,6 @@ const PKCE = () => {
       redirectUrl: "http://localhost:3000/pkce/callback",
       checks: ["pkce"],
     })
-    console.log("pkceData", pkceData)
     setResponse(pkceData)
   }
 

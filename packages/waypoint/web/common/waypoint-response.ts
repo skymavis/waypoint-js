@@ -6,7 +6,7 @@ export type WaypointResponse = {
   secondary_address?: string
 }
 
-export type WaypointPKCEResponse = {
+export type PKCEWaypointResponse = {
   authorization_code: string
 }
 

@@ -8,7 +8,7 @@ import { RONIN_WAYPOINT_ORIGIN_PROD } from "../common/gate"
 import { openPopup, replaceUrl } from "../common/popup"
 import { getScopesParams, Scope } from "../common/scope"
 import { Includes } from "../common/type-utils"
-import { WaypointPKCEResponse, WaypointResponse } from "./common/waypoint-response"
+import { PKCEWaypointResponse, WaypointResponse } from "./common/waypoint-response"
 import { validateIdAddress } from "./utils/validate-address"
 
 /**
@@ -132,33 +132,31 @@ export const authorize = async <T extends PopupAuthorizeOpts | RedirectAuthorize
   const isPKCE = checks.includes("pkce")
   const { codeVerifier, ...pkceParams } = getPKCEParams(isPKCE)
 
+  const authorizeUrl = `${waypointOrigin}/client/${clientId}/authorize`
+  const baseParams = {
+    redirect: redirectUrl,
+    scope: getScopesParams(scopes),
+    ...pkceParams,
+  }
+
   if (mode === "redirect") {
-    replaceUrl(`${waypointOrigin}/client/${clientId}/authorize`, {
-      redirect: redirectUrl,
+    const redirectParams = {
+      ...baseParams,
       state: opts.state ?? uuidv4(),
-      scope: getScopesParams(scopes),
-      ...pkceParams,
-    })
-    return (
-      isPKCE
-        ? {
-            codeVerifier,
-          }
-        : undefined
-    ) as AuthorizeData<T>
+    }
+    replaceUrl(authorizeUrl, redirectParams)
+    return (isPKCE ? { codeVerifier } : undefined) as AuthorizeData<T>
   }
 
   const helper = new CommunicateHelper(waypointOrigin)
+  const popupParams = {
+    ...baseParams,
+    origin: window.location.origin,
+  }
 
   if (isPKCE) {
-    const pkceAuthData = await helper.sendRequest<WaypointPKCEResponse>(state =>
-      openPopup(`${waypointOrigin}/client/${clientId}/authorize`, {
-        state,
-        redirect: redirectUrl,
-        origin: window.location.origin,
-        scope: getScopesParams(scopes),
-        ...pkceParams,
-      }),
+    const pkceAuthData = await helper.sendRequest<PKCEWaypointResponse>(state =>
+      openPopup(authorizeUrl, { ...popupParams, state }),
     )
 
     return {
@@ -168,25 +166,13 @@ export const authorize = async <T extends PopupAuthorizeOpts | RedirectAuthorize
   }
 
   const authData = await helper.sendRequest<WaypointResponse>(state =>
-    openPopup(`${waypointOrigin}/client/${clientId}/authorize`, {
-      state,
-      redirect: redirectUrl,
-      origin: window.location.origin,
-      scope: getScopesParams(scopes),
-      ...pkceParams,
-    }),
+    openPopup(authorizeUrl, { ...popupParams, state }),
   )
 
-  const {
-    id_token: token,
-    address: rawAddress,
-    secondary_address: secondaryAddress,
-  } = authData ?? {}
-
   return {
-    token,
-    address: validateIdAddress(rawAddress),
-    secondaryAddress: validateIdAddress(secondaryAddress),
+    token: authData?.id_token,
+    address: validateIdAddress(authData?.address),
+    secondaryAddress: validateIdAddress(authData?.secondary_address),
   } as AuthorizeData<T>
 }
 
