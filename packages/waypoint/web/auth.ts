@@ -224,6 +224,5 @@ export const parseRedirectUrl = () => {
     token: rawToken,
     address: validateIdAddress(rawAddress),
     secondaryAddress: validateIdAddress(secondaryAddress),
-    auth: validateIdAddress(secondaryAddress),
   }
 }
