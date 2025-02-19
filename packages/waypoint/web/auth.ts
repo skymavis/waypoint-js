@@ -1,11 +1,14 @@
 import { v4 as uuidv4 } from "uuid"
 import { Address } from "viem"
 
+import { ChecksType } from "../common/checks"
 import { CommunicateHelper } from "../common/communicate"
+import { generateCodeChallenge, generateRandomString } from "../common/crypto"
 import { RONIN_WAYPOINT_ORIGIN_PROD } from "../common/gate"
 import { openPopup, replaceUrl } from "../common/popup"
 import { getScopesParams, Scope } from "../common/scope"
-import { WaypointResponse } from "./common/waypoint-response"
+import { Includes } from "../common/type-utils"
+import { PKCEWaypointResponse, WaypointResponse } from "./common/waypoint-response"
 import { validateIdAddress } from "./utils/validate-address"
 
 /**
@@ -25,13 +28,18 @@ export type BaseAuthorizeOpts = {
   waypointOrigin?: string
 
   /**
-   * Scopes are used by an application during authentication to authorize access to a user’s details, like name and picture.
+   * Scopes are used by an application during authentication to authorize access to a user's details.
    * openid (required; to indicate that the application intends to use OIDC to verify the user's identity)
    * profile (so you can personalize the email with the user's name)
    * email (so you know where to send the welcome email)
    * wallet (so you can request signing & sending transaction from the user's wallet)
    */
   scopes?: Scope[]
+
+  /**
+   * Contains parameters you have to match against the request to make sure it is valid.
+   */
+  checks?: ChecksType[]
 
   /**
    * The URI of your application that users will be redirected to after authentication
@@ -64,7 +72,36 @@ export type PopupAuthorizeData = {
   secondaryAddress: Address | undefined
 }
 
-export type AuthorizeData<T> = T extends PopupAuthorizeOpts ? PopupAuthorizeData : undefined
+export type PKCEPopupAuthorizeData = {
+  authorizationCode: string
+  codeVerifier: string
+}
+
+export type PKCERedirectAuthorizeData = {
+  codeVerifier: string
+}
+
+export type AuthorizeData<T extends PopupAuthorizeOpts | RedirectAuthorizeOpts> =
+  T extends PopupAuthorizeOpts
+    ? Includes<T["checks"], "pkce"> extends true
+      ? PKCEPopupAuthorizeData
+      : PopupAuthorizeData
+    : T extends RedirectAuthorizeOpts
+      ? Includes<T["checks"], "pkce"> extends true
+        ? PKCERedirectAuthorizeData
+        : undefined
+      : never
+
+const getPKCEParams = (usePKCE: boolean) => {
+  if (!usePKCE) return {}
+  const codeVerifier = generateRandomString()
+  return {
+    response_type: "code",
+    code_challenge_algo: "S256",
+    code_challenge: generateCodeChallenge(codeVerifier),
+    codeVerifier,
+  }
+}
 
 /**
  * Authorize a user via Ronin Waypoint, returning an token and user address.
@@ -87,40 +124,55 @@ export const authorize = async <T extends PopupAuthorizeOpts | RedirectAuthorize
     mode,
     clientId,
     scopes,
+    checks = [],
     waypointOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
     redirectUrl = window.location.origin,
   } = opts
 
+  const isPKCE = checks.includes("pkce")
+  const { codeVerifier, ...pkceParams } = getPKCEParams(isPKCE)
+
+  const authorizeUrl = `${waypointOrigin}/client/${clientId}/authorize`
+  const baseParams = {
+    redirect: redirectUrl,
+    scope: getScopesParams(scopes),
+    ...pkceParams,
+  }
+
   if (mode === "redirect") {
-    replaceUrl(`${waypointOrigin}/client/${clientId}/authorize`, {
-      redirect: redirectUrl,
+    const redirectParams = {
+      ...baseParams,
       state: opts.state ?? uuidv4(),
-      scope: getScopesParams(scopes),
-    })
-    return undefined as AuthorizeData<T>
+    }
+    replaceUrl(authorizeUrl, redirectParams)
+    return (isPKCE ? { codeVerifier } : undefined) as AuthorizeData<T>
   }
 
   const helper = new CommunicateHelper(waypointOrigin)
+  const popupParams = {
+    ...baseParams,
+    origin: window.location.origin,
+  }
+
+  if (isPKCE) {
+    const pkceAuthData = await helper.sendRequest<PKCEWaypointResponse>(state =>
+      openPopup(authorizeUrl, { ...popupParams, state }),
+    )
+
+    return {
+      codeVerifier: codeVerifier!,
+      authorizationCode: pkceAuthData.authorization_code,
+    } as AuthorizeData<T>
+  }
 
   const authData = await helper.sendRequest<WaypointResponse>(state =>
-    openPopup(`${waypointOrigin}/client/${clientId}/authorize`, {
-      state,
-      redirect: redirectUrl,
-      origin: window.location.origin,
-      scope: getScopesParams(scopes),
-    }),
+    openPopup(authorizeUrl, { ...popupParams, state }),
   )
 
-  const {
-    id_token: token,
-    address: rawAddress,
-    secondary_address: secondaryAddress,
-  } = authData ?? {}
-
   return {
-    token,
-    address: validateIdAddress(rawAddress),
-    secondaryAddress: validateIdAddress(secondaryAddress),
+    token: authData?.id_token,
+    address: validateIdAddress(authData?.address),
+    secondaryAddress: validateIdAddress(authData?.secondary_address),
   } as AuthorizeData<T>
 }
 
@@ -150,9 +202,11 @@ export const parseRedirectUrl = () => {
   const rawToken = url.searchParams.get("data")
   const rawAddress = url.searchParams.get("address")
   const secondaryAddress = url.searchParams.get("secondary_address")
+  const authorizationCode = url.searchParams.get("authorization_code")
 
   return {
     state,
+    authorizationCode,
     token: rawToken,
     address: validateIdAddress(rawAddress),
     secondaryAddress: validateIdAddress(secondaryAddress),
