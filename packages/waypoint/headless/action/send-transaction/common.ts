@@ -2,7 +2,7 @@ import { type AccessList, type Address, type Hex, numberToHex, parseGwei } from 
 
 export const LEGACY_TYPE = "0x0"
 export const RONIN_GAS_SPONSOR_TYPE = "0x64"
-export const RONIN_GAS_PRICE = numberToHex(parseGwei("20"))
+export const RONIN_GAS_PRICE = numberToHex(parseGwei("21"))
 
 export const PAYER_INFO = {
   s: "0x3caeb99cc6659c5ca4c66b91b1686a86fe0493e1122bdd09f2babdf72e54041a",
