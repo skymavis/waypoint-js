@@ -3,7 +3,7 @@
   "repository": {
     "url": "https://github.com/skymavis/waypoint-js"
   },
-  "version": "4.1.0",
+  "version": "4.1.1",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -66,14 +66,13 @@
     "@babel/preset-env": "7.24.4",
     "@bufbuild/protobuf": "2.2.2",
     "@noble/curves": "1.6.0",
+    "@noble/hashes": "1.7.1",
     "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-commonjs": "25.0.7",
     "@rollup/plugin-node-resolve": "15.2.3",
     "@sky-mavis/eslint-config-ts": "workspace:*",
-    "@types/crypto-js": "4.2.2",
     "@types/node": "20.12.11",
     "@vitest/ui": "2.1.4",
-    "crypto-js": "4.2.0",
     "eslint": "8.57.0",
     "fs-extra": "11.2.0",
     "genversion": "3.2.0",

@@ -1,16 +1,19 @@
-import CryptoJS from "crypto-js"
+import { sha256 } from "@noble/hashes/sha256"
+import { randomBytes } from "@noble/hashes/utils"
 
-function base64UrlEncode(wordArray: CryptoJS.lib.WordArray) {
-  const base64 = CryptoJS.enc.Base64.stringify(wordArray)
-  return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
+function base64UrlEncode(buffer: Uint8Array) {
+  return btoa(String.fromCharCode(...buffer))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "")
 }
 
 export function generateCodeChallenge(codeVerifier: string) {
-  const hash = CryptoJS.SHA256(codeVerifier)
+  const hash = sha256(new TextEncoder().encode(codeVerifier))
   return base64UrlEncode(hash)
 }
 
-export function generateRandomString(length: number = 64) {
-  const randomBytes = CryptoJS.lib.WordArray.random(length)
-  return base64UrlEncode(randomBytes).slice(0, length)
+export function generateRandomString() {
+  const bytes = randomBytes(48)
+  return base64UrlEncode(bytes)
 }
