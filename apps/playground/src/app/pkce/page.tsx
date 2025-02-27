@@ -1,11 +1,11 @@
 "use client"
 
-import { authorize, PopupPKCEAuthorizeData } from "@sky-mavis/waypoint"
+import { authorize, PKCEPopupAuthorizeData } from "@sky-mavis/waypoint"
 import { useState } from "react"
 import { Button } from "src/@/components/ui/button"
 
 const PKCE = () => {
-  const [response, setResponse] = useState<PopupPKCEAuthorizeData>()
+  const [response, setResponse] = useState<PKCEPopupAuthorizeData>()
 
   const handleRedirectPKCEAuth = async () => {
     const pkceData = await authorize({
