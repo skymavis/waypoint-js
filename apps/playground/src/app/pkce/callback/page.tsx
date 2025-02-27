@@ -1,10 +1,10 @@
 "use client"
 
-import { parseRedirectUrl, PopupPKCEAuthorizeData } from "@sky-mavis/waypoint"
+import { parseRedirectUrl, PKCEPopupAuthorizeData } from "@sky-mavis/waypoint"
 import { useEffect, useState } from "react"
 
 const PKCECallback = () => {
-  const [response, setResponse] = useState<PopupPKCEAuthorizeData>()
+  const [response, setResponse] = useState<PKCEPopupAuthorizeData>()
 
   useEffect(() => {
     const response = parseRedirectUrl()
