@@ -38,11 +38,6 @@
       "import": "./dist/module/web/index.js",
       "require": "./dist/commonjs/web/index.js"
     },
-    "./skynet": {
-      "types": "./dist/types/skynet/index.d.ts",
-      "import": "./dist/module/skynet/index.js",
-      "require": "./dist/commonjs/skynet/index.js"
-    },
     "./headless": {
       "types": "./dist/types/headless/index.d.ts",
       "import": "./dist/module/headless/index.js",
@@ -91,5 +86,8 @@
     "uuid": "11.0.4",
     "viem": "2.21.22",
     "vitest": "2.1.4"
+  },
+  "peerDependencies": {
+    "viem": ">=2"
   }
 }

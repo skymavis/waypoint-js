@@ -37,6 +37,7 @@ const mainConfig = defineConfig({
       format: "module",
     },
   ],
+  external: ["viem"],
   plugins: [
     peerDepsExternal(),
     nodeResolve({

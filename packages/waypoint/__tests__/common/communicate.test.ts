@@ -20,7 +20,6 @@ describe("CommunicateHelper", () => {
   test("Create CommunicateHelper", () => {
     const communicateHelper = new CommunicateHelper(CONFIG.WAYPOINT_ORIGIN)
     expect(communicateHelper).toBeDefined()
-    expect(communicateHelper.handleResponse).toBeDefined()
     expect(communicateHelper.sendRequest).toBeDefined()
   })
 
