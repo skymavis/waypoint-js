@@ -2,6 +2,7 @@ import { Hex, toHex } from "viem"
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 
 import { CommunicateHelper } from "../../common/communicate"
+import { name, version } from "../../common/version"
 import { normalizeWaypointError } from "../../common/waypoint-error"
 import { WaypointProvider } from "../../web/provider"
 import { CONFIG } from "./../constants"
@@ -18,23 +19,20 @@ describe("Waypoint Provider", () => {
     expect(waypointProvider.connect).toBeDefined()
     expect(waypointProvider.disconnect).toBeDefined()
     expect(waypointProvider.request).toBeDefined()
+    expect(waypointProvider.config.popupCloseDelay).toBeUndefined()
+    expect(waypointProvider.config.source).toBe(`${name}@${version}`)
   })
 
-  test("create WaypointProvider with config", () => {
+  test("create WaypointProvider with custom config", () => {
     const waypointProvider = WaypointProvider.create({
       chainId: CONFIG.CHAIN_ID,
       clientId: CONFIG.CLIENT_ID,
       popupCloseDelay: 3000,
-      source: "tanto-widget",
+      source: "@sky-mavis/tanto-widget@0.0.1",
     })
 
-    expect(waypointProvider).toBeDefined()
-    expect(waypointProvider.chainId).toBe(CONFIG.CHAIN_ID)
-    expect(waypointProvider.connect).toBeDefined()
-    expect(waypointProvider.disconnect).toBeDefined()
-    expect(waypointProvider.request).toBeDefined()
     expect(waypointProvider.config.popupCloseDelay).toBe(3000)
-    expect(waypointProvider.config.source).toBe("tanto-widget")
+    expect(waypointProvider.config.source).toBe("@sky-mavis/tanto-widget@0.0.1")
   })
 
   const sampleToken = "sample-token"
