@@ -36,7 +36,7 @@ export type WaypointProviderOpts = BaseAuthorizeOpts &
  *
  * This provider is designed to easily integrate with Ronin Waypoint.
  *
- * Use `create` function to create a new instance.address"
+ * Use `create` function to create a new instance."
 import { EventEmitter } from "events"
 import { A, ChainDisconnectedError, Client, createClient, EIP1193Parameters, http, ProviderDisconnectedError, toHex, UnauthorizedProviderError } from "viem
  *
