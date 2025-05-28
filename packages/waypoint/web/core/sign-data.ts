@@ -11,8 +11,10 @@ import {
 
 import { CommunicateHelper } from "../../common/communicate"
 import { openPopup } from "../../common/popup"
+import { WaypointConfig } from "../common"
 
 type SignTypedDataV4Params = {
+  config: WaypointConfig
   params: [address: Address, data: TypedDataDefinition | string]
   expectAddress?: Address
 
@@ -20,7 +22,6 @@ type SignTypedDataV4Params = {
   chainId: number
   waypointOrigin: string
   communicateHelper: CommunicateHelper
-  popupCloseDelay?: number
 }
 
 const REQUIRED_PROPERTIES = ["types", "domain", "primaryType", "message"]
@@ -72,6 +73,7 @@ const transformTypedData = (
 }
 
 export const signTypedDataV4 = async ({
+  config,
   params,
   expectAddress,
 
@@ -79,7 +81,6 @@ export const signTypedDataV4 = async ({
   chainId,
   waypointOrigin,
   communicateHelper,
-  popupCloseDelay,
 }: SignTypedDataV4Params) => {
   const [address, data] = params
 
@@ -98,13 +99,13 @@ export const signTypedDataV4 = async ({
       openPopup(`${waypointOrigin}/wallet/sign`, {
         state,
         clientId,
-        popupCloseDelay,
         origin: window.location.origin,
 
         chainId,
         expectAddress,
 
         typedData: JSON.stringify(typedData),
+        ...config,
       }),
     )
 

@@ -3,8 +3,10 @@ import { type Address } from "viem"
 import { CommunicateHelper } from "../../common/communicate"
 import { openPopup } from "../../common/popup"
 import { GenericTransaction } from "../../common/tx"
+import { WaypointConfig } from "../common"
 
 type SendTransactionParams = {
+  config: WaypointConfig
   params: [transaction: GenericTransaction]
 
   chainId: number
@@ -13,10 +15,10 @@ type SendTransactionParams = {
   clientId: string
   waypointOrigin: string
   communicateHelper: CommunicateHelper
-  popupCloseDelay?: number
 }
 
 export const sendTransaction = async ({
+  config,
   params,
 
   chainId,
@@ -25,7 +27,6 @@ export const sendTransaction = async ({
   clientId,
   waypointOrigin,
   communicateHelper,
-  popupCloseDelay,
 }: SendTransactionParams): Promise<string> => {
   const [transaction] = params
 
@@ -33,13 +34,13 @@ export const sendTransaction = async ({
     openPopup(`${waypointOrigin}/wallet/send`, {
       state,
       clientId,
-      popupCloseDelay,
       origin: window.location.origin,
 
       chainId,
       expectAddress,
 
       ...transaction,
+      ...config,
     }),
   )
 

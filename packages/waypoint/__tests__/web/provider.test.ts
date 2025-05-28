@@ -20,6 +20,23 @@ describe("Waypoint Provider", () => {
     expect(waypointProvider.request).toBeDefined()
   })
 
+  test("create WaypointProvider with config", () => {
+    const waypointProvider = WaypointProvider.create({
+      chainId: CONFIG.CHAIN_ID,
+      clientId: CONFIG.CLIENT_ID,
+      popupCloseDelay: 3000,
+      source: "tanto-widget",
+    })
+
+    expect(waypointProvider).toBeDefined()
+    expect(waypointProvider.chainId).toBe(CONFIG.CHAIN_ID)
+    expect(waypointProvider.connect).toBeDefined()
+    expect(waypointProvider.disconnect).toBeDefined()
+    expect(waypointProvider.request).toBeDefined()
+    expect(waypointProvider.config.popupCloseDelay).toBe(3000)
+    expect(waypointProvider.config.source).toBe("tanto-widget")
+  })
+
   const sampleToken = "sample-token"
   describe("connect function", () => {
     test("should return valid token and address", async () => {
