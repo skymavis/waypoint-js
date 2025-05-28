@@ -17,6 +17,7 @@ import { Eip1193EventName, Eip1193Provider, RoninWaypointRequestSchema } from ".
 import { RONIN_WAYPOINT_ORIGIN_PROD } from "../common/gate"
 import { openPopup } from "../common/popup"
 import { getScopesParams, Scope } from "../common/scope"
+import { name, version } from "../common/version"
 import { BaseAuthorizeOpts } from "./auth"
 import { WaypointConfig } from "./common/config"
 import { WaypointResponseWithWallet } from "./common/waypoint-response"
@@ -82,7 +83,7 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
     this.communicateHelper = new CommunicateHelper(waypointOrigin)
     this.viemClient = this.createViemClient(chainId)
     this.config = {
-      source,
+      source: source ?? `${name}@${version}`,
       popupCloseDelay,
     }
   }

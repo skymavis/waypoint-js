@@ -55,7 +55,7 @@
     }
   },
   "scripts": {
-    "gen-v": "genversion --esm --double common/version.ts",
+    "gen-v": "genversion --esm --double --property name,version common/version.ts",
     "build": "rm -rf dist && pnpm gen-v && rollup -c",
     "dev": "rm -rf dist && rollup -c --watch",
     "lint": "eslint . --ext .js,.ts --max-warnings=0",
