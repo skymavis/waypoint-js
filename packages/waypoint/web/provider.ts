@@ -17,7 +17,9 @@ import { Eip1193EventName, Eip1193Provider, RoninWaypointRequestSchema } from ".
 import { RONIN_WAYPOINT_ORIGIN_PROD } from "../common/gate"
 import { openPopup } from "../common/popup"
 import { getScopesParams, Scope } from "../common/scope"
+import { name, version } from "../common/version"
 import { BaseAuthorizeOpts } from "./auth"
+import { WaypointConfig } from "./common/config"
 import { WaypointResponseWithWallet } from "./common/waypoint-response"
 import { personalSign } from "./core/personal-sign"
 import { sendTransaction } from "./core/send-tx"
@@ -25,17 +27,17 @@ import { signTypedDataV4 } from "./core/sign-data"
 import { getStorage, removeStorage, setStorage, STORAGE_ADDRESS_KEY } from "./utils/storage"
 import { validateIdAddress } from "./utils/validate-address"
 
-export type WaypointProviderOpts = BaseAuthorizeOpts & {
-  chainId: number
-  popupCloseDelay?: number
-}
+export type WaypointProviderOpts = BaseAuthorizeOpts &
+  WaypointConfig & {
+    chainId: number
+  }
 
 /**
  * A JavaScript Ethereum Provider API for consistency across clients and applications.
  *
  * This provider is designed to easily integrate with Ronin Waypoint.
  *
- * Use `create` function to create a new instance.ddress"
+ * Use `create` function to create a new instance."
 import { EventEmitter } from "events"
 import { A, ChainDisconnectedError, Client, createClient, EIP1193Parameters, http, ProviderDisconnectedError, toHex, UnauthorizedProviderError } from "viem
  *
@@ -58,7 +60,7 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
 
   private readonly viemClient: Client
   private readonly communicateHelper: CommunicateHelper
-  private readonly popupCloseDelay: number | undefined
+  readonly config: WaypointConfig
 
   protected constructor(options: WaypointProviderOpts) {
     super()
@@ -66,10 +68,11 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
     const {
       clientId,
       chainId,
-      popupCloseDelay,
       scopes = [],
       waypointOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
       redirectUrl = typeof window !== "undefined" ? window.location.origin : "",
+      source,
+      popupCloseDelay,
     } = options
 
     this.clientId = clientId
@@ -79,7 +82,10 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
     this.scopes = this.addDefaultScopes(scopes)
     this.communicateHelper = new CommunicateHelper(waypointOrigin)
     this.viemClient = this.createViemClient(chainId)
-    this.popupCloseDelay = popupCloseDelay
+    this.config = {
+      source: source ?? `${name}@${version}`,
+      popupCloseDelay,
+    }
   }
 
   private createViemClient(chainId: number) {
@@ -149,23 +155,16 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
    * @returns The access token and address.
    */
   connect = async () => {
-    const {
-      waypointOrigin,
-      clientId,
-      redirectUrl,
-      scopes,
-      communicateHelper,
-      chainId,
-      popupCloseDelay,
-    } = this
+    const { waypointOrigin, clientId, redirectUrl, scopes, communicateHelper, chainId, config } =
+      this
 
     const authData = await communicateHelper.sendRequest<WaypointResponseWithWallet>(state =>
       openPopup(`${waypointOrigin}/client/${clientId}/authorize`, {
         state,
-        popupCloseDelay,
         redirect: redirectUrl,
         origin: window.location.origin,
         scope: getScopesParams(scopes),
+        ...config,
       }),
     )
 
@@ -173,16 +172,15 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
   }
 
   createKeylessWallet = async () => {
-    const { waypointOrigin, clientId, redirectUrl, communicateHelper, chainId, popupCloseDelay } =
-      this
+    const { waypointOrigin, clientId, redirectUrl, communicateHelper, chainId, config } = this
 
     const authData = await communicateHelper.sendRequest<WaypointResponseWithWallet>(state =>
       openPopup(`${waypointOrigin}/wallet/setup/introduce`, {
         state,
         clientId,
-        popupCloseDelay,
         redirect: redirectUrl,
         origin: window.location.origin,
+        ...config,
       }),
     )
 
@@ -243,7 +241,7 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
       connect,
       getIdAddress,
       getIdAddressOrConnect,
-      popupCloseDelay,
+      config,
     } = this
     const { method, params } = args
 
@@ -269,12 +267,12 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
         const expectAddress = await getIdAddressOrConnect()
 
         return personalSign({
+          config,
           params,
           expectAddress,
           clientId,
           waypointOrigin,
           communicateHelper,
-          popupCloseDelay,
         }) as ReturnType
       }
 
@@ -282,13 +280,13 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
         const expectAddress = await getIdAddressOrConnect()
 
         return signTypedDataV4({
+          config,
           params,
           chainId,
           expectAddress,
           clientId,
           waypointOrigin,
           communicateHelper,
-          popupCloseDelay,
         }) as ReturnType
       }
 
@@ -296,13 +294,13 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
         const expectAddress = await getIdAddressOrConnect()
 
         return sendTransaction({
+          config,
           params,
           chainId,
           expectAddress,
           clientId,
           waypointOrigin,
           communicateHelper,
-          popupCloseDelay,
         }) as ReturnType
       }
 

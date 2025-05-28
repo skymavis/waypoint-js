@@ -11,25 +11,26 @@ import {
 
 import { CommunicateHelper } from "../../common/communicate"
 import { openPopup } from "../../common/popup"
+import { WaypointConfig } from "../common"
 
 type PersonalSignParams = {
+  config: WaypointConfig
   params: [data: Hex, address: Address]
   expectAddress?: Address
 
   clientId: string
   waypointOrigin: string
   communicateHelper: CommunicateHelper
-  popupCloseDelay?: number
 }
 
 export const personalSign = async ({
+  config,
   params,
   expectAddress,
 
   clientId,
   waypointOrigin,
   communicateHelper,
-  popupCloseDelay,
 }: PersonalSignParams) => {
   const [data, address] = params
 
@@ -50,11 +51,11 @@ export const personalSign = async ({
     openPopup(`${waypointOrigin}/wallet/sign`, {
       state,
       clientId,
-      popupCloseDelay,
       origin: window.location.origin,
 
       expectAddress,
       message,
+      ...config,
     }),
   )
 
