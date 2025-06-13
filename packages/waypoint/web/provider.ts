@@ -73,6 +73,7 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
       redirectUrl = typeof window !== "undefined" ? window.location.origin : "",
       source,
       popupCloseDelay,
+      theme,
     } = options
 
     this.clientId = clientId
@@ -85,6 +86,7 @@ export class WaypointProvider extends EventEmitter implements Eip1193Provider {
     this.config = {
       source: source ?? `${name}@${version}`,
       popupCloseDelay,
+      theme,
     }
   }
 

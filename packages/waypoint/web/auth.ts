@@ -45,6 +45,11 @@ export type BaseAuthorizeOpts = {
    * The URI of your application that users will be redirected to after authentication
    */
   redirectUrl?: string
+
+  /**
+   * The theme of the popup.
+   */
+  theme?: "light" | "dark"
 }
 
 export type PopupAuthorizeOpts = BaseAuthorizeOpts & {
@@ -127,6 +132,7 @@ export const authorize = async <T extends PopupAuthorizeOpts | RedirectAuthorize
     checks = [],
     waypointOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
     redirectUrl = window.location.origin,
+    ...restConfig
   } = opts
 
   const isPKCE = checks.includes("pkce")
@@ -137,6 +143,7 @@ export const authorize = async <T extends PopupAuthorizeOpts | RedirectAuthorize
     redirect: redirectUrl,
     scope: getScopesParams(scopes),
     ...pkceParams,
+    ...restConfig,
   }
 
   if (mode === "redirect") {

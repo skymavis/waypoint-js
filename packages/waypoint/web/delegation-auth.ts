@@ -38,6 +38,7 @@ export const delegationAuthorize = async <T extends DelegationAuthorizeOpts>(
     scopes,
     waypointOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
     redirectUrl = window.location.origin,
+    ...restConfig
   } = opts
 
   const keyPair = await generateKeyPair()
@@ -64,6 +65,7 @@ export const delegationAuthorize = async <T extends DelegationAuthorizeOpts>(
       origin: window.location.origin,
       scope: getDelegationScopesParams(scopes),
       publicKey: stringifiedKeyPair.publicKey,
+      ...restConfig,
     }),
   )
 
