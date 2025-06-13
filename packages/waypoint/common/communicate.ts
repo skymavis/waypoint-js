@@ -119,13 +119,13 @@ export class CommunicateHelper {
     return this.pendingEvents.has(requestId) && this.windowMonitorIntervals.has(requestId)
   }
 
-  public sendRequest<T>(action: (requestId: string) => Window | undefined): Promise<T> {
+  public async sendRequest<T>(action: (requestId: string) => Promise<Window>): Promise<T> {
     const id = uuidv4()
     const responseHandler = new Deferred<T>()
 
     this.pendingEvents.set(id, responseHandler)
 
-    const referencedWindow = action(id)
+    const referencedWindow = await action(id)
     if (referencedWindow) {
       this.monitorWindowClosing({
         window: referencedWindow,
