@@ -29,10 +29,12 @@ describe("Waypoint Provider", () => {
       clientId: CONFIG.CLIENT_ID,
       popupCloseDelay: 3000,
       source: "@sky-mavis/tanto-widget@0.0.1",
+      theme: "light",
     })
 
     expect(waypointProvider.config.popupCloseDelay).toBe(3000)
     expect(waypointProvider.config.source).toBe("@sky-mavis/tanto-widget@0.0.1")
+    expect(waypointProvider.config.theme).toBe("light")
   })
 
   const sampleToken = "sample-token"

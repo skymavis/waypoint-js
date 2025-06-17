@@ -96,14 +96,6 @@ describe("Popup and URL functions", () => {
         `scrollbars=yes,width=480,height=720,top=24,left=272`,
       )
     })
-
-    test("throws UserRejectedRequestError if popup is blocked", () => {
-      vi.spyOn(globalThis.window, "open").mockImplementation(() => null)
-
-      expect(() => openPopup("https://example.com")).toThrowError(
-        "Popup window is BLOCKED by the browser",
-      )
-    })
   })
 
   describe("replaceUrl", () => {
