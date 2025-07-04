@@ -10,14 +10,13 @@ import {
   serializeTransaction,
   type TransactionSerializableLegacy,
 } from "viem"
-import { getTransactionCount } from "viem/actions"
+import { getGasPrice, getTransactionCount } from "viem/actions"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
 import {
   type ChainParams,
   LEGACY_TYPE,
   PAYER_INFO,
-  RONIN_GAS_PRICE,
   RONIN_GAS_SPONSOR_TYPE,
   type TransactionInServerFormat,
   type TransactionParams,
@@ -41,7 +40,7 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
     value = "0x0",
     data = "0x",
     input,
-    gasPrice = RONIN_GAS_PRICE,
+    gasPrice,
     // * need rpc call to fill
     gas,
     nonce,
@@ -79,16 +78,13 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
     })
   }
 
+  const client = createClient({ transport: http(rpcUrl) })
+
   const fillNonce = async () => {
     try {
-      if (isHex(nonce)) {
+      if (nonce && isHex(nonce)) {
         return hexToNumber(nonce)
       }
-
-      const client = createClient({
-        transport: http(rpcUrl),
-      })
-
       return await getTransactionCount(client, { address: from, blockTag: "pending" })
     } catch (error) {
       throw new HeadlessClientError({
@@ -98,17 +94,38 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
       })
     }
   }
-  const filledNonce = await fillNonce()
+
+  const fillGasPrice = async () => {
+    try {
+      if (gasPrice && isHex(gasPrice)) {
+        return hexToBigInt(gasPrice)
+      }
+      const baseGasPrice = await getGasPrice(client)
+      // Add 5% buffer to gas price
+      // TODO: Apply EIP-1559
+      const bufferedGasPrice = baseGasPrice + (baseGasPrice * 5n) / 100n
+      return bufferedGasPrice
+    } catch (error) {
+      throw new HeadlessClientError({
+        cause: error,
+        code: HeadlessClientErrorCode.PrepareTransactionError,
+        message: `Unable to get gas price when preparing the transaction. This could be due to a slow network or an RPC status.`,
+      })
+    }
+  }
 
   try {
+    const [filledNonce, filledGasPrice] = await Promise.all([fillNonce(), fillGasPrice()])
+
+    const gasPriceHex = numberToHex(filledGasPrice)
+
     const formattedTransaction: TransactionInServerFormat = {
       type,
       from,
       to,
       value,
       input: input ?? data,
-      gasPrice,
-
+      gasPrice: gasPriceHex,
       gas,
       nonce: numberToHex(filledNonce),
 
@@ -120,8 +137,8 @@ export const toTransactionInServerFormat = async (params: FormatTransactionParam
       payerS: PAYER_INFO.s,
       payerR: PAYER_INFO.r,
       payerV: PAYER_INFO.v,
-      maxFeePerGas: RONIN_GAS_PRICE,
-      maxPriorityFeePerGas: RONIN_GAS_PRICE,
+      maxFeePerGas: gasPriceHex,
+      maxPriorityFeePerGas: gasPriceHex,
       expiredTime: "0x5208",
     }
 
