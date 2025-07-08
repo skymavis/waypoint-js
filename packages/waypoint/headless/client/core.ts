@@ -14,10 +14,11 @@ import { encryptShard } from "../action/encrypt-shard"
 import { getAddressFromShard } from "../action/get-address"
 import { getBackupClientShard } from "../action/get-backup-shard"
 import { getUserProfile } from "../action/get-user-profile"
+import { isRoninGasSponsorTransaction } from "../action/helpers/tx-type-check"
 import { keygen } from "../action/keygen"
 import { personalSign } from "../action/personal-sign"
-import { RONIN_GAS_SPONSOR_TYPE, type TransactionParams } from "../action/send-transaction/common"
-import { sendLegacyTransaction } from "../action/send-transaction/send-legacy"
+import { type TransactionParams } from "../action/send-transaction/common"
+import { sendPaidTransaction } from "../action/send-transaction/send-paid-tx"
 import { sendSponsoredTransaction } from "../action/send-transaction/send-sponsored"
 import { signTypedData } from "../action/sign-typed-data"
 import { validateSponsorTransaction } from "../action/validate-sponsor-tx"
@@ -205,7 +206,7 @@ export class HeadlessCore {
   sendTransaction = (transaction: TransactionParams) => {
     const { clientShard, waypointToken, wsUrl, wasmUrl, chainId, rpcUrl } = this
 
-    if (transaction.type === RONIN_GAS_SPONSOR_TYPE) {
+    if (isRoninGasSponsorTransaction(transaction.type)) {
       return sendSponsoredTransaction({
         clientShard,
         waypointToken,
@@ -219,7 +220,7 @@ export class HeadlessCore {
       })
     }
 
-    return sendLegacyTransaction({
+    return sendPaidTransaction({
       clientShard,
       waypointToken,
       wsUrl,

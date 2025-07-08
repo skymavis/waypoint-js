@@ -14,12 +14,14 @@ import {
   wasmGetProtocolData,
 } from "../helpers/send-round-data"
 import { wasmTriggerSign } from "../helpers/trigger-sign"
-import type { SendTransactionParams, SendTransactionResult } from "./common"
-import { serializeLegacyTransaction, toTransactionInServerFormat } from "./prepare-tx"
+import { isEIP1559CompatibleTransaction } from "../helpers/tx-type-check"
+import { type SendTransactionParams, type SendTransactionResult } from "./common"
+import { toTransactionInServerFormat } from "./prepare-tx"
 import { sendTransactionRequest } from "./send-tx-request"
+import { serializeTX } from "./serialize-tx"
 import { toTxHash } from "./to-tx-hash"
 
-const _sendLegacyTransaction = async (
+const _sendPaidTransaction = async (
   params: SendTransactionParams,
 ): Promise<SendTransactionResult> => {
   const {
@@ -37,7 +39,7 @@ const _sendLegacyTransaction = async (
     transaction,
     currentAddress: address,
   })
-  const serializedTx = serializeLegacyTransaction(txInServerFormat)
+  const serializedTx = serializeTX(txInServerFormat)
   const keccakSerializedTx = keccak256(serializedTx, "bytes")
   console.debug("🔏 SEND TX: start")
 
@@ -115,19 +117,21 @@ const _sendLegacyTransaction = async (
   }
 }
 
-export const sendLegacyTransaction = async (
+export const sendPaidTransaction = async (
   params: SendTransactionParams,
 ): Promise<SendTransactionResult> => {
   const { chain, transaction, wasmUrl, waypointToken, wsUrl } = params
   const tracker = createTracker({
-    event: HeadlessEventName.sendLegacyTransaction,
+    event: isEIP1559CompatibleTransaction(transaction.type)
+      ? HeadlessEventName.endEIP1559Transaction
+      : HeadlessEventName.sendLegacyTransaction,
     waypointToken,
     productionFactor: wsUrl,
     wasmUrl,
   })
 
   try {
-    const result = await _sendLegacyTransaction(params)
+    const result = await _sendPaidTransaction(params)
     const { txHash } = result
     tracker.trackOk({
       request: { transaction, chain },

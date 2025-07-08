@@ -21,15 +21,18 @@ export { keygen, type KeygenParams } from "./action/keygen"
 export { personalSign, type PersonalSignParams } from "./action/personal-sign"
 export { signTypedData, type SignTypedDataParams } from "./action/sign-typed-data"
 
-export { sendLegacyTransaction } from "./action/send-transaction/send-legacy"
+export { sendPaidTransaction } from "./action/send-transaction/send-paid-tx"
 export { sendSponsoredTransaction } from "./action/send-transaction/send-sponsored"
 export {
-  LEGACY_TYPE,
-  RONIN_GAS_SPONSOR_TYPE,
+  SupportedTransaction,
+  UnsupportedTransaction,
+  type SupportedTransactionType,
+  type UnsupportedTransactionType,
   type ChainParams,
   type SendTransactionParams,
   type SendTransactionResult,
   type TransactionParams,
+  type TransactionType,
 } from "./action/send-transaction/common"
 
 export {

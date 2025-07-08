@@ -1,8 +1,22 @@
-import { type AccessList, type Address, type Hex, numberToHex, parseGwei } from "viem"
+import { type AccessList, type Address, type Hex } from "viem"
 
-export const LEGACY_TYPE = "0x0"
-export const RONIN_GAS_SPONSOR_TYPE = "0x64"
-export const RONIN_GAS_PRICE = numberToHex(parseGwei("21"))
+export const SupportedTransaction = {
+  Legacy: "0x0",
+  EIP1559: "0x2",
+  RoninGasSponsor: "0x64",
+} as const
+
+export const UnsupportedTransaction = {
+  EIP2930: "0x1",
+  EIP4844: "0x3",
+  EIP7702: "0x4",
+} as const
+
+export type SupportedTransactionType =
+  (typeof SupportedTransaction)[keyof typeof SupportedTransaction]
+export type UnsupportedTransactionType =
+  (typeof UnsupportedTransaction)[keyof typeof UnsupportedTransaction]
+export type TransactionType = SupportedTransactionType | UnsupportedTransactionType
 
 export const PAYER_INFO = {
   s: "0x3caeb99cc6659c5ca4c66b91b1686a86fe0493e1122bdd09f2babdf72e54041a",
@@ -12,7 +26,7 @@ export const PAYER_INFO = {
 
 export type TransactionParams = {
   // * "0x64" for ronin gas sponsor
-  type?: "0x0" | "0x1" | "0x2" | "0x64"
+  type?: TransactionType
 
   // * auto fill
   nonce?: Hex
@@ -30,8 +44,7 @@ export type TransactionParams = {
   // * auto fill
   gasPrice?: Hex
 
-  // * ronin do NOT support "0x1" and "0x2" type
-  // * EIP-2930; Type 1 & EIP-1559; Type 2
+  // * ronin do NOT support "0x1"
   accessList?: AccessList
 
   // * EIP-1559; Type 2
@@ -63,27 +76,23 @@ export type SendTransactionResult = {
 }
 
 export type TransactionInServerFormat = {
-  type: "0x0" | "0x64"
   from: Address
   to: Address
   value: Hex
   input: Hex
-  gasPrice: Hex
-
-  gas: Hex
   nonce: Hex
+  gas: Hex
+  gasPrice: Hex
+  maxPriorityFeePerGas: Hex
+  maxFeePerGas: Hex
 
-  // chainId for processing the transaction
+  type: SupportedTransactionType
   chainId: Hex
-
-  // placeholder fields
   r: Hex
   v: Hex
   s: Hex
   payerS: Hex
   payerR: Hex
   payerV: Hex
-  maxFeePerGas: Hex
-  maxPriorityFeePerGas: Hex
   expiredTime: Hex
 }
