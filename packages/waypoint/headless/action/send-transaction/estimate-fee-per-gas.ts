@@ -8,18 +8,18 @@ import { RequestRoute } from "../helpers/request/types"
 import { isEIP1559CompatibleTransaction } from "../helpers/tx-type-check"
 import { SupportedTransactionType } from "./common"
 
-const GAS_SUGGESTION_ROUTES: Record<number, RequestRoute> = {
+export const GAS_SUGGESTION_ROUTES: Record<number, RequestRoute> = {
   [ronin.id]: "get https://wallet-manager.skymavis.com/proxy/public/v1/ronin/gas-suggestion",
   [saigon.id]:
     "get https://wallet-manager-stg.skymavis.one/proxy/public/v1/ronin-testnet/gas-suggestion",
 } as const
 
-const GAS_PRICE_BUFFER_PERCENTAGE = 2 // 2%
+export const GAS_PRICE_BUFFER_PERCENTAGE = 2 // 2%
 
-const applyBuffer = (value: bigint, percentage: number): bigint =>
+export const applyBuffer = (value: bigint, percentage: number): bigint =>
   (value * BigInt(100 + percentage)) / 100n
 
-interface GasSuggestionResponse {
+export interface GasSuggestionResponse {
   base_fee_per_gas: bigint
   exact_base_fee: bigint
   low: GasPriceLevel
@@ -27,7 +27,7 @@ interface GasSuggestionResponse {
   high: GasPriceLevel
 }
 
-interface GasPriceLevel {
+export interface GasPriceLevel {
   max_priority_fee_per_gas: bigint
   max_fee_per_gas: bigint
 }
@@ -38,7 +38,7 @@ export interface EstimateFeesPerGasReturnType {
   maxPriorityFeePerGas: Hex
 }
 
-interface EstimateFeesPerGasParams {
+export interface EstimateFeesPerGasParams {
   chainId: number
   type: SupportedTransactionType
   gasPrice?: Hex
@@ -84,8 +84,8 @@ const handleEIP1559Transaction = async (
 
   return {
     gasPrice: "0x0",
-    maxPriorityFeePerGas: numberToHex(max_priority_fee_per_gas),
-    maxFeePerGas: numberToHex(max_fee_per_gas),
+    maxPriorityFeePerGas: maxPriorityFeePerGas || numberToHex(max_priority_fee_per_gas),
+    maxFeePerGas: maxFeePerGas || numberToHex(max_fee_per_gas),
   }
 }
 

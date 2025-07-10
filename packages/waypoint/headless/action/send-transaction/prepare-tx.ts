@@ -4,7 +4,6 @@ import {
   createClient,
   Hex,
   hexToBigInt,
-  hexToNumber,
   http,
   isAddress,
   numberToHex,
@@ -23,12 +22,14 @@ import {
 } from "./common"
 import { estimateFeesPerGas } from "./estimate-fee-per-gas"
 
-const DEFAULT_VALUE = "0x0"
-const DEFAULT_DATA = "0x"
-const GAS_LIMIT_BUFFER_MULTIPLIER = 2n
-const EXPIRED_TIME_PLACEHOLDER = "0x5208"
+export const DEFAULT_VALUE = "0x0"
+export const DEFAULT_DATA = "0x"
+export const GAS_LIMIT_BUFFER_MULTIPLIER = 2n
+export const EXPIRED_TIME_PLACEHOLDER = "0x5208"
 
-function validateTransactionType(type: TransactionType | undefined): SupportedTransactionType {
+export function validateTransactionType(
+  type: TransactionType | undefined,
+): SupportedTransactionType {
   if (!isSupportedTransaction(type))
     throw new HeadlessClientError({
       cause: undefined,
@@ -38,7 +39,7 @@ function validateTransactionType(type: TransactionType | undefined): SupportedTr
   return type as SupportedTransactionType
 }
 
-function validateToAddress(to: Address | null): Address {
+export function validateToAddress(to: Address | null): Address {
   if (!to || !isAddress(to))
     throw new HeadlessClientError({
       cause: undefined,
@@ -48,7 +49,7 @@ function validateToAddress(to: Address | null): Address {
   return to
 }
 
-function validateFromAddress(from: Address | undefined): Address {
+export function validateFromAddress(from: Address | undefined): Address {
   if (!from || !isAddress(from))
     throw new HeadlessClientError({
       cause: undefined,
@@ -58,7 +59,7 @@ function validateFromAddress(from: Address | undefined): Address {
   return from
 }
 
-async function estimateGasLimit(
+export async function estimateGasLimit(
   client: Client,
   params: {
     to: Address
@@ -88,17 +89,18 @@ async function estimateGasLimit(
   }
 }
 
-async function getNonceFromNetwork(
+export async function getNonceFromNetwork(
   client: Client,
   params: { from: Address; nonce?: Hex },
-): Promise<number> {
+): Promise<Hex> {
   try {
     const { from, nonce } = params
-    if (nonce) return hexToNumber(nonce)
-    return await getTransactionCount(client, {
+    if (nonce) return nonce
+    const count = await getTransactionCount(client, {
       address: from,
       blockTag: "pending",
     })
+    return numberToHex(count)
   } catch (error) {
     throw new HeadlessClientError({
       cause: error,
@@ -109,7 +111,7 @@ async function getNonceFromNetwork(
   }
 }
 
-type FormatTransactionParams = {
+export type FormatTransactionParams = {
   transaction: TransactionParams
   chain: ChainParams
   currentAddress?: Address
@@ -149,8 +151,6 @@ export const toTransactionInServerFormat = async (
       estimateGasLimit(client, { to, from, value, gas, data: transactionData }),
     ])
 
-    const nonceHex = numberToHex(nonce)
-    const chainIdHex = numberToHex(chainId)
     const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feesPerGas
 
     const formattedTransaction: TransactionInServerFormat = {
@@ -158,11 +158,11 @@ export const toTransactionInServerFormat = async (
       from,
       to,
       value,
-      input: transactionData,
+      nonce,
       gasPrice,
+      input: transactionData,
+      chainId: numberToHex(chainId),
       gas: gasLimit,
-      nonce: nonceHex,
-      chainId: chainIdHex,
       maxFeePerGas,
       maxPriorityFeePerGas,
       r: DEFAULT_VALUE,
