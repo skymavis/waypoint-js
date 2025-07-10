@@ -15,6 +15,7 @@ import { isSupportedTransaction } from "../helpers/tx-type-check"
 import {
   type ChainParams,
   PAYER_INFO,
+  SupportedTransaction,
   SupportedTransactionType,
   type TransactionInServerFormat,
   type TransactionParams,
@@ -129,9 +130,9 @@ export const toTransactionInServerFormat = async (
   const {
     value = DEFAULT_VALUE,
     data = DEFAULT_DATA,
+    type: rawType = SupportedTransaction.EIP1559,
     from: rawFrom = currentAddress,
     to: rawTo,
-    type: rawType,
     gasPrice: rawGasPrice,
     nonce: rawNonce,
     input,
