@@ -9,9 +9,11 @@ import {
   getUserProfile,
   keygen,
   personalSign,
-  sendLegacyTransaction,
+  sendPaidTransaction,
   sendSponsoredTransaction,
   signTypedData,
+  SupportedTransaction,
+  SupportedTransactionType,
   validateSponsorTransaction,
 } from "@sky-mavis/waypoint/headless"
 import { useState } from "react"
@@ -160,9 +162,32 @@ const KeygenTestPage = () => {
     )
   }
 
+  const handleSendEIP1559Transaction = async () => {
+    calcExecutionTime("Send EIP1559 Tx", () =>
+      sendPaidTransaction({
+        clientShard: CLIENT_SHARD,
+        waypointToken: WAYPOINT_TOKEN,
+
+        chain: {
+          chainId: saigon.id,
+          rpcUrl: saigon.rpcUrls.default.http[0],
+        },
+        transaction: {
+          type: SupportedTransaction.EIP1559,
+          to: getAddress("0xcd3cf91e7f0601ab98c95dd18b4f99221bcf0b20"),
+          value: "0x23af16b18000",
+          gas: toHex(1000000),
+        },
+
+        wasmUrl: WASM_URL,
+        wsUrl: LOCKBOX_STAG_WS_URL,
+      }),
+    )
+  }
+
   const handleSendLegacyTransaction = async () => {
     calcExecutionTime("Send Legacy Tx", () =>
-      sendLegacyTransaction({
+      sendPaidTransaction({
         clientShard: CLIENT_SHARD,
         waypointToken: WAYPOINT_TOKEN,
 
@@ -264,6 +289,7 @@ const KeygenTestPage = () => {
       <Button onClick={handleSignTypedData}>Sign typed data</Button>
       <Divider />
       <Button onClick={handleSendLegacyTransaction}>Send legacy transaction</Button>
+      <Button onClick={handleSendEIP1559Transaction}>Send EIP1559 transaction</Button>
       <Button onClick={handleSendSponsoredTransaction}>Send sponsored transaction</Button>
       <Divider />
       <Button onClick={handleGetUserProfile}>Get user profile</Button>

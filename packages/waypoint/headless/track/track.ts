@@ -19,8 +19,9 @@ export enum HeadlessEventName {
   keygen = "keygen",
   personalSign = "personalSign",
   signTypedData = "signTypedData",
-  sendLegacyTransaction = "sendLegacyTransaction,",
-  sendSponsoredTransaction = "sendSponsoredTransaction,",
+  sendLegacyTransaction = "sendLegacyTransaction",
+  endEIP1559Transaction = "endEIP1559Transaction",
+  sendSponsoredTransaction = "sendSponsoredTransaction",
 }
 
 type CommonProperties = {
