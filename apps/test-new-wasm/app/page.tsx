@@ -12,6 +12,7 @@ import {
   sendPaidTransaction,
   sendSponsoredTransaction,
   signTypedData,
+  SupportedTransaction,
   SupportedTransactionType,
   validateSponsorTransaction,
 } from "@sky-mavis/waypoint/headless"
@@ -172,7 +173,7 @@ const KeygenTestPage = () => {
           rpcUrl: saigon.rpcUrls.default.http[0],
         },
         transaction: {
-          type: SupportedTransactionType.EIP1559,
+          type: SupportedTransaction.EIP1559,
           to: getAddress("0xcd3cf91e7f0601ab98c95dd18b4f99221bcf0b20"),
           value: "0x23af16b18000",
           gas: toHex(1000000),
