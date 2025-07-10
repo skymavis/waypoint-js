@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - "waypoint@v**"
+      - "waypoint@v*"
   workflow_dispatch:
 
 jobs:
@@ -48,7 +48,15 @@ jobs:
       - name: Get package
         run: |
           echo "PACKAGE_NAME=$(echo "${{ github.ref_name }}" | cut -d'@' -f1)" >> $GITHUB_ENV
-          echo "PACKAGE_VERSION=$(echo "${{ github.ref_name }}" | cut -d'@' -f2 | cut -c2-)" >> $GITHUB_ENV
+          VERSION_FULL=$(echo "${{ github.ref_name }}" | cut -d'@' -f2 | cut -c2-)
+          echo "PACKAGE_VERSION=$VERSION_FULL" >> $GITHUB_ENV
+
+          if [[ "$VERSION_FULL" == *"-rc."* ]]; then
+            echo "NPM_TAG=rc" >> $GITHUB_ENV
+          else
+            echo "NPM_TAG=latest" >> $GITHUB_ENV
+          fi
+
       - name: Update package version
         run: |
           sed -i 's/"version": "[^"]*"/"version": "${{ env.PACKAGE_VERSION }}"/' packages/${{ env.PACKAGE_NAME }}/package.json
@@ -59,6 +67,6 @@ jobs:
       - name: Publish to npm
         run: |
           cd packages/${{ env.PACKAGE_NAME }}
-          pnpm publish --no-git-checks
+          pnpm publish --no-git-checks --tag ${{ env.NPM_TAG }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_WRITE_TOKEN }}
