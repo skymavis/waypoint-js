@@ -224,7 +224,7 @@ describe("prepare-tx", () => {
   })
 
   describe("getNonceFromNetwork", () => {
-    let mockClient: ReturnType<typeof createPublicClient>
+    let mockClient: Client
 
     beforeEach(() => {
       mockClient = createPublicClient({

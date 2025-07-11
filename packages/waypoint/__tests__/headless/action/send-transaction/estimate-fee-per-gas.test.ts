@@ -1,4 +1,4 @@
-import { createPublicClient, http, numberToHex } from "viem"
+import { Client, createPublicClient, http, numberToHex } from "viem"
 import { estimateFeesPerGas as viemEstimateFeesPerGas, getGasPrice } from "viem/actions"
 import { ronin, saigon } from "viem/chains"
 import { beforeEach, describe, expect, test, vi } from "vitest"
@@ -34,7 +34,7 @@ const mockViemEstimateFeesPerGas = vi.mocked(viemEstimateFeesPerGas)
 const mockIsEIP1559CompatibleTransaction = vi.mocked(isEIP1559CompatibleTransaction)
 
 describe("estimate-fee-per-gas", () => {
-  let mockClient: ReturnType<typeof createPublicClient>
+  let mockClient: Client
 
   beforeEach(() => {
     vi.clearAllMocks()
