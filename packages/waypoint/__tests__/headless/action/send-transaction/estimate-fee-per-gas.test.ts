@@ -1,7 +1,7 @@
 import { Client, createPublicClient, http, numberToHex } from "viem"
-import { getGasPrice } from "viem/actions"
+import { estimateFeesPerGas as viemEstimateFeesPerGas, getGasPrice } from "viem/actions"
 import { ronin, saigon } from "viem/chains"
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
+import { beforeEach, describe, expect, test, vi } from "vitest"
 
 import { request } from "../../../../headless/action/helpers/request/request"
 import { isEIP1559CompatibleTransaction } from "../../../../headless/action/helpers/tx-type-check"
@@ -14,35 +14,34 @@ import {
   GAS_SUGGESTION_ROUTES,
   GasSuggestionResponse,
 } from "../../../../headless/action/send-transaction/estimate-fee-per-gas"
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../../../headless/error/client"
 
-vi.mock("viem/actions", () => ({
-  getGasPrice: vi.fn(),
-}))
 vi.mock("../../../../headless/action/helpers/request/request", () => ({
   request: vi.fn(),
 }))
+
+vi.mock("viem/actions", () => ({
+  getGasPrice: vi.fn(),
+  estimateFeesPerGas: vi.fn(),
+}))
+
 vi.mock("../../../../headless/action/helpers/tx-type-check", () => ({
   isEIP1559CompatibleTransaction: vi.fn().mockReturnValue(false),
 }))
 
-const mockGetGasPrice = vi.mocked(getGasPrice)
 const mockRequest = vi.mocked(request)
+const mockGetGasPrice = vi.mocked(getGasPrice)
+const mockViemEstimateFeesPerGas = vi.mocked(viemEstimateFeesPerGas)
 const mockIsEIP1559CompatibleTransaction = vi.mocked(isEIP1559CompatibleTransaction)
 
 describe("estimate-fee-per-gas", () => {
   let mockClient: Client
 
   beforeEach(() => {
+    vi.clearAllMocks()
     mockClient = createPublicClient({
       chain: ronin,
       transport: http(),
     })
-    vi.clearAllMocks()
-  })
-
-  afterEach(() => {
-    vi.resetAllMocks()
   })
 
   describe("applyBuffer", () => {
@@ -187,42 +186,57 @@ describe("estimate-fee-per-gas", () => {
         expect(mockRequest).toHaveBeenCalledWith(GAS_SUGGESTION_ROUTES[saigon.id])
       })
 
-      test("should throw error for unsupported chain", async () => {
-        const params: EstimateFeesPerGasParams = {
-          chainId: 1,
-          type: SupportedTransaction.EIP1559,
+      test("should fallback to viem estimateFeesPerGas when API request fails", async () => {
+        const requestError = new Error("API request failed")
+        mockRequest.mockRejectedValue(requestError)
+
+        const viemResult = {
+          maxFeePerGas: 25000000000n,
+          maxPriorityFeePerGas: 2000000000n,
         }
-
-        await expect(estimateFeesPerGas(mockClient, params)).rejects.toThrow(
-          new HeadlessClientError({
-            cause: expect.any(Error),
-            code: HeadlessClientErrorCode.PrepareTransactionError,
-            message:
-              "Failed to estimate gas price. This could be due to network issues or RPC problems.",
-          }),
-        )
-      })
-
-      test("should throw error when gas suggestion response is empty", async () => {
-        mockRequest.mockResolvedValue({
-          status: 200,
-          data: undefined,
-          error: undefined,
-        })
+        mockViemEstimateFeesPerGas.mockResolvedValue(viemResult)
 
         const params: EstimateFeesPerGasParams = {
           chainId: ronin.id,
           type: SupportedTransaction.EIP1559,
         }
 
-        await expect(estimateFeesPerGas(mockClient, params)).rejects.toThrow(
-          new HeadlessClientError({
-            cause: expect.any(Error),
-            code: HeadlessClientErrorCode.PrepareTransactionError,
-            message:
-              "Failed to estimate gas price. This could be due to network issues or RPC problems.",
-          }),
-        )
+        const result = await estimateFeesPerGas(mockClient, params)
+
+        expect(mockViemEstimateFeesPerGas).toHaveBeenCalledWith(mockClient)
+        expect(result).toEqual({
+          gasPrice: "0x0",
+          maxPriorityFeePerGas: numberToHex(viemResult.maxPriorityFeePerGas),
+          maxFeePerGas: numberToHex(viemResult.maxFeePerGas),
+        })
+      })
+
+      test("should fallback to viem estimateFeesPerGas when response data is empty", async () => {
+        mockRequest.mockResolvedValue({
+          status: 200,
+          data: undefined,
+          error: undefined,
+        })
+
+        const viemResult = {
+          maxFeePerGas: 25000000000n,
+          maxPriorityFeePerGas: 2000000000n,
+        }
+        mockViemEstimateFeesPerGas.mockResolvedValue(viemResult)
+
+        const params: EstimateFeesPerGasParams = {
+          chainId: ronin.id,
+          type: SupportedTransaction.EIP1559,
+        }
+
+        const result = await estimateFeesPerGas(mockClient, params)
+
+        expect(mockViemEstimateFeesPerGas).toHaveBeenCalledWith(mockClient)
+        expect(result).toEqual({
+          gasPrice: "0x0",
+          maxPriorityFeePerGas: numberToHex(viemResult.maxPriorityFeePerGas),
+          maxFeePerGas: numberToHex(viemResult.maxFeePerGas),
+        })
       })
     })
 
@@ -251,7 +265,6 @@ describe("estimate-fee-per-gas", () => {
       test("should fetch and buffer gas price when not provided", async () => {
         const baseGasPrice = 20000000000n
         const expectedBufferedGasPrice = applyBuffer(baseGasPrice, GAS_PRICE_BUFFER_PERCENTAGE)
-
         mockGetGasPrice.mockResolvedValue(baseGasPrice)
 
         const params: EstimateFeesPerGasParams = {

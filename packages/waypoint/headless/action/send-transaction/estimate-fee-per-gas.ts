@@ -1,5 +1,5 @@
 import { Client, Hex, numberToHex } from "viem"
-import { getGasPrice } from "viem/actions"
+import { estimateFeesPerGas as viemEstimateFeesPerGas, getGasPrice } from "viem/actions"
 import { ronin, saigon } from "viem/chains"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
@@ -46,7 +46,13 @@ export interface EstimateFeesPerGasParams {
   maxPriorityFeePerGas?: Hex
 }
 
-const fetchEIP1559GasSuggestion = async (chainId: number): Promise<GasSuggestionResponse> => {
+const fetchEIP1559GasSuggestion = async (
+  client: Client,
+  chainId: number,
+): Promise<{
+  maxFeePerGas: bigint
+  maxPriorityFeePerGas: bigint
+}> => {
   const route = GAS_SUGGESTION_ROUTES[chainId]
   if (!route)
     throw new HeadlessClientError({
@@ -55,18 +61,27 @@ const fetchEIP1559GasSuggestion = async (chainId: number): Promise<GasSuggestion
       message: `Unsupported chain: ${chainId}.`,
     })
 
-  const { data } = await request<GasSuggestionResponse>(route)
-  if (!data)
-    throw new HeadlessClientError({
-      cause: undefined,
-      code: HeadlessClientErrorCode.PrepareTransactionError,
-      message: "Empty gas suggestion response.",
-    })
+  try {
+    const { data } = await request<GasSuggestionResponse>(route)
 
-  return data
+    if (!data)
+      throw new HeadlessClientError({
+        cause: undefined,
+        code: HeadlessClientErrorCode.PrepareTransactionError,
+        message: "Empty gas suggestion response.",
+      })
+
+    return {
+      maxFeePerGas: data.medium.max_fee_per_gas,
+      maxPriorityFeePerGas: data.medium.max_priority_fee_per_gas,
+    }
+  } catch (error) {
+    return await viemEstimateFeesPerGas(client)
+  }
 }
 
 const handleEIP1559Transaction = async (
+  client: Client,
   params: EstimateFeesPerGasParams,
 ): Promise<EstimateFeesPerGasReturnType> => {
   const { chainId, maxFeePerGas, maxPriorityFeePerGas } = params
@@ -79,13 +94,12 @@ const handleEIP1559Transaction = async (
     }
   }
 
-  const gasSuggestion = await fetchEIP1559GasSuggestion(chainId)
-  const { max_priority_fee_per_gas, max_fee_per_gas } = gasSuggestion.medium
+  const gasSuggestion = await fetchEIP1559GasSuggestion(client, chainId)
 
   return {
     gasPrice: "0x0",
-    maxPriorityFeePerGas: maxPriorityFeePerGas || numberToHex(max_priority_fee_per_gas),
-    maxFeePerGas: maxFeePerGas || numberToHex(max_fee_per_gas),
+    maxPriorityFeePerGas: maxPriorityFeePerGas || numberToHex(gasSuggestion.maxPriorityFeePerGas),
+    maxFeePerGas: maxFeePerGas || numberToHex(gasSuggestion.maxFeePerGas),
   }
 }
 
@@ -118,7 +132,7 @@ export async function estimateFeesPerGas(
   const { type, gasPrice } = params
 
   try {
-    if (isEIP1559CompatibleTransaction(type)) return await handleEIP1559Transaction(params)
+    if (isEIP1559CompatibleTransaction(type)) return await handleEIP1559Transaction(client, params)
     return await handleLegacyTransaction(client, gasPrice)
   } catch (error) {
     throw new HeadlessClientError({
