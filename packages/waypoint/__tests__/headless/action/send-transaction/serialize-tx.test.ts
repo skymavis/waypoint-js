@@ -1,14 +1,14 @@
 import { type Address } from "viem"
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 
-import { isEIP1559CompatibleTransaction } from "../../../../headless/action/helpers/tx-type-check"
 import {
   SupportedTransaction,
   type TransactionInServerFormat,
-} from "../../../../headless/action/send-transaction/common"
-import { serializeTX } from "../../../../headless/action/send-transaction/serialize-tx"
+} from "../../../../headless-kit/headless-common-helper/transaction/common"
+import { serializeTX } from "../../../../headless-kit/headless-common-helper/transaction/serialize-tx"
+import { isEIP1559CompatibleTransaction } from "../../../../headless-kit/headless-common-helper/transaction/tx-type-check"
 
-vi.mock("../../../../headless/action/helpers/tx-type-check", () => ({
+vi.mock("../../../../headless-kit/headless-common-helper/transaction/tx-type-check", () => ({
   isEIP1559CompatibleTransaction: vi.fn(),
 }))
 

@@ -1,0 +1,58 @@
+import { Address } from "viem"
+
+import { request } from "../../headless-common-helper/request/request"
+import {
+  ChainParams,
+  SupportedTransaction,
+  TransactionParams,
+} from "../../headless-common-helper/transaction/common"
+import { toTransactionInServerFormat } from "../../headless-common-helper/transaction/prepare-tx"
+import { RawServerError } from "../error/raw-server"
+import { ServerError } from "../error/server"
+
+type ValidateSponsorTransactionApiResponse = {
+  data: ValidateSponsorTransactionResult
+}
+
+export type ValidateSponsorTransactionParams = {
+  httpUrl: string
+  waypointToken: string
+  transaction: TransactionParams
+  chain: ChainParams
+  currentAddress?: Address
+}
+export type ValidateSponsorTransactionResult = {
+  payer: {
+    address: string
+  }
+  hasSponsorQuotaApplied: boolean
+  sponsorQuota?: number
+}
+
+export const validateSponsorTransaction = async (params: ValidateSponsorTransactionParams) => {
+  const { httpUrl, waypointToken, transaction, chain, currentAddress } = params
+
+  const sponsoredTx = {
+    ...transaction,
+    type: SupportedTransaction.RoninGasSponsor,
+  } as const
+  const serverTxData = await toTransactionInServerFormat({
+    chain,
+    transaction: sponsoredTx,
+    currentAddress,
+  })
+
+  const { data, error } = await request<ValidateSponsorTransactionApiResponse, RawServerError>(
+    `post ${httpUrl}/v1/public/tx-sponsor/validate`,
+    {
+      headers: { authorization: waypointToken },
+      body: { tx: serverTxData },
+    },
+  )
+
+  if (data) {
+    return data.data
+  }
+
+  throw new ServerError({ code: error.code, message: error.errorMessage })
+}
