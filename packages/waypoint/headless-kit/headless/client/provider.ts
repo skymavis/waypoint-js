@@ -1,55 +1,17 @@
 import { EventEmitter } from "events"
-import type {
-  Address,
-  EIP1193Events,
-  EIP1193Parameters,
-  Hash,
-  Hex,
-  PublicRpcSchema,
-  TypedDataDefinition,
-} from "viem"
+import type { Address, EIP1193Parameters, Hex, TypedDataDefinition } from "viem"
 import { InternalRpcError, isAddressEqual, toHex, UnauthorizedProviderError } from "viem"
 
+import {
+  HeadlessProviderBaseSchema,
+  HeadlessProviderBaseType,
+} from "../../headless-common-helper/provider/types"
 import { TransactionParams } from "../../headless-common-helper/transaction/common"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { HeadlessCore } from "./core"
 
-export type HeadlessProviderType = EIP1193Events & {
-  request: <ReturnType = unknown>(
-    args: EIP1193Parameters<HeadlessProviderSchema>,
-  ) => Promise<ReturnType>
-}
-
-export type HeadlessProviderSchema = [
-  ...PublicRpcSchema,
-
-  {
-    Method: "eth_accounts"
-    Parameters?: undefined
-    ReturnType: Address[]
-  },
-  {
-    Method: "eth_requestAccounts"
-    Parameters?: undefined
-    ReturnType: Address[]
-  },
-  {
-    Method: "eth_sendTransaction"
-    Parameters: [transaction: TransactionParams]
-    ReturnType: Hash
-  },
-  {
-    Method: "eth_signTypedData_v4"
-    Parameters: [address: Address, typedData: TypedDataDefinition | string]
-    ReturnType: Hex
-  },
-  {
-    Method: "personal_sign"
-    Parameters: [data: Hex, address: Address]
-    ReturnType: Hex
-  },
-]
-
+export type HeadlessProviderType = HeadlessProviderBaseType
+export type HeadlessProviderSchema = HeadlessProviderBaseSchema
 // ! Keep the same interface with internal libs
 export class HeadlessProvider extends EventEmitter implements HeadlessProviderType {
   private core: HeadlessCore

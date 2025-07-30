@@ -1,4 +1,4 @@
-import { Hex } from "viem"
+import { Hash } from "viem"
 
 import { request } from "../../headless-common-helper/request/request"
 import { TransactionInServerFormat } from "../../headless-common-helper/transaction/common"
@@ -13,7 +13,7 @@ export type SendParams = BaseParams & {
 }
 
 export type SendResult = {
-  tx_hash: Hex
+  tx_hash: Hash
 }
 
 export type SendApiResponse = {
