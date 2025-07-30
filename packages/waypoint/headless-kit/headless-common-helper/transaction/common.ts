@@ -59,22 +59,6 @@ export type ChainParams = {
   rpcUrl: string
 }
 
-export type SendTransactionParams = {
-  waypointToken: string
-  clientShard: string
-
-  chain: ChainParams
-  transaction: TransactionParams
-
-  wasmUrl: string
-  wsUrl: string
-}
-
-export type SendTransactionResult = {
-  txHash: Hex
-  signature: Hex
-}
-
 export type TransactionInServerFormat = {
   from: Address
   to: Address

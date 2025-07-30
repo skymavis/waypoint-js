@@ -1,9 +1,5 @@
 import { keccak256 } from "viem"
 
-import {
-  SendTransactionParams,
-  SendTransactionResult,
-} from "../../../headless-common-helper/transaction/common"
 import { toTransactionInServerFormat } from "../../../headless-common-helper/transaction/prepare-tx"
 import { serializeTX } from "../../../headless-common-helper/transaction/serialize-tx"
 import { isEIP1559CompatibleTransaction } from "../../../headless-common-helper/transaction/tx-type-check"
@@ -23,6 +19,7 @@ import {
 import { wasmTriggerSign } from "../helpers/trigger-sign"
 import { sendTransactionRequest } from "./send-tx-request"
 import { toTxHash } from "./to-tx-hash"
+import { SendTransactionParams, SendTransactionResult } from "./types"
 
 const _sendPaidTransaction = async (
   params: SendTransactionParams,
@@ -123,14 +120,13 @@ const _sendPaidTransaction = async (
 export const sendPaidTransaction = async (
   params: SendTransactionParams,
 ): Promise<SendTransactionResult> => {
-  const { chain, transaction, wasmUrl, waypointToken, wsUrl } = params
+  const { chain, transaction, waypointToken, wsUrl } = params
   const tracker = createTracker({
     event: isEIP1559CompatibleTransaction(transaction.type)
       ? HeadlessEventName.endEIP1559Transaction
       : HeadlessEventName.sendLegacyTransaction,
     waypointToken,
     productionFactor: wsUrl,
-    wasmUrl,
   })
 
   try {

@@ -1,9 +1,5 @@
 import { fromBinary } from "@bufbuild/protobuf"
 
-import {
-  SendTransactionParams,
-  SendTransactionResult,
-} from "../../../headless-common-helper/transaction/common"
 import { toTransactionInServerFormat } from "../../../headless-common-helper/transaction/prepare-tx"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
 import { decodeServerError } from "../../error/server"
@@ -23,6 +19,7 @@ import {
 import { wasmTriggerSign } from "../helpers/trigger-sign"
 import { sendTransactionRequest } from "./send-tx-request"
 import { toTxHash } from "./to-tx-hash"
+import { SendTransactionParams, SendTransactionResult } from "./types"
 
 export const toSerializedSponsoredTransaction = (frame: Frame): Uint8Array => {
   if (frame.type !== Type.DATA) throw decodeServerError(frame)
