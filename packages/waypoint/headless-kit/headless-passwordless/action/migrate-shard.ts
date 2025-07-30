@@ -19,7 +19,7 @@ export type MigrateShardApiResponse = {
   data: MigrateShardResult
 }
 
-export async function migrateShard(params: MigrateShardParams) {
+export const migrateShard = async (params: MigrateShardParams) => {
   const { httpUrl, waypointToken, shardCiphertextB64, shardEncryptedKeyB64, shardNonceB64 } = params
 
   const tracker = createPasswordlessTracker({

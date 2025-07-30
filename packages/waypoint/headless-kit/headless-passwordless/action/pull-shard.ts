@@ -19,7 +19,7 @@ export type PullShardApiResponse = {
   data: PullShardResult
 }
 
-export async function pullShard(params: PullShardParams) {
+export const pullShard = async (params: PullShardParams) => {
   const { httpUrl, waypointToken, clientEncryptedKey } = params
 
   const tracker = createPasswordlessTracker({

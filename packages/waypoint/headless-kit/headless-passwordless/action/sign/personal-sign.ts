@@ -23,7 +23,7 @@ export type PersonalSignParams = {
   httpUrl: string
 }
 
-export async function personalSign(params: PersonalSignParams): Promise<Hex> {
+export const personalSign = async (params: PersonalSignParams): Promise<Hex> => {
   const tracker = createPasswordlessTracker({
     event: HeadlessPasswordlessEventName.personalSign,
     waypointToken: params.waypointToken,

@@ -93,7 +93,7 @@ export type GetPublicKeyApiResponse = {
 }
 export const NOT_FOUND_GENERATED_KEY_ERROR = 5
 
-export async function getPublicKey(params: GetPublicKeyParams) {
+export const getPublicKey = async (params: GetPublicKeyParams) => {
   const { httpUrl, waypointToken } = params
 
   const { data, error } = await request<GetPublicKeyApiResponse, RawServerError>(

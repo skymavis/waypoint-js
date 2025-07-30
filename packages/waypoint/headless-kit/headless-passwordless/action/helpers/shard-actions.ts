@@ -1,12 +1,12 @@
 import { encryptContent } from "./key-actions"
 
-export async function encryptClientShard({
+export const encryptClientShard = async ({
   shard,
   publicKey,
 }: {
   shard: string
   publicKey: string
-}) {
+}) => {
   const { encryptedContent: publicKeyEncrypted, contentKey } = await encryptContent(publicKey)
 
   const shardBytes = new TextEncoder().encode(shard)
@@ -35,7 +35,7 @@ export async function encryptClientShard({
   }
 }
 
-export async function decryptClientShard({
+export const decryptClientShard = async ({
   shardCiphertextB64,
   shardNonceB64,
   aesKey,
@@ -43,7 +43,7 @@ export async function decryptClientShard({
   shardCiphertextB64: string
   shardNonceB64: string
   aesKey: Uint8Array
-}) {
+}) => {
   const nonce = Uint8Array.from(atob(shardNonceB64), c => c.charCodeAt(0))
   const encryptedShard = Uint8Array.from(atob(shardCiphertextB64), c => c.charCodeAt(0))
 

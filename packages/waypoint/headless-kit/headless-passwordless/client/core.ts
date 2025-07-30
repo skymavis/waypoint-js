@@ -95,21 +95,21 @@ export class HeadlessPasswordlessCore {
     }
   }
 
-  static create(opts: CreateHeadlessPasswordlessCoreOpts) {
+  static create = (opts: CreateHeadlessPasswordlessCoreOpts) => {
     return new HeadlessPasswordlessCore(opts)
   }
 
-  setWaypointToken(waypointToken: string) {
+  setWaypointToken = (waypointToken: string) => {
     this.waypointToken = waypointToken
   }
 
-  setClientShard(clientShard: string) {
+  setClientShard = (clientShard: string) => {
     this.clientShard = clientShard
   }
 
-  private async interactWithPasswordlessServicePrepared<S extends boolean = false>(
+  private interactWithPasswordlessServicePrepared = async <S extends boolean = false>(
     signable: S = false as S,
-  ): Promise<S extends true ? Address : boolean> {
+  ): Promise<S extends true ? Address : boolean> => {
     if (!this.waypointToken) {
       throw new HeadlessPasswordlessClientError({
         cause: undefined,
@@ -123,7 +123,7 @@ export class HeadlessPasswordlessCore {
     return needAddress && (isTokenValid as S extends true ? Address : boolean)
   }
 
-  async genMpc() {
+  genMpc = async () => {
     await this.interactWithPasswordlessServicePrepared()
 
     return generateKeyPasswordless({
@@ -132,7 +132,7 @@ export class HeadlessPasswordlessCore {
     })
   }
 
-  async getUserProfile() {
+  getUserProfile = async () => {
     await this.interactWithPasswordlessServicePrepared()
 
     const userProfile = await _getUserProfile({
@@ -145,7 +145,7 @@ export class HeadlessPasswordlessCore {
     return userProfile
   }
 
-  async getAddress() {
+  getAddress = async () => {
     if (this.address) {
       return this.address
     }
@@ -155,11 +155,11 @@ export class HeadlessPasswordlessCore {
     return userProfile.address
   }
 
-  getChainId() {
+  getChainId = () => {
     return this.chainId
   }
 
-  async signMessage(message: SignableMessage) {
+  signMessage = async (message: SignableMessage) => {
     const address = await this.interactWithPasswordlessServicePrepared(true)
 
     return personalSign({
@@ -170,7 +170,7 @@ export class HeadlessPasswordlessCore {
     })
   }
 
-  async signTypedData(typedData: TypedDataDefinition) {
+  signTypedData = async (typedData: TypedDataDefinition) => {
     const address = await this.interactWithPasswordlessServicePrepared(true)
 
     return signTypedData({
@@ -181,7 +181,7 @@ export class HeadlessPasswordlessCore {
     })
   }
 
-  async sendTransaction(transaction: TransactionParams) {
+  sendTransaction = async (transaction: TransactionParams) => {
     const { chainId, rpcUrl } = this
     const address = await this.interactWithPasswordlessServicePrepared(true)
 
@@ -210,7 +210,7 @@ export class HeadlessPasswordlessCore {
     })
   }
 
-  private async genPasswordlessAsymmetricKey() {
+  private genPasswordlessAsymmetricKey = async () => {
     await this.interactWithPasswordlessServicePrepared()
 
     const generateAsymmetricKeyResult = await generateAsymmetricKey({
@@ -223,7 +223,7 @@ export class HeadlessPasswordlessCore {
     return generateAsymmetricKeyResult.public_key
   }
 
-  async getPasswordlessPublicKey() {
+  getPasswordlessPublicKey = async () => {
     if (this.publicKey) {
       return this.publicKey
     }
@@ -247,7 +247,7 @@ export class HeadlessPasswordlessCore {
     }
   }
 
-  async pullClientShard() {
+  pullClientShard = async () => {
     if (this.clientShard) {
       return this.clientShard
     }
@@ -270,7 +270,7 @@ export class HeadlessPasswordlessCore {
     })
   }
 
-  async migrateShardFromPassword(clientShard?: string) {
+  migrateShardFromPassword = async (clientShard?: string) => {
     await this.interactWithPasswordlessServicePrepared()
 
     if (!clientShard && !this.clientShard) {
@@ -308,7 +308,7 @@ export class HeadlessPasswordlessCore {
     })
   }
 
-  getProvider() {
+  getProvider = () => {
     return HeadlessPasswordlessProvider.fromHeadlessCore(this)
   }
 }

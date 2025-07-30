@@ -19,7 +19,7 @@ export type SignTypedDataParams = {
   httpUrl: string
 }
 
-export async function signTypedData(params: SignTypedDataParams): Promise<Hex> {
+export const signTypedData = async (params: SignTypedDataParams): Promise<Hex> => {
   const { typedData, waypointToken, address, httpUrl } = params
   const tracker = createPasswordlessTracker({
     event: HeadlessPasswordlessEventName.signTypedData,

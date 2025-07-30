@@ -20,7 +20,7 @@ export type SendApiResponse = {
   data: SendResult
 }
 
-export async function send(params: SendParams) {
+export const send = async (params: SendParams) => {
   const { httpUrl, waypointToken, tx, rpcUrl } = params
 
   const { data, error } = await request<SendApiResponse, RawServerError>(

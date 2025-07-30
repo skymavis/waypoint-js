@@ -18,7 +18,7 @@ export type SignApiResponse = {
   data: SignResult
 }
 
-export async function sign(params: SignParams) {
+export const sign = async (params: SignParams) => {
   const { httpUrl, waypointToken, messageBase64 } = params
 
   const { data, error } = await request<SignApiResponse, RawServerError>(
