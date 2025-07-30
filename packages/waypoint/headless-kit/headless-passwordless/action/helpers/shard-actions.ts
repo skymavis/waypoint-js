@@ -42,7 +42,7 @@ export async function decryptClientShard({
 }: {
   shardCiphertextB64: string
   shardNonceB64: string
-  aesKey: Uint8Array<ArrayBuffer>
+  aesKey: Uint8Array
 }) {
   const nonce = Uint8Array.from(atob(shardNonceB64), c => c.charCodeAt(0))
   const encryptedShard = Uint8Array.from(atob(shardCiphertextB64), c => c.charCodeAt(0))

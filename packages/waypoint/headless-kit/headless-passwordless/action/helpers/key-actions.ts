@@ -1,4 +1,4 @@
-export async function encryptContent(encryptContent: string, contentKey?: Uint8Array<ArrayBuffer>) {
+export async function encryptContent(encryptContent: string, contentKey?: Uint8Array) {
   contentKey = contentKey ?? crypto.getRandomValues(new Uint8Array(32))
 
   const pemHeader = "-----BEGIN PUBLIC KEY-----"

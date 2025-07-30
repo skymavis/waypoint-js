@@ -4,7 +4,7 @@
     "rootDir": ".",
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "jsx": "preserve",
     "noEmit": true,
     "esModuleInterop": true,

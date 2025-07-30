@@ -3,69 +3,65 @@ import {
   HeadlessBaseClientErrorOpts,
   HeadlessBaseClientErrorType,
 } from "../../headless-common-helper/error/base"
+import { HeadlessCommonClientErrorCode } from "../../headless-common-helper/error/client"
 
-export enum HeadlessClientErrorCode {
-  // consider to move to headless-common
-
-  // // * param error
-  // InvalidWaypointTokenError = -1100,
-  InvalidClientShardError = -1101,
-  UnsupportedTransactionTypeError = -1102,
-  PrepareTransactionError = -1103,
-  UnsupportedChainIdError = -1104,
-  AddressIsNotMatch = -1105,
-  ParseTypedDataError = -1106,
+export const HeadlessClientErrorCode = {
+  // * common error
+  ...HeadlessCommonClientErrorCode,
 
   // * socket error
-  OpenSocketError = -2200,
-  ListenSocketMessageError = -2201,
-  // * when client do NOT process frame with type = DATA | DONE from socket
-  MissingMessageError = -2202,
+  OpenSocketError: -2200,
+  ListenSocketMessageError: -2201,
+  // * when client do NOT process frame with type : DATA | DONE from socket
+  MissingMessageError: -2202,
 
   // * wasm init error
-  WebAssemblyNotSupportedError = -3300,
-  InstantiateError = -3301,
-  SetupGoWasmEnvError = -3302,
-  CreateWasmInstanceError = -3303,
+  WebAssemblyNotSupportedError: -3300,
+  InstantiateError: -3301,
+  SetupGoWasmEnvError: -3302,
+  CreateWasmInstanceError: -3303,
   // * wasm action error
-  HandlerNotFoundError = -3304,
-  WasmGetProtocolResultError = -3305,
-  WasmReceiveSocketDataError = -3306,
-  WasmTriggerSignError = -3307,
-  WasmTriggerKeygenError = -3308,
+  HandlerNotFoundError: -3304,
+  WasmGetProtocolResultError: -3305,
+  WasmReceiveSocketDataError: -3306,
+  WasmTriggerSignError: -3307,
+  WasmTriggerKeygenError: -3308,
 
   // * action error
-  AuthenticateError = -4400,
-  DecryptClientShardError = -4401,
-  EncryptClientShardError = -4402,
-  BackupClientShardError = -4403,
+  AuthenticateError: -4400,
+  DecryptClientShardError: -4401,
+  EncryptClientShardError: -4402,
+  BackupClientShardError: -4403,
 
-  InvalidSignatureError = -4404,
-  SendTransactionError = -4405,
-
-  UnknownError = -9900,
+  SendTransactionError: -4405,
 }
+
+type HeadlessClientErrorCodeType =
+  (typeof HeadlessClientErrorCode)[keyof typeof HeadlessClientErrorCode]
 
 export const HeadlessClientErrorName = "HeadlessClientError"
 
 type HeadlessClientErrorOpts = HeadlessBaseClientErrorOpts<
-  HeadlessClientErrorCode,
+  HeadlessClientErrorCodeType,
   typeof HeadlessClientErrorName
 >
 
 export type HeadlessClientErrorType = HeadlessBaseClientErrorType<
-  HeadlessClientErrorCode,
+  HeadlessClientErrorCodeType,
   typeof HeadlessClientErrorName
 >
 
 export class HeadlessClientError extends HeadlessBaseClientError<
-  HeadlessClientErrorCode,
+  HeadlessClientErrorCodeType,
   typeof HeadlessClientErrorName | string
 > {
   constructor(opts: HeadlessClientErrorOpts) {
     super({
       ...opts,
-      name: HeadlessClientErrorCode[opts.code] || HeadlessClientErrorName,
+      name:
+        Object.keys(HeadlessClientErrorCode).find(
+          key => HeadlessClientErrorCode[key as keyof typeof HeadlessClientErrorCode] === opts.code,
+        ) || HeadlessClientErrorName,
     })
   }
 }

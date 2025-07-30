@@ -19,6 +19,6 @@
     "esModuleInterop": true,
     "lib": ["dom", "esnext", "ES2019.Object", "dom.iterable"]
   },
-  "include": ["common", "web", "skynet", "core", "headless-kit/headless", "deposit", "global.d.ts", "headless-kit/headless-passwordless", "headless-kit/headless-common-helper"],
+  "include": ["common", "web", "skynet", "core", "headless-kit/headless", "deposit", "global.d.ts", "headless-kit/headless-passwordless", "headless-kit/headless-common-helper", "headless-kit/headless-adapter"],
   "exclude": ["node_modules", "dist", "**/__tests__", "**/*.test.ts"]
 }

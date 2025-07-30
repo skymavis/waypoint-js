@@ -2,9 +2,7 @@
 // Headless Base Client Error
 // -------------------------------------------------------------
 const HeadlessBaseClientErrorName = "HeadlessBaseClientError"
-export enum HeadlessBaseClientErrorCode {
-  UnknownError = -1109,
-}
+
 export type HeadlessBaseClientErrorOpts<T = unknown, N extends string = string> = {
   code: T
   message: string

@@ -3,11 +3,8 @@ import { v4 as uuidv4 } from "uuid"
 import { sha256, stringToHex } from "viem"
 
 import { version } from "../../../common/version"
-import {
-  HeadlessBaseClientError,
-  HeadlessBaseClientErrorCode,
-  ServerBaseError,
-} from "../error/base"
+import { HeadlessBaseClientError, ServerBaseError } from "../error/base"
+import { HeadlessCommonClientErrorCode } from "../error/client"
 import { ASAccessTokenPayload, WaypointTokenPayload } from "../utils/token"
 
 const CONTENT_TYPE = "application/json"
@@ -139,7 +136,7 @@ const toErrorProperties = (error: unknown): ErrorProperties => {
       error_level: "error",
       error_type: "client_unknown",
       error_name: error.name,
-      error_code: HeadlessBaseClientErrorCode.UnknownError,
+      error_code: HeadlessCommonClientErrorCode.UnknownError,
       error_message: error.message,
     }
 
@@ -147,7 +144,7 @@ const toErrorProperties = (error: unknown): ErrorProperties => {
     error_level: "error",
     error_type: "client_unknown",
     error_name: "UnknownError",
-    error_code: HeadlessBaseClientErrorCode.UnknownError,
+    error_code: HeadlessCommonClientErrorCode.UnknownError,
     error_message: "Unknown error",
   }
 }

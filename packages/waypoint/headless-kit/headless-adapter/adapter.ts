@@ -1,0 +1,66 @@
+import { CreateHeadlessCoreOpts, HeadlessCore } from "../headless/client/core"
+import {
+  CreateHeadlessPasswordlessCoreOpts,
+  HeadlessPasswordlessCore,
+} from "../headless-passwordless"
+
+export enum PreferMethod {
+  PASSWORDLESS = "passwordless",
+  RECOVERY_PASSWORD = "recovery-password",
+}
+
+type CreateHeadlessKitOpts<T extends PreferMethod> = {
+  mode?: T
+  [PreferMethod.PASSWORDLESS]: CreateHeadlessPasswordlessCoreOpts
+  [PreferMethod.RECOVERY_PASSWORD]: CreateHeadlessCoreOpts
+}
+
+type CoreType<T extends PreferMethod> = T extends PreferMethod.PASSWORDLESS
+  ? HeadlessPasswordlessCore
+  : HeadlessCore
+
+type CoreInstanceRecord = {
+  [K in PreferMethod]: K extends PreferMethod.PASSWORDLESS ? HeadlessPasswordlessCore : HeadlessCore
+}
+
+export class HeadlessKitAdapter<T extends PreferMethod = PreferMethod.RECOVERY_PASSWORD> {
+  private preferMethod: T = PreferMethod.RECOVERY_PASSWORD as T
+  private coreInstanceRecords: CoreInstanceRecord
+
+  protected constructor(opts: CreateHeadlessKitOpts<T>) {
+    if (opts.mode) {
+      this.preferMethod = opts.mode
+    }
+
+    this.coreInstanceRecords = {
+      [PreferMethod.PASSWORDLESS]: HeadlessPasswordlessCore.create(opts[PreferMethod.PASSWORDLESS]),
+      [PreferMethod.RECOVERY_PASSWORD]: HeadlessCore.create(opts[PreferMethod.RECOVERY_PASSWORD]),
+    }
+
+    this.getCurrentCoreInstance()
+  }
+
+  static create<T extends PreferMethod>(opts: CreateHeadlessKitOpts<T>): HeadlessKitAdapter<T> {
+    return new HeadlessKitAdapter(opts)
+  }
+
+  getPreferMethod(): T {
+    return this.preferMethod
+  }
+
+  setPreferMethod(preferMethod: T) {
+    this.preferMethod = preferMethod
+  }
+
+  getCoreInstanceByPreferMethod<K extends PreferMethod>(preferMethod: K): CoreType<K> {
+    return this.coreInstanceRecords[preferMethod] as CoreType<K>
+  }
+
+  getCurrentCoreInstance(): CoreType<T> {
+    return this.coreInstanceRecords[this.preferMethod] as CoreType<T>
+  }
+
+  getProvider() {
+    return this.coreInstanceRecords[this.preferMethod].getProvider()
+  }
+}

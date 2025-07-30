@@ -3,43 +3,41 @@ import {
   HeadlessBaseClientErrorOpts,
   HeadlessBaseClientErrorType,
 } from "../../headless-common-helper/error/base"
+import { HeadlessCommonClientErrorCode } from "../../headless-common-helper/error/client"
 
-export enum HeadlessPasswordlessClientErrorCode {
-  //Todo: update to common error code
-
-  InvalidClientShardError = -1101,
-  UnsupportedTransactionTypeError = -1102,
-  PrepareTransactionError = -1103,
-  UnsupportedChainIdError = -1104,
-  AddressIsNotMatch = -1105,
-  ParseTypedDataError = -1106,
-  WaypointTokenNotFoundError = -1107,
-  ClientShardNotFoundError = -1108,
-  UnknownError = -1109,
-
-  InvalidSignatureError = -4404,
+export const HeadlessPasswordlessClientErrorCode = {
+  ...HeadlessCommonClientErrorCode,
 }
 
-const HeadlessPasswordlessClientErrorName = "HeadlessPasswordlessClientError"
+export type HeadlessPasswordlessClientErrorCodeType =
+  (typeof HeadlessPasswordlessClientErrorCode)[keyof typeof HeadlessPasswordlessClientErrorCode]
+
+export const HeadlessPasswordlessClientErrorName = "HeadlessPasswordlessClientError"
 
 export type HeadlessPasswordlessClientErrorOpts = HeadlessBaseClientErrorOpts<
-  HeadlessPasswordlessClientErrorCode,
+  HeadlessPasswordlessClientErrorCodeType,
   typeof HeadlessPasswordlessClientErrorName
 >
 
 export type HeadlessPasswordlessClientErrorType = HeadlessBaseClientErrorType<
-  HeadlessPasswordlessClientErrorCode,
+  HeadlessPasswordlessClientErrorCodeType,
   typeof HeadlessPasswordlessClientErrorName
 >
 
 export class HeadlessPasswordlessClientError extends HeadlessBaseClientError<
-  HeadlessPasswordlessClientErrorCode,
+  HeadlessPasswordlessClientErrorCodeType,
   typeof HeadlessPasswordlessClientErrorName | string
 > {
   constructor(opts: HeadlessPasswordlessClientErrorOpts) {
     super({
       ...opts,
-      name: opts.name || HeadlessPasswordlessClientErrorName,
+      name:
+        Object.keys(HeadlessPasswordlessClientErrorCode).find(
+          key =>
+            HeadlessPasswordlessClientErrorCode[
+              key as keyof typeof HeadlessPasswordlessClientErrorCode
+            ] === opts.code,
+        ) || HeadlessPasswordlessClientErrorName,
     })
   }
 }

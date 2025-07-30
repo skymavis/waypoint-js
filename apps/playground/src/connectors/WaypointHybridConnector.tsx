@@ -1,7 +1,7 @@
 import { AutoConnectPriority, BaseConnector, IConnectResult } from "@roninnetwork/walletgo"
 import { delegationAuthorize } from "@sky-mavis/waypoint"
 import { HeadlessClient, HeadlessProvider } from "@sky-mavis/waypoint/headless"
-import { ServiceEnv } from "@sky-mavis/waypoint/headless/utils/service-url"
+import { ServiceEnv } from "@sky-mavis/waypoint/headless-common-helper"
 
 import { RoninLogo } from "./RoninLogo"
 

@@ -44,9 +44,24 @@
       "require": "./dist/commonjs/skynet/index.js"
     },
     "./headless": {
-      "types": "./dist/types/headless/index.d.ts",
-      "import": "./dist/module/headless/index.js",
-      "require": "./dist/commonjs/headless/index.js"
+      "types": "./dist/types/headless-kit/headless/index.d.ts",
+      "import": "./dist/module/headless-kit/headless/index.js",
+      "require": "./dist/commonjs/headless-kit/headless/index.js"
+    },
+    "./headless-adapter": {
+      "types": "./dist/types/headless-kit/headless-adapter/index.d.ts",
+      "import": "./dist/module/headless-kit/headless-adapter/index.js",
+      "require": "./dist/commonjs/headless-kit/headless-adapter/index.js"
+    },
+    "./headless-passwordless": {
+      "types": "./dist/types/headless-kit/headless-passwordless/index.d.ts",
+      "import": "./dist/module/headless-kit/headless-passwordless/index.js",
+      "require": "./dist/commonjs/headless-kit/headless-passwordless/index.js"
+    },
+    "./headless-common-helper": {
+      "types": "./dist/types/headless-kit/headless-common-helper/index.d.ts",
+      "import": "./dist/module/headless-kit/headless-common-helper/index.js",
+      "require": "./dist/commonjs/headless-kit/headless-common-helper/index.js"
     },
     "./deposit": {
       "types": "./dist/types/deposit/index.d.ts",

@@ -29,11 +29,14 @@ export {
   type SupportedTransactionType,
   type UnsupportedTransactionType,
   type ChainParams,
-  type SendTransactionParams,
-  type SendTransactionResult,
   type TransactionParams,
   type TransactionType,
 } from "../headless-common-helper/transaction/common"
+
+export {
+  type SendTransactionParams,
+  type SendTransactionResult,
+} from "./action/send-transaction/types"
 
 export {
   getBackupClientShard,

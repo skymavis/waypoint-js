@@ -1,15 +1,11 @@
 import { Address } from "viem"
 
+import { PreferMethod } from "../../headless-adapter"
 import { request } from "../../headless-common-helper/request/request"
 import { RawServerError } from "../error/raw-server"
 import { ServerError } from "../error/server"
 import { AbortKey } from "../helper/request/abort-key"
 import { BaseParams } from "./types"
-
-export enum PreferMethod {
-  Passwordless = "passwordless",
-  RecoveryPassword = "recovery_password",
-}
 
 export type GetUserProfileParams = BaseParams
 

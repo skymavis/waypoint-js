@@ -31,8 +31,6 @@ import {
 import { ServerError } from "../error/server"
 import { HeadlessPasswordlessProvider } from "./provider"
 
-export type LockboxMode = "recovery-password" | "passwordless"
-
 export type CreateHeadlessPasswordlessCoreOpts = {
   waypointToken?: string
   clientShard?: string
