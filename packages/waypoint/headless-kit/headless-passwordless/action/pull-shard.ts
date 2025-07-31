@@ -9,14 +9,10 @@ export type PullShardParams = BaseParams & {
   clientEncryptedKey: string
 }
 
-export type PullShardResult = {
+export type PullShardApiResponse = {
   shardCiphertextB64: string
   shardEncryptedKeyB64: string
   shardNonceB64: string
-}
-
-export type PullShardApiResponse = {
-  data: PullShardResult
 }
 
 export const pullShard = async (params: PullShardParams) => {
@@ -42,7 +38,7 @@ export const pullShard = async (params: PullShardParams) => {
   if (data) {
     //No track response or request, only track event
     tracker.trackOk({})
-    return data.data
+    return data
   }
 
   tracker.trackError(error)

@@ -7,12 +7,8 @@ import { BaseParams } from "./types"
 
 export type GenerateKeyPasswordlessParams = BaseParams
 
-export type GenerateKeyPasswordlessResult = {
-  uuid: string
-}
-
 export type GenerateKeyPasswordlessApiResponse = {
-  data: GenerateKeyPasswordlessResult
+  uuid: string
 }
 
 export async function generateKeyPasswordless(params: GenerateKeyPasswordlessParams) {
@@ -35,9 +31,9 @@ export async function generateKeyPasswordless(params: GenerateKeyPasswordlessPar
 
   if (data) {
     tracker.trackOk({
-      response: { ...data.data },
+      response: { ...data },
     })
-    return data.data
+    return data
   }
 
   tracker.trackError(error)
@@ -50,9 +46,7 @@ export type GenerateAsymmetricKeyResult = {
   public_key: string
 }
 
-export type GenerateAsymmetricKeyApiResponse = {
-  data: GenerateAsymmetricKeyResult
-}
+export type GenerateAsymmetricKeyApiResponse = GenerateAsymmetricKeyResult
 
 export async function generateAsymmetricKey(params: GenerateAsymmetricKeyParams) {
   const { httpUrl, waypointToken } = params
@@ -73,9 +67,9 @@ export async function generateAsymmetricKey(params: GenerateAsymmetricKeyParams)
 
   if (data) {
     tracker.trackOk({
-      response: { ...data.data },
+      response: { ...data },
     })
-    return data.data
+    return data
   }
 
   tracker.trackError(error)
@@ -88,9 +82,8 @@ export type GetPublicKeyResult = {
   public_key: string
 }
 
-export type GetPublicKeyApiResponse = {
-  data: GetPublicKeyResult
-}
+export type GetPublicKeyApiResponse = GetPublicKeyResult
+
 export const NOT_FOUND_GENERATED_KEY_ERROR = 5
 
 export const getPublicKey = async (params: GetPublicKeyParams) => {
@@ -105,7 +98,7 @@ export const getPublicKey = async (params: GetPublicKeyParams) => {
   )
 
   if (data) {
-    return data.data
+    return data
   }
 
   throw new ServerError({ code: error.error_code, message: error.error_message })

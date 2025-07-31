@@ -1,1 +1,1 @@
-export { HeadlessKitAdapter, PreferMethod } from "./adapter"
+export { type CreateHeadlessKitAdapterOpts, HeadlessKitAdapter, PreferMethod } from "./adapter"

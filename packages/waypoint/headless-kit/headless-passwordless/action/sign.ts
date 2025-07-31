@@ -10,12 +10,8 @@ export type SignParams = BaseParams & {
   messageBase64: string
 }
 
-export type SignResult = {
-  signature: Hex
-}
-
 export type SignApiResponse = {
-  data: SignResult
+  signature: Hex
 }
 
 export const sign = async (params: SignParams) => {
@@ -33,7 +29,7 @@ export const sign = async (params: SignParams) => {
   )
 
   if (data) {
-    return data.data
+    return data
   }
 
   throw new ServerError({ code: error.error_code, message: error.error_message })

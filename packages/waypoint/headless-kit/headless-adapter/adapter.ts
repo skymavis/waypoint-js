@@ -1,46 +1,53 @@
-import { CreateHeadlessCoreOpts, HeadlessCore } from "../headless/client/core"
+import { CreateHeadlessClientOpts, HeadlessClient } from "../headless/client/client"
 import {
-  CreateHeadlessPasswordlessCoreOpts,
-  HeadlessPasswordlessCore,
+  CreateHeadlessPasswordlessClientOpts,
+  HeadlessPasswordlessClient,
 } from "../headless-passwordless"
 
 export enum PreferMethod {
   PASSWORDLESS = "passwordless",
-  RECOVERY_PASSWORD = "recovery-password",
+  RECOVERY_PASSWORD = "recovery_password",
 }
 
-type CreateHeadlessKitOpts<T extends PreferMethod> = {
-  mode?: T
-  [PreferMethod.PASSWORDLESS]: CreateHeadlessPasswordlessCoreOpts
-  [PreferMethod.RECOVERY_PASSWORD]: CreateHeadlessCoreOpts
-}
+export type CreateHeadlessKitAdapterOpts<T extends PreferMethod = PreferMethod.RECOVERY_PASSWORD> =
+  {
+    mode?: T
+    [PreferMethod.PASSWORDLESS]: CreateHeadlessPasswordlessClientOpts
+    [PreferMethod.RECOVERY_PASSWORD]: CreateHeadlessClientOpts
+  }
 
 type CoreType<T extends PreferMethod> = T extends PreferMethod.PASSWORDLESS
-  ? HeadlessPasswordlessCore
-  : HeadlessCore
+  ? HeadlessPasswordlessClient
+  : HeadlessClient
 
 type CoreInstanceRecord = {
-  [K in PreferMethod]: K extends PreferMethod.PASSWORDLESS ? HeadlessPasswordlessCore : HeadlessCore
+  [K in PreferMethod]: K extends PreferMethod.PASSWORDLESS
+    ? HeadlessPasswordlessClient
+    : HeadlessClient
 }
 
 export class HeadlessKitAdapter<T extends PreferMethod = PreferMethod.RECOVERY_PASSWORD> {
   private preferMethod: T = PreferMethod.RECOVERY_PASSWORD as T
   private coreInstanceRecords: CoreInstanceRecord
 
-  protected constructor(opts: CreateHeadlessKitOpts<T>) {
+  protected constructor(opts: CreateHeadlessKitAdapterOpts<T>) {
     if (opts.mode) {
       this.preferMethod = opts.mode
     }
 
     this.coreInstanceRecords = {
-      [PreferMethod.PASSWORDLESS]: HeadlessPasswordlessCore.create(opts[PreferMethod.PASSWORDLESS]),
-      [PreferMethod.RECOVERY_PASSWORD]: HeadlessCore.create(opts[PreferMethod.RECOVERY_PASSWORD]),
+      [PreferMethod.PASSWORDLESS]: HeadlessPasswordlessClient.create(
+        opts[PreferMethod.PASSWORDLESS],
+      ),
+      [PreferMethod.RECOVERY_PASSWORD]: HeadlessClient.create(opts[PreferMethod.RECOVERY_PASSWORD]),
     }
 
     this.getCurrentCoreInstance()
   }
 
-  static create<T extends PreferMethod>(opts: CreateHeadlessKitOpts<T>): HeadlessKitAdapter<T> {
+  static create<T extends PreferMethod>(
+    opts: CreateHeadlessKitAdapterOpts<T>,
+  ): HeadlessKitAdapter<T> {
     return new HeadlessKitAdapter(opts)
   }
 

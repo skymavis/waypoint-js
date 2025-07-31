@@ -11,12 +11,8 @@ export type MigrateShardParams = BaseParams & {
   shardNonceB64: string
 }
 
-export type MigrateShardResult = {
-  uuid: string
-}
-
 export type MigrateShardApiResponse = {
-  data: MigrateShardResult
+  uuid: string
 }
 
 export const migrateShard = async (params: MigrateShardParams) => {
@@ -44,7 +40,7 @@ export const migrateShard = async (params: MigrateShardParams) => {
   if (data) {
     //No track response or request, only track event
     tracker.trackOk({})
-    return data.data
+    return data
   }
 
   tracker.trackError(error)

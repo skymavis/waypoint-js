@@ -12,12 +12,8 @@ export type SendParams = BaseParams & {
   rpcUrl: string
 }
 
-export type SendResult = {
-  tx_hash: Hash
-}
-
 export type SendApiResponse = {
-  data: SendResult
+  tx_hash: Hash
 }
 
 export const send = async (params: SendParams) => {
@@ -36,7 +32,7 @@ export const send = async (params: SendParams) => {
   )
 
   if (data) {
-    return data.data
+    return data
   }
 
   throw new ServerError({ code: error.error_code, message: error.error_message })

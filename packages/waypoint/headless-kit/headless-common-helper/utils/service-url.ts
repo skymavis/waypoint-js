@@ -45,7 +45,7 @@ export type PasswordlessServiceEnv = "prod" | "stag" | PasswordlessServiceUrl
 // TODO: change to the prod url
 const PASSWORDLESS_PROD_HTTP_URL = "https://growing-narwhal-infinitely.ngrok-free.app"
 
-const PASSWORDLESS_STAG_HTTP_URL = " https://growing-narwhal-infinitely.ngrok-free.app"
+const PASSWORDLESS_STAG_HTTP_URL = "https://growing-narwhal-infinitely.ngrok-free.app"
 
 export const getPasswordlessServiceUrls = (env: PasswordlessServiceEnv): PasswordlessServiceUrl => {
   switch (env) {

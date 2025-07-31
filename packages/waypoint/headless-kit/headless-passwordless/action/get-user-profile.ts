@@ -9,15 +9,11 @@ import { BaseParams } from "./types"
 
 export type GetUserProfileParams = BaseParams
 
-export type GetUserProfileResult = {
+export type GetUserProfileApiResponse = {
   uuid: string
   address: Address
   has_support_passwordless: boolean
   prefer_method: PreferMethod
-}
-
-export type GetUserProfileApiResponse = {
-  data: GetUserProfileResult
 }
 
 export const getUserProfile = async (params: GetUserProfileParams) => {
@@ -32,7 +28,7 @@ export const getUserProfile = async (params: GetUserProfileParams) => {
   )
 
   if (data) {
-    return data.data
+    return data
   }
 
   throw new ServerError({
