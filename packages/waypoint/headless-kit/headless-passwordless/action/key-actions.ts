@@ -84,8 +84,6 @@ export type GetPublicKeyResult = {
 
 export type GetPublicKeyApiResponse = GetPublicKeyResult
 
-export const NOT_FOUND_GENERATED_KEY_ERROR = 5
-
 export const getPublicKey = async (params: GetPublicKeyParams) => {
   const { httpUrl, waypointToken } = params
 

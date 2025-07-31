@@ -1,7 +1,7 @@
-import { CreateHeadlessClientOpts, HeadlessClient } from "../headless/client/client"
+import { CreateHeadlessCoreOpts, HeadlessCore } from "../headless/client/core"
 import {
-  CreateHeadlessPasswordlessClientOpts,
-  HeadlessPasswordlessClient,
+  CreateHeadlessPasswordlessCoreOpts,
+  HeadlessPasswordlessCore,
 } from "../headless-passwordless"
 
 export enum PreferMethod {
@@ -9,21 +9,18 @@ export enum PreferMethod {
   RECOVERY_PASSWORD = "recovery_password",
 }
 
-export type CreateHeadlessKitAdapterOpts<T extends PreferMethod = PreferMethod.RECOVERY_PASSWORD> =
-  {
-    mode?: T
-    [PreferMethod.PASSWORDLESS]: CreateHeadlessPasswordlessClientOpts
-    [PreferMethod.RECOVERY_PASSWORD]: CreateHeadlessClientOpts
-  }
+export type CreateHeadlessKitAdapterOpts<T extends PreferMethod> = {
+  mode?: T
+  [PreferMethod.PASSWORDLESS]: CreateHeadlessPasswordlessCoreOpts
+  [PreferMethod.RECOVERY_PASSWORD]: CreateHeadlessCoreOpts
+}
 
 type CoreType<T extends PreferMethod> = T extends PreferMethod.PASSWORDLESS
-  ? HeadlessPasswordlessClient
-  : HeadlessClient
+  ? HeadlessPasswordlessCore
+  : HeadlessCore
 
 type CoreInstanceRecord = {
-  [K in PreferMethod]: K extends PreferMethod.PASSWORDLESS
-    ? HeadlessPasswordlessClient
-    : HeadlessClient
+  [K in PreferMethod]: K extends PreferMethod.PASSWORDLESS ? HeadlessPasswordlessCore : HeadlessCore
 }
 
 export class HeadlessKitAdapter<T extends PreferMethod = PreferMethod.RECOVERY_PASSWORD> {
@@ -36,10 +33,8 @@ export class HeadlessKitAdapter<T extends PreferMethod = PreferMethod.RECOVERY_P
     }
 
     this.coreInstanceRecords = {
-      [PreferMethod.PASSWORDLESS]: HeadlessPasswordlessClient.create(
-        opts[PreferMethod.PASSWORDLESS],
-      ),
-      [PreferMethod.RECOVERY_PASSWORD]: HeadlessClient.create(opts[PreferMethod.RECOVERY_PASSWORD]),
+      [PreferMethod.PASSWORDLESS]: HeadlessPasswordlessCore.create(opts[PreferMethod.PASSWORDLESS]),
+      [PreferMethod.RECOVERY_PASSWORD]: HeadlessCore.create(opts[PreferMethod.RECOVERY_PASSWORD]),
     }
 
     this.getCurrentCoreInstance()

@@ -13,3 +13,4 @@ export {
   type HeadlessPasswordlessProviderSchema,
   type HeadlessPasswordlessProviderType,
 } from "./client/provider"
+export { ServerErrorCode as PasswordlessServerErrorCode } from "./error/server"

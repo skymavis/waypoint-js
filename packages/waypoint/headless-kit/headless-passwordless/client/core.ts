@@ -12,12 +12,7 @@ import { validateToken } from "../../headless-common-helper/utils/token"
 import { getUserProfile as _getUserProfile } from "../action/get-user-profile"
 import { encryptContent } from "../action/helpers/key-actions"
 import { decryptClientShard, encryptClientShard } from "../action/helpers/shard-actions"
-import {
-  generateAsymmetricKey,
-  generateKeyPasswordless,
-  getPublicKey,
-  NOT_FOUND_GENERATED_KEY_ERROR,
-} from "../action/key-actions"
+import { generateAsymmetricKey, generateKeyPasswordless, getPublicKey } from "../action/key-actions"
 import { migrateShard } from "../action/migrate-shard"
 import { pullShard } from "../action/pull-shard"
 import { sendPaidTransaction } from "../action/send-transaction/send-paid-tx"
@@ -28,7 +23,7 @@ import {
   HeadlessPasswordlessClientError,
   HeadlessPasswordlessClientErrorCode,
 } from "../error/client"
-import { ServerError } from "../error/server"
+import { ServerError, ServerErrorCode } from "../error/server"
 import { HeadlessPasswordlessProvider } from "./provider"
 
 export type CreateHeadlessPasswordlessCoreOpts = {
@@ -238,7 +233,7 @@ export class HeadlessPasswordlessCore {
 
       return getPublicKeyResult.public_key
     } catch (error) {
-      if (error instanceof ServerError && error.code === NOT_FOUND_GENERATED_KEY_ERROR) {
+      if (error instanceof ServerError && error.code === ServerErrorCode.WALLET_NOT_FOUND) {
         const publicKey = await this.genPasswordlessAsymmetricKey()
         return publicKey
       }

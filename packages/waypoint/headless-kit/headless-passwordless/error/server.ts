@@ -4,7 +4,9 @@ import {
   ServerBaseErrorType,
 } from "../../headless-common-helper/error/base"
 
-export enum ServerErrorCode {}
+export enum ServerErrorCode {
+  WALLET_NOT_FOUND = 5,
+}
 
 const ServerErrorName = "PasswordlessServerError"
 
