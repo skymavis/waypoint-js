@@ -233,7 +233,7 @@ export class HeadlessPasswordlessCore {
 
       return getPublicKeyResult.public_key
     } catch (error) {
-      if (error instanceof ServerError && error.code === ServerErrorCode.WALLET_NOT_FOUND) {
+      if (error instanceof ServerError && error.code === ServerErrorCode.NotFound) {
         const publicKey = await this.genPasswordlessAsymmetricKey()
         return publicKey
       }
