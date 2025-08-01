@@ -25,7 +25,7 @@ export const addBearerPrefix = (waypointToken: string) => {
 }
 
 const BUFFER = 10
-export const validateToken = (waypointToken: string) => {
+export const validateToken = (waypointToken: string): true => {
   try {
     const { sub, exp } = jwtDecode<WaypointTokenPayload>(waypointToken)
 

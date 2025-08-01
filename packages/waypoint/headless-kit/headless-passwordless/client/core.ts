@@ -113,9 +113,9 @@ export class HeadlessPasswordlessCore {
       })
     }
     const isTokenValid = validateToken(this.waypointToken)
-    const needAddress = signable ? !!(await this.getAddress()) : true
+    const needAddress = signable ? await this.getAddress() : true
 
-    return needAddress && (isTokenValid as S extends true ? Address : boolean)
+    return isTokenValid && (needAddress as S extends true ? Address : boolean)
   }
 
   genMpc = async () => {
@@ -146,7 +146,6 @@ export class HeadlessPasswordlessCore {
     }
 
     const userProfile = await this.getUserProfile()
-
     return userProfile.address
   }
 
