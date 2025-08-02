@@ -58,7 +58,7 @@ export async function generateAsymmetricKey(params: GenerateAsymmetricKeyParams)
     productionFactor: httpUrl,
   })
   const { data, error } = await request<GenerateAsymmetricKeyApiResponse, RawServerError>(
-    `post ${httpUrl}/v1/public/rpc/generate-asymmetric-key`,
+    `post ${httpUrl}/v1/public/rpc/generate-exchange-key`,
     {
       headers: { authorization: waypointToken },
       key: AbortKey.generateAsymmetricKey,
@@ -88,7 +88,7 @@ export const getPublicKey = async (params: GetPublicKeyParams) => {
   const { httpUrl, waypointToken } = params
 
   const { data, error } = await request<GetPublicKeyApiResponse, RawServerError>(
-    `post ${httpUrl}/v1/public/rpc/get-public-key`,
+    `post ${httpUrl}/v1/public/rpc/get-exchange-public-key`,
     {
       headers: { authorization: waypointToken },
       key: AbortKey.getPublicKey,
