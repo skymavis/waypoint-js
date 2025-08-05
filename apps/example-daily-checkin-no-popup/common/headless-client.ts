@@ -1,10 +1,11 @@
-import { HeadlessClient } from "@sky-mavis/waypoint/headless"
+import { HeadlessProvider } from "@sky-mavis/waypoint/headless/common"
+import { HeadlessCore } from "@sky-mavis/waypoint/headless/v1"
 import { createWalletClient, custom, getAddress, isAddressEqual } from "viem"
 
 import { saigon } from "./chain"
 import { WP_ADDRESS_STORAGE_KEY, WP_SHARD_STORAGE_KEY, WP_TOKEN_STORAGE_KEY } from "./storage"
 
-export const headlessClient = HeadlessClient.create({ chainId: saigon.id })
+export const headlessCore = HeadlessCore.create({ chainId: saigon.id })
 
 export const connectHeadless = async (password: string) => {
   const token = localStorage.getItem(WP_TOKEN_STORAGE_KEY)
@@ -14,7 +15,7 @@ export const connectHeadless = async (password: string) => {
     throw new Error("No waypoint token found")
   }
 
-  const { provider, address, clientShard } = await headlessClient.connectWithPassword({
+  const { address, clientShard } = await headlessCore.connectWithPassword({
     waypointToken: token,
     recoveryPassword: password,
   })
@@ -24,7 +25,7 @@ export const connectHeadless = async (password: string) => {
   }
 
   const walletClient = createWalletClient({
-    transport: custom(provider),
+    transport: custom(HeadlessProvider.create(headlessCore)),
     chain: saigon,
   })
 
@@ -41,7 +42,7 @@ export const reconnectHeadless = async () => {
     throw new Error("No waypoint token found")
   }
 
-  const { provider, address } = await headlessClient.connect({
+  const { address } = await headlessCore.connect({
     waypointToken: token,
     clientShard,
   })
@@ -51,7 +52,7 @@ export const reconnectHeadless = async () => {
   }
 
   const walletClient = createWalletClient({
-    transport: custom(provider),
+    transport: custom(HeadlessProvider.create(headlessCore)),
     chain: saigon,
   })
 

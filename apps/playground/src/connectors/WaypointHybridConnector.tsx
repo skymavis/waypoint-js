@@ -1,7 +1,7 @@
 import { AutoConnectPriority, BaseConnector, IConnectResult } from "@roninnetwork/walletgo"
 import { delegationAuthorize } from "@sky-mavis/waypoint"
-import { HeadlessClient, HeadlessProvider } from "@sky-mavis/waypoint/headless"
-import { ServiceEnv } from "@sky-mavis/waypoint/headless-common-helper"
+import { HeadlessProvider, ServiceEnv } from "@sky-mavis/waypoint/headless/common"
+import { HeadlessCore } from "@sky-mavis/waypoint/headless/v1"
 
 import { RoninLogo } from "./RoninLogo"
 
@@ -53,7 +53,7 @@ export class WaypointHybridConnector extends BaseConnector<HeadlessProvider> {
   }
 
   async connect(chainId: number): Promise<IConnectResult<HeadlessProvider>> {
-    const client = HeadlessClient.create({
+    const core = HeadlessCore.create({
       chainId: chainId,
       serviceEnv: this.headlessEnv,
     })
@@ -62,11 +62,11 @@ export class WaypointHybridConnector extends BaseConnector<HeadlessProvider> {
     const savedClientShard = getStorage(SHARD_KEY) ?? ""
 
     try {
-      const { address, provider } = await client.connect({
+      const { address } = await core.connect({
         waypointToken: savedWaypointToken,
         clientShard: savedClientShard,
       })
-      const signable = client.isSignable()
+      const signable = core.isSignable()
 
       if (!signable) {
         throw "Client is not signable"
@@ -75,7 +75,7 @@ export class WaypointHybridConnector extends BaseConnector<HeadlessProvider> {
       return {
         account: address,
         chainId: chainId,
-        provider: provider,
+        provider: HeadlessProvider.create(core),
       }
     } catch (error) {
       /* empty */
@@ -86,11 +86,11 @@ export class WaypointHybridConnector extends BaseConnector<HeadlessProvider> {
       clientId: this.clientId,
       waypointOrigin: this.waypointOrigin,
     })
-    const { address, provider } = await client.connect({
+    const { address } = await core.connect({
       clientShard,
       waypointToken,
     })
-    const signable = client.isSignable()
+    const signable = core.isSignable()
 
     if (!signable) {
       throw "Client is not signable"
@@ -102,7 +102,7 @@ export class WaypointHybridConnector extends BaseConnector<HeadlessProvider> {
     return {
       account: address,
       chainId: chainId,
-      provider: provider,
+      provider: HeadlessProvider.create(core),
     }
   }
 
