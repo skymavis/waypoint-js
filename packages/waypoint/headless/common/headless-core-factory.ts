@@ -4,21 +4,19 @@ import { CreateHeadlessCoreOpts, HeadlessCore } from "../v1"
 import { CreateHeadlessPasswordlessCoreOpts, HeadlessPasswordlessCore } from "../v2"
 
 export enum PreferMethod {
-  PASSWORDLESS = "passwordless",
-  RECOVERY_PASSWORD = "recovery_password",
+  RecoveryPassword = "recovery_password",
+  Passwordless = "passwordless",
 }
-type GetCoreOpts<T extends PreferMethod> = T extends PreferMethod.PASSWORDLESS
-  ? CreateHeadlessPasswordlessCoreOpts
-  : CreateHeadlessCoreOpts
 
-type CoreInstance<T extends PreferMethod> = T extends PreferMethod.PASSWORDLESS
+export type GetOmittedCoreOpts<T extends PreferMethod> = T extends PreferMethod.Passwordless
+  ? Omit<CreateHeadlessPasswordlessCoreOpts, "chainId" | "overrideRpcUrl">
+  : Omit<CreateHeadlessCoreOpts, "chainId" | "overrideRpcUrl">
+
+export type CoreInstance<T extends PreferMethod> = T extends PreferMethod.Passwordless
   ? HeadlessPasswordlessCore
   : HeadlessCore
 
-type HeadlessCoreFactoryOptions<T extends PreferMethod> = Omit<
-  GetCoreOpts<T>,
-  "chainId" | "overrideRpcUrl"
-> & {
+export type HeadlessCoreFactoryOptions<T extends PreferMethod> = GetOmittedCoreOpts<T> & {
   chain: Chain
   preferMethod: T
 }
@@ -28,7 +26,7 @@ export class HeadlessCoreFactory {
     const { chain, preferMethod, ...coreOpts } = opts
 
     switch (preferMethod) {
-      case PreferMethod.PASSWORDLESS: {
+      case PreferMethod.Passwordless: {
         const base = {
           ...coreOpts,
           chainId: chain.id,
@@ -37,7 +35,7 @@ export class HeadlessCoreFactory {
 
         return HeadlessPasswordlessCore.create(base) as CoreInstance<T>
       }
-      case PreferMethod.RECOVERY_PASSWORD: {
+      case PreferMethod.RecoveryPassword: {
         const base = {
           ...coreOpts,
           chainId: chain.id,
