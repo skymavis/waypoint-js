@@ -4,11 +4,11 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 import {
   SupportedTransaction,
   type TransactionInServerFormat,
-} from "../../../../headless-kit/headless-common-helper/transaction/common"
-import { serializeTX } from "../../../../headless-kit/headless-common-helper/transaction/serialize-tx"
-import { isEIP1559CompatibleTransaction } from "../../../../headless-kit/headless-common-helper/transaction/tx-type-check"
+} from "../../../../headless/common/transaction/common"
+import { serializeTX } from "../../../../headless/common/transaction/serialize-tx"
+import { isEIP1559CompatibleTransaction } from "../../../../headless/common/transaction/tx-type-check"
 
-vi.mock("../../../../headless-kit/headless-common-helper/transaction/tx-type-check", () => ({
+vi.mock("../../../../headless/common/transaction/tx-type-check", () => ({
   isEIP1559CompatibleTransaction: vi.fn(),
 }))
 

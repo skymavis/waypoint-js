@@ -3,7 +3,7 @@
   "repository": {
     "url": "https://github.com/skymavis/waypoint-js"
   },
-  "version": "5.0.0-alpha.1.2",
+  "version": "5.0.0-beta.01",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -43,25 +43,20 @@
       "import": "./dist/module/skynet/index.js",
       "require": "./dist/commonjs/skynet/index.js"
     },
-    "./headless": {
-      "types": "./dist/types/headless-kit/headless/index.d.ts",
-      "import": "./dist/module/headless-kit/headless/index.js",
-      "require": "./dist/commonjs/headless-kit/headless/index.js"
+    "./headless/v1": {
+      "types": "./dist/types/headless/v1/index.d.ts",
+      "import": "./dist/module/headless/v1/index.js",
+      "require": "./dist/commonjs/headless/v1/index.js"
     },
-    "./headless-adapter": {
-      "types": "./dist/types/headless-kit/headless-adapter/index.d.ts",
-      "import": "./dist/module/headless-kit/headless-adapter/index.js",
-      "require": "./dist/commonjs/headless-kit/headless-adapter/index.js"
+    "./headless/v2": {
+      "types": "./dist/types/headless/v2/index.d.ts",
+      "import": "./dist/module/headless/v2/index.js",
+      "require": "./dist/commonjs/headless/v2/index.js"
     },
-    "./headless-passwordless": {
-      "types": "./dist/types/headless-kit/headless-passwordless/index.d.ts",
-      "import": "./dist/module/headless-kit/headless-passwordless/index.js",
-      "require": "./dist/commonjs/headless-kit/headless-passwordless/index.js"
-    },
-    "./headless-common-helper": {
-      "types": "./dist/types/headless-kit/headless-common-helper/index.d.ts",
-      "import": "./dist/module/headless-kit/headless-common-helper/index.js",
-      "require": "./dist/commonjs/headless-kit/headless-common-helper/index.js"
+    "./headless/common": {
+      "types": "./dist/types/headless/common/index.d.ts",
+      "import": "./dist/module/headless/common/index.js",
+      "require": "./dist/commonjs/headless/common/index.js"
     },
     "./deposit": {
       "types": "./dist/types/deposit/index.d.ts",

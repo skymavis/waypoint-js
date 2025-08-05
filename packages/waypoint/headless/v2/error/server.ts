@@ -1,0 +1,15 @@
+import { ServerBaseError, ServerBaseErrorOpts, ServerBaseErrorType } from "../../common/error/base"
+
+export enum ServerErrorCode {
+  NotFound = 5,
+}
+
+const ServerErrorName = "PasswordlessServerError"
+
+export type ServerErrorType = ServerBaseErrorType<typeof ServerErrorName>
+
+export class ServerError extends ServerBaseError<typeof ServerErrorName> {
+  constructor(opts: ServerBaseErrorOpts<typeof ServerErrorName>) {
+    super(opts)
+  }
+}

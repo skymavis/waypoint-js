@@ -3,17 +3,16 @@ import { estimateGas, getTransactionCount } from "viem/actions"
 import { ronin } from "viem/chains"
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../../../headless-kit/headless"
 import {
   PAYER_INFO,
   SupportedTransaction,
   type TransactionParams,
   UnsupportedTransaction,
-} from "../../../../headless-kit/headless-common-helper/transaction/common"
+} from "../../../../headless/common/transaction/common"
 import {
   estimateFeesPerGas,
   EstimateFeesPerGasReturnType,
-} from "../../../../headless-kit/headless-common-helper/transaction/estimate-fee-per-gas"
+} from "../../../../headless/common/transaction/estimate-fee-per-gas"
 import {
   DEFAULT_DATA,
   DEFAULT_VALUE,
@@ -26,17 +25,18 @@ import {
   validateFromAddress,
   validateToAddress,
   validateTransactionType,
-} from "../../../../headless-kit/headless-common-helper/transaction/prepare-tx"
-import { isSupportedTransaction } from "../../../../headless-kit/headless-common-helper/transaction/tx-type-check"
+} from "../../../../headless/common/transaction/prepare-tx"
+import { isSupportedTransaction } from "../../../../headless/common/transaction/tx-type-check"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../../../headless/v1/error/client"
 
 vi.mock("viem/actions", () => ({
   estimateGas: vi.fn(),
   getTransactionCount: vi.fn(),
 }))
-vi.mock("../../../../headless-kit/headless-common-helper/transaction/estimate-fee-per-gas", () => ({
+vi.mock("../../../../headless/common/transaction/estimate-fee-per-gas", () => ({
   estimateFeesPerGas: vi.fn(),
 }))
-vi.mock("../../../../headless-kit/headless-common-helper/transaction/tx-type-check", () => ({
+vi.mock("../../../../headless/common/transaction/tx-type-check", () => ({
   isSupportedTransaction: vi.fn(),
 }))
 
