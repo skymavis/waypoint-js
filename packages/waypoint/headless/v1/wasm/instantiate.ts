@@ -1,4 +1,4 @@
-import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
 import { setupGoWasmEnv } from "./wasm-exec"
 
 const wasmBrowserInstantiate = async (wasmModuleUrl: string, importObject: WebAssembly.Imports) => {

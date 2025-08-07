@@ -1,4 +1,4 @@
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
 import { createWasmInstance } from "../../wasm/create"
 
 export const wasmGetKeygenHandler = async (wasmUrl: string) => {

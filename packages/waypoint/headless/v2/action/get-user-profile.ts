@@ -1,9 +1,9 @@
 import { Address } from "viem"
 
+import { ServerError } from "../../common/error/server"
 import { PreferMethod } from "../../common/headless-core-factory"
 import { request } from "../../common/request/request"
 import { RawServerError } from "../error/raw-server"
-import { ServerError } from "../error/server"
 import { BaseParams } from "./types"
 
 export type GetUserProfileParams = BaseParams

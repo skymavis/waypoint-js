@@ -2,6 +2,7 @@ import { Chain } from "viem"
 
 import { CreateHeadlessCoreOpts, HeadlessCore } from "../v1"
 import { CreateHeadlessPasswordlessCoreOpts, HeadlessPasswordlessCore } from "../v2"
+import { HeadlessClientError, HeadlessClientErrorCode } from "./error/client"
 
 export enum PreferMethod {
   RecoveryPassword = "recovery_password",
@@ -33,7 +34,7 @@ export class HeadlessCoreFactory {
           overrideRpcUrl: chain.rpcUrls.default.http[0],
         } as CreateHeadlessPasswordlessCoreOpts
 
-        return HeadlessPasswordlessCore.create(base) as CoreInstance<T>
+        return new HeadlessPasswordlessCore(base) as CoreInstance<T>
       }
       case PreferMethod.RecoveryPassword: {
         const base = {
@@ -42,10 +43,14 @@ export class HeadlessCoreFactory {
           overrideRpcUrl: chain.rpcUrls.default.http[0],
         } as CreateHeadlessCoreOpts
 
-        return HeadlessCore.create(base) as CoreInstance<T>
+        return new HeadlessCore(base) as CoreInstance<T>
       }
       default:
-        throw new Error(`Unsupported prefer method: ${preferMethod satisfies never}`)
+        throw new HeadlessClientError({
+          cause: undefined,
+          code: HeadlessClientErrorCode.UnsupportedMethod,
+          message: `Unsupported prefer method: ${preferMethod}. Use one of the following: ${Object.values(PreferMethod).join(", ")}`,
+        })
     }
   }
 }

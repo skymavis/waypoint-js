@@ -1,6 +1,6 @@
 import { fromBinary } from "@bufbuild/protobuf"
 
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
 import { Frame, FrameSchema } from "../../proto/rpc"
 
 const DEFAULT_TIMEOUT = 20_000

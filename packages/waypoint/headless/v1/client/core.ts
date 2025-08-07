@@ -4,7 +4,7 @@ import { AbstractHeadlessCore, CreateAbstractHeadlessCore } from "../../common/a
 import { TransactionParams } from "../../common/transaction/common"
 import { isRoninGasSponsorTransaction } from "../../common/transaction/tx-type-check"
 import { getServiceUrls, ServiceUrls } from "../../common/utils/service-url"
-import { validateToken } from "../../common/utils/token"
+import { TokenCache } from "../../common/utils/token-cache"
 import { backupShard } from "../action/backup-shard"
 import { decryptShard } from "../action/decrypt-shard"
 import { encryptShard } from "../action/encrypt-shard"
@@ -18,16 +18,6 @@ import { sendPaidTransaction } from "../action/send-transaction/send-paid-tx"
 import { sendSponsoredTransaction } from "../action/send-transaction/send-sponsored"
 import { signTypedData } from "../action/sign-typed-data"
 import { WASM_URL } from "../wasm/cdn"
-
-type BaseParams = {
-  waypointToken: string
-}
-type ConnectParams = BaseParams & {
-  clientShard: string
-}
-type ConnectWithPasswordParams = BaseParams & {
-  recoveryPassword: string
-}
 
 export type CreateHeadlessCoreOpts = CreateAbstractHeadlessCore<
   ServiceUrls,
@@ -58,12 +48,12 @@ export class HeadlessCore extends AbstractHeadlessCore<
     this.wasmUrl = wasmUrl
   }
 
-  isSignable = async () => {
+  isSignable = () => {
     const { waypointToken, clientShard } = this
 
     try {
       const isValidShard = isAddress(getAddressFromShard(clientShard))
-      const isValidToken = validateToken(waypointToken)
+      const isValidToken = TokenCache.validateToken(waypointToken)
 
       return isValidShard && isValidToken
     } catch (error) {
@@ -203,33 +193,5 @@ export class HeadlessCore extends AbstractHeadlessCore<
       transaction,
       currentAddress,
     })
-  }
-
-  connectWithPassword = async (params: ConnectWithPasswordParams) => {
-    const { recoveryPassword, waypointToken } = params
-
-    this.setWaypointToken(waypointToken)
-
-    const { key: backupShard } = await this.getBackupClientShard()
-    const clientShard = await this.decryptClientShard(backupShard, recoveryPassword)
-    const address = this.getAddress()
-
-    return {
-      address,
-      clientShard,
-    }
-  }
-
-  connect = (params: ConnectParams) => {
-    const { clientShard, waypointToken } = params
-
-    this.setWaypointToken(waypointToken)
-    this.setClientShard(clientShard)
-
-    const address = this.getAddress()
-
-    return {
-      address,
-    }
   }
 }

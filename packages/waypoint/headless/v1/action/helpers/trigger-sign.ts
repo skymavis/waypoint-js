@@ -1,5 +1,5 @@
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
 import { base64ToHex, bytesToBase64, bytesToJson } from "../../../common/utils/convertor"
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
 import { type ActionHandler, type SignHandlerDoResult } from "../../wasm/types"
 
 // * trigger signing process in wasm

@@ -10,13 +10,13 @@ import {
 } from "viem"
 
 import { VIEM_CHAIN_MAPPING } from "../../../common"
-import { HeadlessCommonClientError, HeadlessCommonClientErrorCode } from "../error/client"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { TransactionParams } from "../transaction/common"
 import { BaseServiceEnv } from "../utils/service-url"
 
 export type CreateAbstractHeadlessCore<
   ServiceEnv extends object = object,
-  Extra extends object | unknown = unknown,
+  Extra extends object = object,
 > = {
   readonly chainId: number
   overrideRpcUrl?: string
@@ -27,16 +27,16 @@ export type CreateAbstractHeadlessCore<
 
 export abstract class AbstractHeadlessCore<
   ServiceEnv extends object = object,
-  Extra extends object | unknown = unknown,
+  Extra extends object = object,
 > {
   protected readonly chainId: number
-  protected rpcUrl: string
+  protected readonly rpcUrl: string
   protected publicClient: Client
 
   protected waypointToken: string
   protected clientShard: string
 
-  protected constructor(opts: CreateAbstractHeadlessCore<ServiceEnv, Extra>) {
+  public constructor(opts: CreateAbstractHeadlessCore<ServiceEnv, Extra>) {
     const { chainId, overrideRpcUrl, waypointToken = "", clientShard = "" } = opts
 
     this.chainId = chainId
@@ -52,9 +52,9 @@ export abstract class AbstractHeadlessCore<
       const rpcUrl = VIEM_CHAIN_MAPPING[chainId]?.rpcUrls?.default?.http[0]
 
       if (!rpcUrl) {
-        throw new HeadlessCommonClientError({
+        throw new HeadlessClientError({
           cause: undefined,
-          code: HeadlessCommonClientErrorCode.UnsupportedChainIdError,
+          code: HeadlessClientErrorCode.UnsupportedChainIdError,
           message: `Unsupported chain. Unable to find rpcUrl for chainId="${chainId}". Please provide an "overrideRpcUrl" parameter.`,
         })
       }
@@ -83,17 +83,6 @@ export abstract class AbstractHeadlessCore<
     return this.publicClient
   }
 
-  static create<
-    ServiceEnv extends object = object,
-    Extra extends object | unknown = unknown,
-    T extends AbstractHeadlessCore<ServiceEnv, Extra> = AbstractHeadlessCore<ServiceEnv, Extra>,
-  >(
-    this: new (opts: CreateAbstractHeadlessCore<ServiceEnv, Extra>) => T,
-    opts: CreateAbstractHeadlessCore<ServiceEnv, Extra>,
-  ): T {
-    return new this(opts)
-  }
-
   abstract genMpc: () => Promise<unknown>
 
   abstract getUserProfile: () => Promise<unknown>
@@ -110,5 +99,5 @@ export abstract class AbstractHeadlessCore<
 
   abstract validateSponsorTx: (transaction: TransactionParams) => Promise<unknown>
 
-  abstract isSignable: () => Promise<boolean> | boolean | Promise<Address>
+  abstract isSignable: () => boolean
 }

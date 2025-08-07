@@ -1,7 +1,7 @@
 import { concatBytes, numberToBytes, stringToBytes } from "viem"
 
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
 import { bytesToBase64 } from "../../common/utils/convertor"
-import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { deriveKey } from "./helpers/key"
 
 const packEncryptedContent = (

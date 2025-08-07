@@ -1,8 +1,8 @@
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf"
 import { v4 as uuidv4 } from "uuid"
 
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
 import { addBearerPrefix } from "../../../common/utils/token"
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
 import { decodeServerError } from "../../error/server"
 import { AuthenticateRequestSchema, AuthenticateResponseSchema } from "../../proto/auth"
 import { Frame, FrameSchema, Type } from "../../proto/rpc"

@@ -1,13 +1,11 @@
 import { type Address, type Hex, type TypedDataDefinition, verifyTypedData } from "viem"
 
+import { isPasswordlessProd } from "../../../common"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
+import { createTracker, HeadlessEventName } from "../../../common/track/track"
 import { prepareTypedData } from "../../../common/transaction/prepare-typed-data"
 import { hexToBase64 } from "../../../common/utils/convertor"
 import { toEthereumSignature } from "../../../common/utils/signature"
-import {
-  HeadlessPasswordlessClientError,
-  HeadlessPasswordlessClientErrorCode,
-} from "../../error/client"
-import { createPasswordlessTracker, HeadlessPasswordlessEventName } from "../../track/track"
 import { sign } from "../sign"
 
 export type SignTypedDataParams = {
@@ -21,11 +19,11 @@ export type SignTypedDataParams = {
 
 export const signTypedData = async (params: SignTypedDataParams): Promise<Hex> => {
   const { typedData, waypointToken, address, httpUrl } = params
-  const tracker = createPasswordlessTracker({
-    event: HeadlessPasswordlessEventName.signTypedData,
+  const tracker = createTracker({
+    event: HeadlessEventName.signTypedData,
     waypointToken: params.waypointToken,
     passwordlessServiceUrl: params.httpUrl,
-    productionFactor: params.httpUrl,
+    isProdEnv: isPasswordlessProd(params.httpUrl),
   })
 
   try {
@@ -44,9 +42,9 @@ export const signTypedData = async (params: SignTypedDataParams): Promise<Hex> =
     })
 
     if (!isSignatureValid) {
-      throw new HeadlessPasswordlessClientError({
+      throw new HeadlessClientError({
         cause: undefined,
-        code: HeadlessPasswordlessClientErrorCode.InvalidSignatureError,
+        code: HeadlessClientErrorCode.InvalidSignatureError,
         message: `Unable to verify the signature="${signature}" with the given address="${address}".`,
       })
     }

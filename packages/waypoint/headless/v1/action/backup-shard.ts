@@ -2,8 +2,10 @@ import { create, fromBinary, toBinary } from "@bufbuild/protobuf"
 import { secp256k1 } from "@noble/curves/secp256k1"
 import { keccak256, stringToBytes } from "viem"
 
+import { isProd } from "../../common"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
+import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { bytesToBase64 } from "../../common/utils/convertor"
-import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { decodeServerError } from "../error/server"
 import {
   BackupRequestSchema,
@@ -13,7 +15,6 @@ import {
   CreateBackupParamsSchema,
 } from "../proto/backup"
 import { Frame, FrameSchema, Type } from "../proto/rpc"
-import { createTracker, HeadlessEventName } from "../track/track"
 import { encryptShard } from "./encrypt-shard"
 import { getSecretFromShard } from "./get-address"
 import { decodeAuthenticateData, sendAuthenticate } from "./helpers/authenticate"
@@ -131,7 +132,7 @@ export const backupShard = async (params: BackupShardParams): Promise<string> =>
   const tracker = createTracker({
     event: HeadlessEventName.backupShard,
     waypointToken,
-    productionFactor: wsUrl,
+    isProdEnv: isProd(wsUrl),
   })
 
   try {

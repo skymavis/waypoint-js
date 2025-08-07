@@ -1,6 +1,7 @@
+import { isProd } from "../../common"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
+import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { bytesToJson } from "../../common/utils/convertor"
-import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
-import { createTracker, HeadlessEventName } from "../track/track"
 import { type ActionHandler, type KeygenHandlerDoResponse } from "../wasm/types"
 import { decodeAuthenticateData, sendAuthenticate } from "./helpers/authenticate"
 import { wasmGetKeygenHandler } from "./helpers/get-keygen-handler"
@@ -95,8 +96,8 @@ export const keygen = async (params: KeygenParams): Promise<string> => {
   const tracker = createTracker({
     event: HeadlessEventName.keygen,
     waypointToken,
-    productionFactor: wsUrl,
     wasmUrl,
+    isProdEnv: isProd(wsUrl),
   })
 
   try {

@@ -3,6 +3,9 @@
 // headless core
 export { HeadlessCore, type CreateHeadlessCoreOpts } from "./client/core"
 
+// headless client
+export { HeadlessClient, type CreateHeadlessClientOpts } from "./client/client"
+
 // actions
 export { getAddressFromShard } from "./action/get-address"
 export { decryptShard, type DecryptShardParams } from "./action/decrypt-shard"
@@ -46,14 +49,6 @@ export {
   type ValidateSponsorTransactionResult,
 } from "./action/helpers/validate-sponsor-tx"
 
-// error
-export {
-  HeadlessClientError,
-  HeadlessClientErrorCode,
-  type HeadlessClientErrorType,
-} from "./error/client"
-export { ServerError, ServerErrorCode, type ServerErrorType } from "./error/server"
-
 // utils
-export { validateToken } from "../common/utils/token"
+export { TokenCache } from "../common/utils/token-cache"
 export { WASM_URL } from "./wasm/cdn"

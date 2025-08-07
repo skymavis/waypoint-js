@@ -1,11 +1,12 @@
 import { fromBinary } from "@bufbuild/protobuf"
 
+import { isProd } from "../../../common"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
+import { createTracker, HeadlessEventName } from "../../../common/track/track"
 import { toTransactionInServerFormat } from "../../../common/transaction/prepare-tx"
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
 import { decodeServerError } from "../../error/server"
 import { MessageSchema } from "../../proto/message"
 import { Frame, Type } from "../../proto/rpc"
-import { createTracker, HeadlessEventName } from "../../track/track"
 import { getAddressFromShard } from "../get-address"
 import { decodeAuthenticateData, sendAuthenticate } from "../helpers/authenticate"
 import { wasmGetSignHandler } from "../helpers/get-sign-handler"
@@ -141,7 +142,7 @@ export const sendSponsoredTransaction = async (
   const tracker = createTracker({
     event: HeadlessEventName.sendSponsoredTransaction,
     waypointToken,
-    productionFactor: wsUrl,
+    isProdEnv: isProd(wsUrl),
     wasmUrl,
   })
 

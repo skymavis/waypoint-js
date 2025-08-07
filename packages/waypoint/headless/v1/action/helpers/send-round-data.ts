@@ -1,12 +1,12 @@
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf"
 
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
 import {
   base64ToBytes,
   bytesToBase64,
   bytesToJson,
   jsonToBytes,
 } from "../../../common/utils/convertor"
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
 import { decodeServerError } from "../../error/server"
 import { Frame, FrameSchema, SessionSchema, Type } from "../../proto/rpc"
 import { type ActionHandler, HandlerRxResult, HandlerTxParams } from "../../wasm/types"

@@ -1,7 +1,7 @@
+import { isPasswordlessProd, ServerError } from "../../common"
 import { request } from "../../common/request/request"
+import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { RawServerError } from "../error/raw-server"
-import { ServerError } from "../error/server"
-import { createPasswordlessTracker, HeadlessPasswordlessEventName } from "../track/track"
 import { BaseParams } from "./types"
 
 export type MigrateShardParams = BaseParams & {
@@ -17,11 +17,11 @@ export type MigrateShardApiResponse = {
 export const migrateShard = async (params: MigrateShardParams) => {
   const { httpUrl, waypointToken, shardCiphertextB64, shardEncryptedKeyB64, shardNonceB64 } = params
 
-  const tracker = createPasswordlessTracker({
-    event: HeadlessPasswordlessEventName.migrateFromPasswordWallet,
+  const tracker = createTracker({
+    event: HeadlessEventName.migrateFromPasswordWallet,
     waypointToken: waypointToken,
     passwordlessServiceUrl: httpUrl,
-    productionFactor: httpUrl,
+    isProdEnv: isPasswordlessProd(httpUrl),
   })
   const { data, error } = await request<MigrateShardApiResponse, RawServerError>(
     `post ${httpUrl}/v1/public/rpc/migrate-shard`,

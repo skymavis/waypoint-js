@@ -3,8 +3,8 @@ import { v4 as uuidv4 } from "uuid"
 import { sha256, stringToHex } from "viem"
 
 import { version } from "../../../common/version"
-import { HeadlessBaseClientError, ServerBaseError } from "../error/base"
-import { HeadlessCommonClientErrorCode } from "../error/client"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
+import { ServerError } from "../error/server"
 import { ASAccessTokenPayload, WaypointTokenPayload } from "../utils/token"
 
 const CONTENT_TYPE = "application/json"
@@ -12,7 +12,30 @@ const TRACK_URL = "https://x.skymavis.com/track"
 const AUTHORIZATION_PROD = "Basic ODZkMTNkMmYtYWFmYy00M2YyLWJhZDctNDI2NTBiYmJmZTJlOg=="
 const AUTHORIZATION_STAG = "Basic ZDU1ODQyODYtOWIwYS00MzE3LWI3YjktOWRjOTQwNmFiMzJlOg=="
 
-export type CommonPropertiesBase<T extends object | unknown = unknown> = {
+export enum HeadlessEventName {
+  //-------------------------------- Headless V1 Event Name --------------------------------
+  backupShard = "backupShard",
+  decryptShard = "decryptShard",
+  keygen = "keygen",
+  personalSign = "personalSign",
+  signTypedData = "signTypedData",
+  sendLegacyTransaction = "sendLegacyTransaction",
+  endEIP1559Transaction = "endEIP1559Transaction",
+  sendSponsoredTransaction = "sendSponsoredTransaction",
+
+  //-------------------------------- Headless V2 Event Name --------------------------------
+  sendPaidTransactionByPasswordless = "sendPaidTransactionByPasswordless",
+  sendSponsoredTransactionByPasswordless = "sendSponsoredTransactionByPasswordless",
+  signTypedDataByPasswordless = "signTypedDataByPasswordless",
+  personalSignByPasswordless = "personalSignByPasswordless",
+  genPasswordlessKey = "genPasswordlessKey",
+  migrateFromPasswordWallet = "migrateFromPasswordWallet",
+  genExchangeAsymmetricKey = "genExchangeAsymmetricKey",
+  pullPasswordlessClientShard = "pullPasswordlessClientShard",
+  setPassword = "setPassword",
+  authenticate = "authenticate",
+}
+export type PropertiesBase = {
   user_agent: string
   origin: string
   sdk_version: string
@@ -25,7 +48,7 @@ export type CommonPropertiesBase<T extends object | unknown = unknown> = {
   iss: string
   sub: string
   aud: string[]
-} & T
+} & Record<string, unknown>
 
 type OkProperties = {
   request?: unknown
@@ -41,17 +64,17 @@ type ErrorProperties = {
   error_meta?: unknown
 }
 
-type TrackActionData<T extends object | unknown = unknown> =
+type TrackActionData =
   | {
       action: "ok"
-      action_properties: OkProperties & CommonPropertiesBase<T>
+      action_properties: OkProperties & PropertiesBase
     }
   | {
       action: "error"
-      action_properties: ErrorProperties & CommonPropertiesBase<T>
+      action_properties: ErrorProperties & PropertiesBase
     }
 
-type TrackData<T extends object | unknown = unknown, E = unknown> = {
+type TrackData<E = unknown> = {
   uuid: string
   event: E
   ref: string
@@ -63,17 +86,14 @@ type TrackData<T extends object | unknown = unknown, E = unknown> = {
   offset: number
   // * sha256(`${iss}:${sub}`)
   user_id: string
-} & TrackActionData<T>
+} & TrackActionData
 
-type TrackEvent<T extends object | unknown = unknown, E = unknown> = {
+type TrackEvent<E = unknown> = {
   type: "track"
-  data: TrackData<T, E>
+  data: TrackData<E>
 }
 
-const track = <T extends object | unknown = unknown, E = unknown>(
-  events: TrackEvent<T, E>[],
-  isProdEnv: boolean,
-) => {
+const track = <E = unknown>(events: TrackEvent<E>[], isProdEnv: boolean) => {
   const headers = new Headers({})
   headers.set("Authorization", isProdEnv ? AUTHORIZATION_PROD : AUTHORIZATION_STAG)
   headers.set("Content-Type", CONTENT_TYPE)
@@ -113,22 +133,22 @@ const getUTCTime = () => {
   return timestamp
 }
 const toErrorProperties = (error: unknown): ErrorProperties => {
-  if (error instanceof HeadlessBaseClientError)
+  if (error instanceof HeadlessClientError)
     return {
       error_level: "error",
       error_type: "client_defined",
       error_name: error.name,
       error_code: error.code,
-      error_message: error.shortMessage,
+      error_message: error.message,
     }
 
-  if (error instanceof ServerBaseError)
+  if (error instanceof ServerError)
     return {
       error_level: "error",
       error_type: "server",
       error_name: error.name,
       error_code: error.code,
-      error_message: error.shortMessage,
+      error_message: error.message,
     }
 
   if (error instanceof Error)
@@ -136,7 +156,7 @@ const toErrorProperties = (error: unknown): ErrorProperties => {
       error_level: "error",
       error_type: "client_unknown",
       error_name: error.name,
-      error_code: HeadlessCommonClientErrorCode.UnknownError,
+      error_code: HeadlessClientErrorCode.UnknownError,
       error_message: error.message,
     }
 
@@ -144,26 +164,22 @@ const toErrorProperties = (error: unknown): ErrorProperties => {
     error_level: "error",
     error_type: "client_unknown",
     error_name: "UnknownError",
-    error_code: HeadlessCommonClientErrorCode.UnknownError,
+    error_code: HeadlessClientErrorCode.UnknownError,
     error_message: "Unknown error",
   }
 }
 
-export type CreateBaseTrackerParams<T extends object = object, E = unknown> = {
-  event: E
+export type CreateTrackerParams = {
+  event: HeadlessEventName
   waypointToken: string
   isProdEnv: boolean
-} & T
+} & Record<string, unknown>
 
-export const createBaseTracker = <T extends object = object, E = unknown>(
-  params: CreateBaseTrackerParams<T, E>,
-) => {
+export const createTracker = (params: CreateTrackerParams) => {
   const { event, waypointToken, isProdEnv, ...rest } = params
   const startTime = performance.now()
 
   const _getCommonData = () => {
-    const castRest = { ...rest } as T
-
     const endTime = performance.now()
     const duration = endTime - startTime
     const {
@@ -193,7 +209,7 @@ export const createBaseTracker = <T extends object = object, E = unknown>(
         user_agent: navigator?.userAgent ?? "",
         sdk_version: version,
         duration,
-        ...castRest,
+        ...rest,
       },
     }
   }
@@ -203,7 +219,7 @@ export const createBaseTracker = <T extends object = object, E = unknown>(
       const { commonActionProperties, ...restCommonData } = _getCommonData()
       const { request, response } = okProperties
 
-      const trackData: TrackData<T, E> = {
+      const trackData: TrackData = {
         ...restCommonData,
         action: "ok",
         action_properties: {

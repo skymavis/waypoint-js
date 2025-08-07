@@ -14,7 +14,7 @@ import {
 } from "viem"
 
 import { AbstractHeadlessCore } from "../abstracts/core"
-import { HeadlessCommonClientError, HeadlessCommonClientErrorCode } from "../error/client"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { TransactionParams } from "../transaction/common"
 
 export type HeadlessProviderType = EIP1193Events & {
@@ -57,19 +57,15 @@ export type HeadlessProviderSchema = [
 export class HeadlessProvider extends EventEmitter implements HeadlessProviderType {
   private core: AbstractHeadlessCore
 
-  protected constructor(core: AbstractHeadlessCore) {
+  public constructor(core: AbstractHeadlessCore) {
     super()
     this.core = core
-  }
-
-  static create<TCore extends AbstractHeadlessCore>(core: TCore): HeadlessProvider {
-    return new HeadlessProvider(core)
   }
 
   getAccounts = async () => {
     try {
       const address = await this.core.getAddress()
-      const signable = await this.core.isSignable()
+      const signable = this.core.isSignable()
 
       if (address && signable) {
         return [address] as const
@@ -105,9 +101,9 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
     const [currentAddress] = await this.requestAccounts()
 
     if (!isAddressEqual(address, currentAddress)) {
-      const notMatchError = new HeadlessCommonClientError({
+      const notMatchError = new HeadlessClientError({
         cause: undefined,
-        code: HeadlessCommonClientErrorCode.AddressIsNotMatch,
+        code: HeadlessClientErrorCode.AddressIsNotMatch,
         message: `Unable to sign message, currentAddress="${currentAddress}" is different from requestedAddress="${address}".`,
       })
       throw new UnauthorizedProviderError(notMatchError)
@@ -120,9 +116,9 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
         throw new InternalRpcError(err)
       }
 
-      const unknownErr = new HeadlessCommonClientError({
+      const unknownErr = new HeadlessClientError({
         cause: err,
-        code: HeadlessCommonClientErrorCode.UnknownError,
+        code: HeadlessClientErrorCode.UnknownError,
         message: "Unable to perform personal sign.",
       })
       throw new InternalRpcError(unknownErr)
@@ -140,9 +136,9 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
         typedData = data
       }
     } catch (err) {
-      const parseError = new HeadlessCommonClientError({
+      const parseError = new HeadlessClientError({
         cause: err,
-        code: HeadlessCommonClientErrorCode.ParseTypedDataError,
+        code: HeadlessClientErrorCode.ParseTypedDataError,
         message: `Unable to parse typedData="${data}".`,
       })
       throw new InternalRpcError(parseError)
@@ -150,9 +146,9 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
 
     const [currentAddress] = await this.requestAccounts()
     if (!isAddressEqual(address, currentAddress)) {
-      const notMatchError = new HeadlessCommonClientError({
+      const notMatchError = new HeadlessClientError({
         cause: undefined,
-        code: HeadlessCommonClientErrorCode.AddressIsNotMatch,
+        code: HeadlessClientErrorCode.AddressIsNotMatch,
         message: `Unable to sign typed data, currentAddress="${currentAddress}" is different from requestedAddress="${address}".`,
       })
       throw new UnauthorizedProviderError(notMatchError)
@@ -165,9 +161,9 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
         throw new InternalRpcError(err)
       }
 
-      const unknownErr = new HeadlessCommonClientError({
+      const unknownErr = new HeadlessClientError({
         cause: err,
-        code: HeadlessCommonClientErrorCode.UnknownError,
+        code: HeadlessClientErrorCode.UnknownError,
         message: "Unable to sign typed data.",
       })
       throw new InternalRpcError(unknownErr)
@@ -212,9 +208,9 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
             throw new InternalRpcError(err)
           }
 
-          const unknownErr = new HeadlessCommonClientError({
+          const unknownErr = new HeadlessClientError({
             cause: err,
-            code: HeadlessCommonClientErrorCode.UnknownError,
+            code: HeadlessClientErrorCode.UnknownError,
             message: "Unable to send transaction.",
           })
           throw new InternalRpcError(unknownErr)

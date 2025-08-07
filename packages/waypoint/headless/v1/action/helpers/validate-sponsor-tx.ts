@@ -1,5 +1,6 @@
 import { Address } from "viem"
 
+import { ServerError } from "../../../common/error/server"
 import { request } from "../../../common/request/request"
 import {
   ChainParams,
@@ -8,7 +9,6 @@ import {
 } from "../../../common/transaction/common"
 import { toTransactionInServerFormat } from "../../../common/transaction/prepare-tx"
 import { RawServerError } from "../../error/raw-server"
-import { ServerError } from "../../error/server"
 
 type ValidateSponsorTransactionApiResponse = {
   data: ValidateSponsorTransactionResult

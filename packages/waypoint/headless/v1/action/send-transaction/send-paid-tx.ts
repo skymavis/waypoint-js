@@ -1,11 +1,12 @@
 import { keccak256 } from "viem"
 
+import { isProd } from "../../../common"
+import { createTracker, HeadlessEventName } from "../../../common/track/track"
 import { toTransactionInServerFormat } from "../../../common/transaction/prepare-tx"
 import { serializeTX } from "../../../common/transaction/serialize-tx"
 import { isEIP1559CompatibleTransaction } from "../../../common/transaction/tx-type-check"
 import { decodeServerError } from "../../error/server"
 import { Type } from "../../proto/rpc"
-import { createTracker, HeadlessEventName } from "../../track/track"
 import { getAddressFromShard } from "../get-address"
 import { decodeAuthenticateData, sendAuthenticate } from "../helpers/authenticate"
 import { wasmGetSignHandler } from "../helpers/get-sign-handler"
@@ -126,7 +127,7 @@ export const sendPaidTransaction = async (
       ? HeadlessEventName.endEIP1559Transaction
       : HeadlessEventName.sendLegacyTransaction,
     waypointToken,
-    productionFactor: wsUrl,
+    isProdEnv: isProd(wsUrl),
   })
 
   try {

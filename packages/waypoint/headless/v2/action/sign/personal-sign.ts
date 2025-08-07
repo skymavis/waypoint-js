@@ -6,13 +6,11 @@ import {
   verifyMessage,
 } from "viem"
 
+import { isPasswordlessProd } from "../../../common"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
+import { createTracker, HeadlessEventName } from "../../../common/track/track"
 import { hexToBase64 } from "../../../common/utils/convertor"
 import { toEthereumSignature } from "../../../common/utils/signature"
-import {
-  HeadlessPasswordlessClientError,
-  HeadlessPasswordlessClientErrorCode,
-} from "../../error/client"
-import { createPasswordlessTracker, HeadlessPasswordlessEventName } from "../../track/track"
 import { sign } from "../sign"
 
 export type PersonalSignParams = {
@@ -24,11 +22,11 @@ export type PersonalSignParams = {
 }
 
 export const personalSign = async (params: PersonalSignParams): Promise<Hex> => {
-  const tracker = createPasswordlessTracker({
-    event: HeadlessPasswordlessEventName.personalSign,
+  const tracker = createTracker({
+    event: HeadlessEventName.personalSign,
     waypointToken: params.waypointToken,
     passwordlessServiceUrl: params.httpUrl,
-    productionFactor: params.httpUrl,
+    isProdEnv: isPasswordlessProd(params.httpUrl),
   })
   try {
     const { message, waypointToken, address, httpUrl } = params
@@ -48,9 +46,9 @@ export const personalSign = async (params: PersonalSignParams): Promise<Hex> => 
     })
 
     if (!isSignatureValid) {
-      throw new HeadlessPasswordlessClientError({
+      throw new HeadlessClientError({
         cause: undefined,
-        code: HeadlessPasswordlessClientErrorCode.InvalidSignatureError,
+        code: HeadlessClientErrorCode.InvalidSignatureError,
         message: `Unable to verify the signature="${signature}" with the given address="${address}".`,
       })
     }

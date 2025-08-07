@@ -4,6 +4,10 @@ import { ronin } from "viem/chains"
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 
 import {
+  HeadlessClientError,
+  HeadlessClientErrorCode,
+} from "../../../../headless/common/error/client"
+import {
   PAYER_INFO,
   SupportedTransaction,
   type TransactionParams,
@@ -27,7 +31,6 @@ import {
   validateTransactionType,
 } from "../../../../headless/common/transaction/prepare-tx"
 import { isSupportedTransaction } from "../../../../headless/common/transaction/tx-type-check"
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../../../headless/v1/error/client"
 
 vi.mock("viem/actions", () => ({
   estimateGas: vi.fn(),

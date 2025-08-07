@@ -2,8 +2,8 @@ import { secp256k1 } from "@noble/curves/secp256k1"
 import { type Hex } from "viem"
 import { type Address, publicKeyToAddress } from "viem/accounts"
 
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
 import { base64ToBytes, bytesToJson } from "../../common/utils/convertor"
-import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 
 type ClientShard = {
   chainKey: string

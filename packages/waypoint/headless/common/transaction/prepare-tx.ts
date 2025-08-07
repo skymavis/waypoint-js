@@ -10,7 +10,7 @@ import {
 } from "viem"
 import { estimateGas, getTransactionCount } from "viem/actions"
 
-import { HeadlessCommonClientError, HeadlessCommonClientErrorCode } from "../error/client"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import {
   type ChainParams,
   PAYER_INFO,
@@ -32,9 +32,9 @@ export function validateTransactionType(
   type: TransactionType | undefined,
 ): SupportedTransactionType {
   if (!isSupportedTransaction(type))
-    throw new HeadlessCommonClientError({
+    throw new HeadlessClientError({
       cause: undefined,
-      code: HeadlessCommonClientErrorCode.UnsupportedTransactionTypeError,
+      code: HeadlessClientErrorCode.UnsupportedTransactionTypeError,
       message: `Transaction type "${type}" is not supported. Supported types: legacy (0x0), EIP1559 (0x2), sponsored (0x64).`,
     })
   return type as SupportedTransactionType
@@ -42,9 +42,9 @@ export function validateTransactionType(
 
 export function validateToAddress(to: Address | null): Address {
   if (!to || !isAddress(to))
-    throw new HeadlessCommonClientError({
+    throw new HeadlessClientError({
       cause: undefined,
-      code: HeadlessCommonClientErrorCode.UnsupportedTransactionTypeError,
+      code: HeadlessClientErrorCode.UnsupportedTransactionTypeError,
       message: `Invalid 'to' address: ${to}.`,
     })
   return to
@@ -52,9 +52,9 @@ export function validateToAddress(to: Address | null): Address {
 
 export function validateFromAddress(from: Address | undefined): Address {
   if (!from || !isAddress(from))
-    throw new HeadlessCommonClientError({
+    throw new HeadlessClientError({
       cause: undefined,
-      code: HeadlessCommonClientErrorCode.PrepareTransactionError,
+      code: HeadlessClientErrorCode.PrepareTransactionError,
       message: `Invalid 'from' address: ${from}.`,
     })
   return from
@@ -81,9 +81,9 @@ export async function estimateGasLimit(
     })
     return numberToHex(baseGasLimit * GAS_LIMIT_BUFFER_MULTIPLIER)
   } catch (error) {
-    throw new HeadlessCommonClientError({
+    throw new HeadlessClientError({
       cause: error,
-      code: HeadlessCommonClientErrorCode.PrepareTransactionError,
+      code: HeadlessClientErrorCode.PrepareTransactionError,
       message:
         "Failed to estimate gas limit. This could be due to network issues or invalid transaction parameters.",
     })
@@ -103,9 +103,9 @@ export async function getNonceFromNetwork(
     })
     return numberToHex(count)
   } catch (error) {
-    throw new HeadlessCommonClientError({
+    throw new HeadlessClientError({
       cause: error,
-      code: HeadlessCommonClientErrorCode.PrepareTransactionError,
+      code: HeadlessClientErrorCode.PrepareTransactionError,
       message:
         "Failed to get transaction nonce. This could be due to network issues or RPC problems.",
     })
@@ -177,13 +177,13 @@ export const toTransactionInServerFormat = async (
 
     return formattedTransaction
   } catch (error) {
-    if (error instanceof HeadlessCommonClientError) {
+    if (error instanceof HeadlessClientError) {
       throw error
     }
 
-    throw new HeadlessCommonClientError({
+    throw new HeadlessClientError({
       cause: error,
-      code: HeadlessCommonClientErrorCode.PrepareTransactionError,
+      code: HeadlessClientErrorCode.PrepareTransactionError,
       message: "Failed to prepare transaction for server format.",
     })
   }

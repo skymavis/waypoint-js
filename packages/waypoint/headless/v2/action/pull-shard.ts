@@ -1,11 +1,13 @@
+import { isPasswordlessProd } from "../../common"
+import { ServerError } from "../../common/error/server"
 import { request } from "../../common/request/request"
+import { createTracker, HeadlessEventName } from "../../common/track/track"
+import { arrayBufferToBase64 } from "../../common/utils/convertor"
 import { RawServerError } from "../error/raw-server"
-import { ServerError } from "../error/server"
-import { createPasswordlessTracker, HeadlessPasswordlessEventName } from "../track/track"
 import { BaseParams } from "./types"
 
 export type PullShardParams = BaseParams & {
-  clientEncryptedKey: string
+  clientEncryptedKey: ArrayBuffer
 }
 
 export type PullShardApiResponse = {
@@ -17,18 +19,18 @@ export type PullShardApiResponse = {
 export const pullShard = async (params: PullShardParams) => {
   const { httpUrl, waypointToken, clientEncryptedKey } = params
 
-  const tracker = createPasswordlessTracker({
-    event: HeadlessPasswordlessEventName.pullPasswordlessClientShard,
+  const tracker = createTracker({
+    event: HeadlessEventName.pullPasswordlessClientShard,
     waypointToken: waypointToken,
     passwordlessServiceUrl: httpUrl,
-    productionFactor: httpUrl,
+    isProdEnv: isPasswordlessProd(httpUrl),
   })
   const { data, error } = await request<PullShardApiResponse, RawServerError>(
     `post ${httpUrl}/v1/public/rpc/pull-shard`,
     {
       headers: { authorization: waypointToken },
       body: {
-        client_encrypted_key: clientEncryptedKey,
+        client_encrypted_key: arrayBufferToBase64(clientEncryptedKey),
       },
     },
   )

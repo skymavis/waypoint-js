@@ -2,7 +2,7 @@ import { Client, Hex, numberToHex } from "viem"
 import { estimateFeesPerGas as viemEstimateFeesPerGas, getGasPrice } from "viem/actions"
 import { ronin, saigon } from "viem/chains"
 
-import { HeadlessCommonClientError, HeadlessCommonClientErrorCode } from "../error/client"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { request } from "../request/request"
 import { RequestRoute } from "../request/types"
 import { SupportedTransactionType } from "./common"
@@ -55,9 +55,9 @@ const fetchEIP1559GasSuggestion = async (
 }> => {
   const route = GAS_SUGGESTION_ROUTES[chainId]
   if (!route)
-    throw new HeadlessCommonClientError({
+    throw new HeadlessClientError({
       cause: undefined,
-      code: HeadlessCommonClientErrorCode.PrepareTransactionError,
+      code: HeadlessClientErrorCode.PrepareTransactionError,
       message: `Unsupported chain: ${chainId}.`,
     })
 
@@ -65,9 +65,9 @@ const fetchEIP1559GasSuggestion = async (
     const { data } = await request<GasSuggestionResponse>(route)
 
     if (!data)
-      throw new HeadlessCommonClientError({
+      throw new HeadlessClientError({
         cause: undefined,
-        code: HeadlessCommonClientErrorCode.PrepareTransactionError,
+        code: HeadlessClientErrorCode.PrepareTransactionError,
         message: "Empty gas suggestion response.",
       })
 
@@ -135,9 +135,9 @@ export async function estimateFeesPerGas(
     if (isEIP1559CompatibleTransaction(type)) return await handleEIP1559Transaction(client, params)
     return await handleLegacyTransaction(client, gasPrice)
   } catch (error) {
-    throw new HeadlessCommonClientError({
+    throw new HeadlessClientError({
       cause: error,
-      code: HeadlessCommonClientErrorCode.PrepareTransactionError,
+      code: HeadlessClientErrorCode.PrepareTransactionError,
       message: "Failed to estimate gas price. This could be due to network issues or RPC problems.",
     })
   }

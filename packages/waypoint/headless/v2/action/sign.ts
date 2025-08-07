@@ -1,8 +1,8 @@
 import { Hex } from "viem"
 
+import { ServerError } from "../../common"
 import { request } from "../../common/request/request"
 import { RawServerError } from "../error/raw-server"
-import { ServerError } from "../error/server"
 import { BaseParams } from "./types"
 
 export type SignParams = BaseParams & {

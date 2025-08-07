@@ -1,5 +1,6 @@
+import { isPasswordlessProd } from "../../../common"
+import { createTracker, HeadlessEventName } from "../../../common/track/track"
 import { toTransactionInServerFormat } from "../../../common/transaction/prepare-tx"
-import { createPasswordlessTracker, HeadlessPasswordlessEventName } from "../../track/track"
 import { send } from "../send"
 import { SendTransactionParams, SendTransactionResult } from "./types"
 
@@ -7,11 +8,11 @@ export const sendPaidTransaction = async (
   params: SendTransactionParams,
 ): Promise<SendTransactionResult> => {
   const { chain, transaction, waypointToken, address, httpUrl } = params
-  const tracker = createPasswordlessTracker({
-    event: HeadlessPasswordlessEventName.sendPaidTransaction,
+  const tracker = createTracker({
+    event: HeadlessEventName.sendPaidTransactionByPasswordless,
     waypointToken: params.waypointToken,
     passwordlessServiceUrl: params.httpUrl,
-    productionFactor: params.httpUrl,
+    isProdEnv: isPasswordlessProd(params.httpUrl),
   })
   try {
     const txInServerFormat = await toTransactionInServerFormat({

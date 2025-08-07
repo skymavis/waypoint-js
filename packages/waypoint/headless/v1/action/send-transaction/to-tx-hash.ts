@@ -1,7 +1,7 @@
 import { fromBinary } from "@bufbuild/protobuf"
 import { Hex, isHash } from "viem"
 
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../error/client"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
 import { decodeServerError } from "../../error/server"
 import { Frame, Type } from "../../proto/rpc"
 import { SendTransactionResponseSchema } from "../../proto/sign"

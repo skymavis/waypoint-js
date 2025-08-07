@@ -1,8 +1,9 @@
 import { type Hex, type TypedDataDefinition, verifyTypedData } from "viem"
 
+import { isProd } from "../../common"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
+import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { prepareTypedData } from "../../common/transaction/prepare-typed-data"
-import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
-import { createTracker, HeadlessEventName } from "../track/track"
 import { getAddressFromShard } from "./get-address"
 import { _sign } from "./sign"
 
@@ -20,7 +21,7 @@ export const signTypedData = async (params: SignTypedDataParams): Promise<Hex> =
   const tracker = createTracker({
     event: HeadlessEventName.signTypedData,
     waypointToken: params.waypointToken,
-    productionFactor: params.wsUrl,
+    isProdEnv: isProd(params.wsUrl),
     wasmUrl: params.wasmUrl,
   })
 

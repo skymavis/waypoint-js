@@ -1,7 +1,8 @@
+import { isPasswordlessProd } from "../../common"
+import { ServerError } from "../../common/error/server"
 import { request } from "../../common/request/request"
+import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { RawServerError } from "../error/raw-server"
-import { ServerError } from "../error/server"
-import { createPasswordlessTracker, HeadlessPasswordlessEventName } from "../track/track"
 import { BaseParams } from "./types"
 
 export type GenerateExchangeKeyParams = BaseParams
@@ -13,11 +14,11 @@ export type GenerateExchangeKeyApiResponse = {
 export async function generateKeyPasswordless(params: GenerateExchangeKeyParams) {
   const { httpUrl, waypointToken } = params
 
-  const tracker = createPasswordlessTracker({
-    event: HeadlessPasswordlessEventName.genPasswordlessKey,
+  const tracker = createTracker({
+    event: HeadlessEventName.genPasswordlessKey,
     waypointToken: waypointToken,
     passwordlessServiceUrl: httpUrl,
-    productionFactor: httpUrl,
+    isProdEnv: isPasswordlessProd(httpUrl),
   })
 
   const { data, error } = await request<GenerateExchangeKeyApiResponse, RawServerError>(
@@ -49,11 +50,11 @@ export type GenerateExchangeAsymmetricKeyApiResponse = GenerateExchangeAsymmetri
 export async function generateExchangeAsymmetricKey(params: GenerateExchangeAsymmetricKeyParams) {
   const { httpUrl, waypointToken } = params
 
-  const tracker = createPasswordlessTracker({
-    event: HeadlessPasswordlessEventName.genExchangeAsymmetricKey,
+  const tracker = createTracker({
+    event: HeadlessEventName.genExchangeAsymmetricKey,
     waypointToken: waypointToken,
     passwordlessServiceUrl: httpUrl,
-    productionFactor: httpUrl,
+    isProdEnv: isPasswordlessProd(httpUrl),
   })
   const { data, error } = await request<GenerateExchangeAsymmetricKeyApiResponse, RawServerError>(
     `post ${httpUrl}/v1/public/rpc/generate-exchange-key`,

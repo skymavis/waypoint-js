@@ -1,7 +1,8 @@
 import { type Hex, type SignableMessage, toPrefixedMessage, verifyMessage } from "viem"
 
-import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
-import { createTracker, HeadlessEventName } from "../track/track"
+import { isProd } from "../../common"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
+import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { getAddressFromShard } from "./get-address"
 import { _sign } from "./sign"
 
@@ -19,7 +20,7 @@ export const personalSign = async (params: PersonalSignParams): Promise<Hex> => 
   const tracker = createTracker({
     event: HeadlessEventName.personalSign,
     waypointToken: params.waypointToken,
-    productionFactor: params.wsUrl,
+    isProdEnv: isProd(params.wsUrl),
     wasmUrl: params.wasmUrl,
   })
 

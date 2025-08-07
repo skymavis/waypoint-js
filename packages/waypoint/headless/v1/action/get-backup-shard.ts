@@ -1,6 +1,6 @@
+import { ServerError } from "../../common/error/server"
 import { request } from "../../common/request/request"
 import { RawServerError } from "../error/raw-server"
-import { ServerError } from "../error/server"
 
 type GetBackupKeyApiResponse = {
   data: GetBackupClientShardResult

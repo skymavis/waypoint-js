@@ -1,4 +1,4 @@
-import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
 import { injectSkymavisMpc } from "./instantiate"
 import { SkyMavisMpc } from "./types"
 

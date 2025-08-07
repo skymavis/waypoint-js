@@ -1,3 +1,6 @@
+import { jwtDecode } from "jwt-decode"
+
+import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import type { WaypointTokenPayload } from "./token"
 
 export interface CachedTokenInfo {
@@ -9,9 +12,7 @@ export interface CachedTokenInfo {
 export class TokenCache {
   private static instance: TokenCache
   private cache: Map<string, CachedTokenInfo> = new Map()
-  private cleanupInterval: NodeJS.Timeout | null = null
   private readonly BUFFER = 10
-  private readonly CLEANUP_INTERVAL_MS = 5 * 60 * 1000
 
   static getInstance(): TokenCache {
     if (!TokenCache.instance) {
@@ -27,10 +28,6 @@ export class TokenCache {
     if (this.isTokenExpired(cached.exp)) {
       this.cache.delete(token)
 
-      if (this.cache.size === 0) {
-        this.stopCleanupInterval()
-      }
-
       return null
     }
 
@@ -40,47 +37,45 @@ export class TokenCache {
   setCachedTokenInfo(token: string, payload: WaypointTokenPayload): void {
     if (!payload.sub || !payload.exp) return
 
-    const shouldStartInterval = this.cache.size === 0
-
     this.cache.set(token, {
       sub: payload.sub,
       exp: payload.exp,
       decodedAt: Date.now(),
     })
-
-    if (shouldStartInterval) {
-      this.startCleanupInterval()
-    }
   }
 
   isTokenExpired(exp: number): boolean {
     return Date.now() / 1000 > exp - this.BUFFER
   }
 
-  private cleanExpiredTokens(): void {
-    for (const [token, info] of this.cache.entries()) {
-      if (this.isTokenExpired(info.exp)) {
-        this.cache.delete(token)
+  static validateToken(waypointToken: string): boolean {
+    const tokenCache = this.getInstance()
+
+    const cachedInfo = tokenCache.getCachedTokenInfo(waypointToken)
+    if (cachedInfo) {
+      return true
+    }
+
+    try {
+      const payload = jwtDecode<WaypointTokenPayload>(waypointToken)
+      const { sub, exp } = payload
+
+      if (!sub) throw "Token does not have an subject (sub field)"
+      if (!exp) throw "Token does not have an expiration time (exp field)"
+
+      if (tokenCache.isTokenExpired(exp)) {
+        throw `Token expired at ${new Date(exp * 1000).toString()} (exp="${exp}")`
       }
-    }
 
-    if (this.cache.size === 0) {
-      this.stopCleanupInterval()
-    }
-  }
+      tokenCache.setCachedTokenInfo(waypointToken, payload)
 
-  private startCleanupInterval(): void {
-    if (this.cleanupInterval === null) {
-      this.cleanupInterval = setInterval(() => {
-        this.cleanExpiredTokens()
-      }, this.CLEANUP_INTERVAL_MS)
-    }
-  }
-
-  private stopCleanupInterval(): void {
-    if (this.cleanupInterval !== null) {
-      clearInterval(this.cleanupInterval)
-      this.cleanupInterval = null
+      return true
+    } catch (error) {
+      throw new HeadlessClientError({
+        cause: error,
+        code: HeadlessClientErrorCode.InvalidWaypointTokenError,
+        message: `Unable to validate the waypoint token with value "${waypointToken}"`,
+      })
     }
   }
 }

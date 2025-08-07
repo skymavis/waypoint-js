@@ -32,3 +32,7 @@ export const jsonToBytes = (json: unknown) => {
 
   return stringToBytes(jsonInStr)
 }
+
+export const arrayBufferToBase64 = (arrayBuffer: ArrayBuffer) => {
+  return btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
+}
