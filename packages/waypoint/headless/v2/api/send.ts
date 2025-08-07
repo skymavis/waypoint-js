@@ -6,19 +6,19 @@ import { TransactionInServerFormat } from "../../common/transaction/common"
 import { RawServerError } from "../error/raw-server"
 import { BaseParams } from "./types"
 
-export type SendParams = BaseParams & {
+export type SendTransactionParams = BaseParams & {
   tx: TransactionInServerFormat
   rpcUrl: string
 }
 
-export type SendApiResponse = {
+export type SendTransactionApiResponse = {
   tx_hash: Hash
 }
 
-export const sendApi = async (params: SendParams) => {
+export const sendTransactionApi = async (params: SendTransactionParams) => {
   const { httpUrl, waypointToken, tx, rpcUrl } = params
 
-  const { data, error } = await request<SendApiResponse, RawServerError>(
+  const { data, error } = await request<SendTransactionApiResponse, RawServerError>(
     `post ${httpUrl}/v1/public/rpc/send`,
     {
       headers: { authorization: waypointToken },

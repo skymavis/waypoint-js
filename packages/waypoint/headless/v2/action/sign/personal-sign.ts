@@ -11,7 +11,7 @@ import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/er
 import { createTracker, HeadlessEventName } from "../../../common/track/track"
 import { hexToBase64 } from "../../../common/utils/convertor"
 import { toEthereumSignature } from "../../../common/utils/signature"
-import { signApi } from "../../api/sign"
+import { signMessageApi } from "../../api/sign"
 
 export type PersonalSignParams = {
   message: SignableMessage
@@ -31,7 +31,7 @@ export const personalSign = async (params: PersonalSignParams): Promise<Hex> => 
   try {
     const { message, waypointToken, address, httpUrl } = params
 
-    const signResult = await signApi({
+    const signResult = await signMessageApi({
       messageBase64: hexToBase64(toPrefixedMessage(message)),
       waypointToken,
       httpUrl,

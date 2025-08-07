@@ -6,7 +6,7 @@ import { createTracker, HeadlessEventName } from "../../../common/track/track"
 import { prepareTypedData } from "../../../common/transaction/prepare-typed-data"
 import { hexToBase64 } from "../../../common/utils/convertor"
 import { toEthereumSignature } from "../../../common/utils/signature"
-import { signApi } from "../../api/sign"
+import { signMessageApi } from "../../api/sign"
 
 export type SignTypedDataParams = {
   typedData: TypedDataDefinition
@@ -27,7 +27,7 @@ export const signTypedData = async (params: SignTypedDataParams): Promise<Hex> =
   })
 
   try {
-    const signResult = await signApi({
+    const signResult = await signMessageApi({
       messageBase64: hexToBase64(prepareTypedData(typedData)),
       waypointToken,
       httpUrl,

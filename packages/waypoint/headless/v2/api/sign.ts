@@ -5,18 +5,18 @@ import { request } from "../../common/request/request"
 import { RawServerError } from "../error/raw-server"
 import { BaseParams } from "./types"
 
-export type SignParams = BaseParams & {
+export type SignMessageParams = BaseParams & {
   messageBase64: string
 }
 
-export type SignApiResponse = {
+export type SignMessageApiResponse = {
   signature: Hex
 }
 
-export const signApi = async (params: SignParams) => {
+export const signMessageApi = async (params: SignMessageParams) => {
   const { httpUrl, waypointToken, messageBase64 } = params
 
-  const { data, error } = await request<SignApiResponse, RawServerError>(
+  const { data, error } = await request<SignMessageApiResponse, RawServerError>(
     `post ${httpUrl}/v1/public/rpc/sign`,
     {
       headers: { authorization: waypointToken },

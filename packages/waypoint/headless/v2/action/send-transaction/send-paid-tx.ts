@@ -1,7 +1,7 @@
 import { isHeadlessV2Prod } from "../../../common"
 import { createTracker, HeadlessEventName } from "../../../common/track/track"
 import { toTransactionInServerFormat } from "../../../common/transaction/prepare-tx"
-import { sendApi } from "../../api/send"
+import { sendTransactionApi } from "../../api/send"
 import { SendTransactionParams, SendTransactionResult } from "./types"
 
 export const sendPaidTransaction = async (
@@ -21,7 +21,7 @@ export const sendPaidTransaction = async (
       currentAddress: address,
     })
 
-    const { tx_hash } = await sendApi({
+    const { tx_hash } = await sendTransactionApi({
       tx: txInServerFormat,
       httpUrl,
       rpcUrl: chain.rpcUrl,
