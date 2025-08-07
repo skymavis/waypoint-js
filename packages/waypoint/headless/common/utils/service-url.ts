@@ -39,7 +39,7 @@ export const isHeadlessV1Prod = (productionFactor: string | boolean): boolean =>
 }
 
 // TODO: change to the prod url
-const HEADLESS_V2_PROD_HTTP_URL = "https://growing-narwhal-infinitely.ngrok-free.app"
+const HEADLESS_V2_PROD_HTTP_URL = "https://headless-v2.skymavis.com"
 
 const HEADLESS_V2_STAG_HTTP_URL = "https://growing-narwhal-infinitely.ngrok-free.app"
 
