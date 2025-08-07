@@ -1,4 +1,4 @@
-import { isProd } from "../../common"
+import { isHeadlessV1Prod } from "../../common"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
 import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { bytesToJson } from "../../common/utils/convertor"
@@ -97,7 +97,7 @@ export const keygen = async (params: KeygenParams): Promise<string> => {
     event: HeadlessEventName.keygen,
     waypointToken,
     wasmUrl,
-    isProdEnv: isProd(wsUrl),
+    isProdEnv: isHeadlessV1Prod(wsUrl),
   })
 
   try {

@@ -1,7 +1,7 @@
 import { Chain } from "viem"
 
-import { CreateHeadlessCoreOpts, HeadlessCore } from "../v1"
-import { CreateHeadlessPasswordlessCoreOpts, HeadlessPasswordlessCore } from "../v2"
+import { CreateHeadlessV1CoreOpts, HeadlessV1Core } from "../v1"
+import { CreateHeadlessV2CoreOpts, HeadlessV2Core } from "../v2"
 import { HeadlessClientError, HeadlessClientErrorCode } from "./error/client"
 
 export enum PreferMethod {
@@ -10,12 +10,12 @@ export enum PreferMethod {
 }
 
 export type GetOmittedCoreOpts<T extends PreferMethod> = T extends PreferMethod.Passwordless
-  ? Omit<CreateHeadlessPasswordlessCoreOpts, "chainId" | "overrideRpcUrl">
-  : Omit<CreateHeadlessCoreOpts, "chainId" | "overrideRpcUrl">
+  ? Omit<CreateHeadlessV2CoreOpts, "chainId" | "overrideRpcUrl">
+  : Omit<CreateHeadlessV1CoreOpts, "chainId" | "overrideRpcUrl">
 
 export type CoreInstance<T extends PreferMethod> = T extends PreferMethod.Passwordless
-  ? HeadlessPasswordlessCore
-  : HeadlessCore
+  ? HeadlessV2Core
+  : HeadlessV1Core
 
 export type HeadlessCoreFactoryOptions<T extends PreferMethod> = GetOmittedCoreOpts<T> & {
   chain: Chain
@@ -32,18 +32,18 @@ export class HeadlessCoreFactory {
           ...coreOpts,
           chainId: chain.id,
           overrideRpcUrl: chain.rpcUrls.default.http[0],
-        } as CreateHeadlessPasswordlessCoreOpts
+        } as CreateHeadlessV2CoreOpts
 
-        return new HeadlessPasswordlessCore(base) as CoreInstance<T>
+        return new HeadlessV2Core(base) as CoreInstance<T>
       }
       case PreferMethod.RecoveryPassword: {
         const base = {
           ...coreOpts,
           chainId: chain.id,
           overrideRpcUrl: chain.rpcUrls.default.http[0],
-        } as CreateHeadlessCoreOpts
+        } as CreateHeadlessV1CoreOpts
 
-        return new HeadlessCore(base) as CoreInstance<T>
+        return new HeadlessV1Core(base) as CoreInstance<T>
       }
       default:
         throw new HeadlessClientError({

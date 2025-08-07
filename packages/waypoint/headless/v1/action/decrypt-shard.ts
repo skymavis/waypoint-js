@@ -1,6 +1,6 @@
 import { bytesToString, concatBytes } from "viem"
 
-import { isProd } from "../../common"
+import { isHeadlessV1Prod } from "../../common"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
 import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { base64ToBytes } from "../../common/utils/convertor"
@@ -52,7 +52,7 @@ export const decryptShard = async (params: DecryptShardParams) => {
   const tracker = createTracker({
     event: HeadlessEventName.decryptShard,
     waypointToken,
-    isProdEnv: isProd(waypointToken),
+    isProdEnv: isHeadlessV1Prod(waypointToken),
   })
 
   try {

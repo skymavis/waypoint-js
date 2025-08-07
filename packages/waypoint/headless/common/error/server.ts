@@ -1,10 +1,10 @@
 const ServerErrorName = "ServerError"
 
 export enum ServerErrorCode {
-  //-------------------------------- Server Error Common --------------------------------
+  // * Common Error
   NotFound = 5,
 
-  //-------------------------------- Server Error V1 --------------------------------
+  // * Headless V1 Error
   OK = 0,
   Canceled = 1,
   Unknown = 2,
@@ -23,7 +23,7 @@ export enum ServerErrorCode {
   Unauthenticated = 16,
   NotSupported = 17,
 
-  // Custom Error
+  // * Custom Error
   MPCInitializeProtocolFailed = 20,
   MPCHandshakeProtocolFailed = 21,
   MPCBadSignature = 22,
@@ -62,7 +62,7 @@ export enum ServerErrorCode {
   TxSponsorNoAppLocalSponsorProgram = 121,
   TxSponsorExceedcap = 122,
 
-  // Policy rules
+  // * Policy rules
   PolicyFailed = 1001,
   UserIDNotAllowed = 1002,
   PolicyMatchDenyList = 1003,
@@ -74,10 +74,6 @@ export enum ServerErrorCode {
 export type ServerErrorOpts = {
   code: number
   message: string
-}
-
-export type ServerErrorType = ServerError & {
-  name: string
 }
 
 export class ServerError extends Error {

@@ -15,7 +15,7 @@ export type SendApiResponse = {
   tx_hash: Hash
 }
 
-export const send = async (params: SendParams) => {
+export const sendApi = async (params: SendParams) => {
   const { httpUrl, waypointToken, tx, rpcUrl } = params
 
   const { data, error } = await request<SendApiResponse, RawServerError>(

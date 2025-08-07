@@ -1,51 +1,53 @@
 import { Address, SignableMessage, TypedDataDefinition } from "viem"
 
-import { AbstractHeadlessCore, CreateAbstractHeadlessCore } from "../../common/abstracts/core"
+import { AbstractHeadlessCore, CreateAbstractHeadlessCoreOpts } from "../../common/abstracts/core"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
 import { ServerError, ServerErrorCode } from "../../common/error/server"
 import { TransactionParams } from "../../common/transaction/common"
 import { isRoninGasSponsorTransaction } from "../../common/transaction/tx-type-check"
 import {
-  getPasswordlessServiceUrls,
-  getServiceUrls,
-  isPasswordlessProd,
-  PasswordlessServiceUrls,
+  getHeadlessV1ServiceUrls,
+  getHeadlessV2ServiceUrls,
+  HeadlessV2ServiceEnv,
+  isHeadlessV2Prod,
 } from "../../common/utils/service-url"
 import { TokenCache } from "../../v1"
 import { validateSponsorTransaction } from "../../v1/action/helpers/validate-sponsor-tx"
-import { authenticate } from "../action/authenticate"
-import { getUserProfile } from "../action/get-user-profile"
-import { AESDecrypt, AESEncrypt } from "../action/helpers/crypto-actions"
-import { encryptContent } from "../action/helpers/key-actions"
+import { authenticateAction } from "../action/authenticate"
 import {
-  generateExchangeAsymmetricKey,
-  generateKeyPasswordless,
-  getExchangePublicKey,
+  generateExchangeAsymmetricKeyAction,
+  generateKeyPasswordlessAction,
 } from "../action/key-actions"
-import { migrateShard } from "../action/migrate-shard"
-import { pullShard } from "../action/pull-shard"
+import { migrateShardAction } from "../action/migrate-shard"
+import { pullShardAction } from "../action/pull-shard"
 import { sendPaidTransaction } from "../action/send-transaction/send-paid-tx"
 import { sendSponsoredTransaction } from "../action/send-transaction/send-sponsored"
-import { setPassword } from "../action/set-password"
+import { setPasswordAction } from "../action/set-password"
 import { personalSign } from "../action/sign/personal-sign"
 import { signTypedData } from "../action/sign/sign-typed-data"
+import { getUserProfileApi } from "../api/get-user-profile"
+import { getExchangePublicKeyApi } from "../api/key"
 
-export type CreateHeadlessPasswordlessCoreOpts = CreateAbstractHeadlessCore<PasswordlessServiceUrls>
+type ExtraOptions = {
+  serviceEnv?: HeadlessV2ServiceEnv
+}
 
-export class HeadlessPasswordlessCore extends AbstractHeadlessCore<PasswordlessServiceUrls> {
+export type CreateHeadlessV2CoreOpts = CreateAbstractHeadlessCoreOpts<ExtraOptions>
+
+export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
   private readonly httpUrl: string
   private publicKey?: string
   private address?: Address
   private readonly lockboxHttpUrl: string
 
-  public constructor(opts: CreateHeadlessPasswordlessCoreOpts) {
+  public constructor(opts: CreateHeadlessV2CoreOpts) {
     super(opts)
 
     const { serviceEnv = "prod" } = opts
-    const { httpUrl } = getPasswordlessServiceUrls(serviceEnv)
+    const { httpUrl } = getHeadlessV2ServiceUrls(serviceEnv)
 
-    const isProd = isPasswordlessProd(httpUrl)
-    this.lockboxHttpUrl = getServiceUrls(isProd ? "prod" : "stag").httpUrl
+    const isProd = isHeadlessV2Prod(httpUrl)
+    this.lockboxHttpUrl = getHeadlessV1ServiceUrls(isProd ? "prod" : "stag").httpUrl
 
     this.httpUrl = httpUrl
   }
@@ -67,14 +69,21 @@ export class HeadlessPasswordlessCore extends AbstractHeadlessCore<PasswordlessS
   }
 
   getSignableAddress = async () => {
-    const address = await this.getAddress()
-    return address
+    const address = this.getAddress()
+
+    if (address) {
+      return address
+    }
+
+    const { address: signableAddress } = await this.getUserProfile()
+
+    return signableAddress
   }
 
   genMpc = async () => {
     await this.validateWaypointToken()
 
-    return generateKeyPasswordless({
+    return generateKeyPasswordlessAction({
       httpUrl: this.httpUrl,
       waypointToken: this.waypointToken,
     })
@@ -83,7 +92,7 @@ export class HeadlessPasswordlessCore extends AbstractHeadlessCore<PasswordlessS
   getUserProfile = async () => {
     await this.validateWaypointToken()
 
-    const userProfile = await getUserProfile({
+    const userProfile = await getUserProfileApi({
       httpUrl: this.httpUrl,
       waypointToken: this.waypointToken,
     })
@@ -93,13 +102,8 @@ export class HeadlessPasswordlessCore extends AbstractHeadlessCore<PasswordlessS
     return userProfile
   }
 
-  getAddress = async () => {
-    if (this.address) {
-      return this.address
-    }
-
-    const userProfile = await this.getUserProfile()
-    return userProfile.address
+  getAddress = () => {
+    return this.address
   }
 
   signMessage = async (message: SignableMessage) => {
@@ -156,7 +160,7 @@ export class HeadlessPasswordlessCore extends AbstractHeadlessCore<PasswordlessS
   private genExchangeAsymmetricKey = async () => {
     await this.validateWaypointToken()
 
-    const generateAsymmetricKeyResult = await generateExchangeAsymmetricKey({
+    const generateAsymmetricKeyResult = await generateExchangeAsymmetricKeyAction({
       httpUrl: this.httpUrl,
       waypointToken: this.waypointToken,
     })
@@ -174,7 +178,7 @@ export class HeadlessPasswordlessCore extends AbstractHeadlessCore<PasswordlessS
     await this.validateWaypointToken()
 
     try {
-      const getPublicKeyResult = await getExchangePublicKey({
+      const getPublicKeyResult = await getExchangePublicKeyApi({
         httpUrl: this.httpUrl,
         waypointToken: this.waypointToken,
       })
@@ -198,18 +202,10 @@ export class HeadlessPasswordlessCore extends AbstractHeadlessCore<PasswordlessS
     await this.validateWaypointToken()
     const publicKey = await this.getExchangePublicKey()
 
-    const { encryptedContent: clientEncryptedKey, encryptionKey } = await encryptContent(publicKey)
-
-    const pullShardResult = await pullShard({
+    return pullShardAction({
       httpUrl: this.httpUrl,
       waypointToken: this.waypointToken,
-      clientEncryptedKey,
-    })
-
-    return AESDecrypt({
-      ciphertextB64: pullShardResult.shardCiphertextB64,
-      nonceB64: pullShardResult.shardNonceB64,
-      aesKey: encryptionKey,
+      exchangePublicKey: publicKey,
     })
   }
 
@@ -225,17 +221,13 @@ export class HeadlessPasswordlessCore extends AbstractHeadlessCore<PasswordlessS
       })
     }
 
-    const encryptedShardPayload = await AESEncrypt({
-      content: shard,
-      key: await this.getExchangePublicKey(),
-    })
+    const exchangePublicKey = await this.getExchangePublicKey()
 
-    return migrateShard({
+    return migrateShardAction({
       httpUrl: this.httpUrl,
       waypointToken: this.waypointToken,
-      shardCiphertextB64: encryptedShardPayload.ciphertextB64,
-      shardEncryptedKeyB64: encryptedShardPayload.encryptedKeyB64,
-      shardNonceB64: encryptedShardPayload.nonceB64,
+      clientShard: shard,
+      exchangePublicKey,
     })
   }
 
@@ -255,35 +247,25 @@ export class HeadlessPasswordlessCore extends AbstractHeadlessCore<PasswordlessS
 
   setPassword = async (password: string) => {
     await this.getSignableAddress()
+    const exchangePublicKey = await this.getExchangePublicKey()
 
-    const encryptedPassword = await AESEncrypt({
-      content: password,
-      key: await this.getExchangePublicKey(),
-    })
-
-    return setPassword({
+    return setPasswordAction({
       httpUrl: this.httpUrl,
       waypointToken: this.waypointToken,
-      ciphertextB64: encryptedPassword.ciphertextB64,
-      clientEncryptedKeyB64: encryptedPassword.encryptedKeyB64,
-      nonceB64: encryptedPassword.nonceB64,
+      password,
+      exchangePublicKey,
     })
   }
 
   authenticate = async (password: string) => {
     await this.getSignableAddress()
+    const exchangePublicKey = await this.getExchangePublicKey()
 
-    const encryptedPassword = await AESEncrypt({
-      content: password,
-      key: await this.getExchangePublicKey(),
-    })
-
-    return authenticate({
+    return authenticateAction({
       httpUrl: this.httpUrl,
       waypointToken: this.waypointToken,
-      ciphertextB64: encryptedPassword.ciphertextB64,
-      clientEncryptedKeyB64: encryptedPassword.encryptedKeyB64,
-      nonceB64: encryptedPassword.nonceB64,
+      password,
+      exchangePublicKey,
     })
   }
 }

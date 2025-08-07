@@ -1,9 +1,9 @@
 import { isAddress, type SignableMessage, type TypedDataDefinition } from "viem"
 
-import { AbstractHeadlessCore, CreateAbstractHeadlessCore } from "../../common/abstracts/core"
+import { AbstractHeadlessCore, CreateAbstractHeadlessCoreOpts } from "../../common/abstracts/core"
 import { TransactionParams } from "../../common/transaction/common"
 import { isRoninGasSponsorTransaction } from "../../common/transaction/tx-type-check"
-import { getServiceUrls, ServiceUrls } from "../../common/utils/service-url"
+import { getHeadlessV1ServiceUrls, HeadlessV1ServiceEnv } from "../../common/utils/service-url"
 import { TokenCache } from "../../common/utils/token-cache"
 import { backupShard } from "../action/backup-shard"
 import { decryptShard } from "../action/decrypt-shard"
@@ -19,29 +19,24 @@ import { sendSponsoredTransaction } from "../action/send-transaction/send-sponso
 import { signTypedData } from "../action/sign-typed-data"
 import { WASM_URL } from "../wasm/cdn"
 
-export type CreateHeadlessCoreOpts = CreateAbstractHeadlessCore<
-  ServiceUrls,
-  {
-    wasmUrl?: string
-  }
->
+type ExtraOptions = {
+  wasmUrl?: string
+  serviceEnv?: HeadlessV1ServiceEnv
+}
+
+export type CreateHeadlessV1CoreOpts = CreateAbstractHeadlessCoreOpts<ExtraOptions>
 
 // ! Keep the same interface with internal libs
-export class HeadlessCore extends AbstractHeadlessCore<
-  ServiceUrls,
-  {
-    wasmUrl?: string
-  }
-> {
+export class HeadlessV1Core extends AbstractHeadlessCore<ExtraOptions> {
   private readonly httpUrl: string
   private readonly wsUrl: string
   private readonly wasmUrl: string
 
-  public constructor(opts: CreateHeadlessCoreOpts) {
+  public constructor(opts: CreateHeadlessV1CoreOpts) {
     super(opts)
 
     const { serviceEnv = "prod", wasmUrl = WASM_URL } = opts
-    const { httpUrl, wsUrl } = getServiceUrls(serviceEnv)
+    const { httpUrl, wsUrl } = getHeadlessV1ServiceUrls(serviceEnv)
 
     this.httpUrl = httpUrl
     this.wsUrl = wsUrl

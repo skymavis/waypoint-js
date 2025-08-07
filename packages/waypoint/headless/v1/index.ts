@@ -1,10 +1,10 @@
 /* eslint-disable simple-import-sort/exports */
 
 // headless core
-export { HeadlessCore, type CreateHeadlessCoreOpts } from "./client/core"
+export { HeadlessV1Core, type CreateHeadlessV1CoreOpts } from "./client/core"
 
 // headless client
-export { HeadlessClient, type CreateHeadlessClientOpts } from "./client/client"
+export { HeadlessV1Client, type CreateHeadlessV1ClientOpts } from "./client/client"
 
 // actions
 export { getAddressFromShard } from "./action/get-address"

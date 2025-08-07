@@ -1,12 +1,4 @@
-export type BaseServiceEnv<T extends object = object> = "prod" | "stag" | T
-
-export type BaseServiceUrls<Extra extends object = object> = {
-  httpUrl: string
-} & Extra
-
-export type GetBaseServiceUrl<Extra extends object = object> = (
-  env: BaseServiceEnv<BaseServiceUrls<Extra>>,
-) => BaseServiceUrls<Extra>
+export type ServiceEnv = "prod" | "stag"
 
 const LOCKBOX_PROD_HTTP_URL = "https://lockbox.skymavis.com"
 const LOCKBOX_PROD_WS_URL = "wss://lockbox.skymavis.com"
@@ -14,15 +6,14 @@ const LOCKBOX_PROD_WS_URL = "wss://lockbox.skymavis.com"
 const LOCKBOX_STAG_HTTP_URL = "https://project-x.skymavis.one"
 const LOCKBOX_STAG_WS_URL = "wss://project-x.skymavis.one"
 
-export type ServiceUrls = BaseServiceUrls<{
+export type HeadlessV1ServiceUrls = {
+  httpUrl: string
   wsUrl: string
-}>
+}
 
-export type ServiceEnv = BaseServiceEnv<ServiceUrls>
+export type HeadlessV1ServiceEnv = ServiceEnv | HeadlessV1ServiceUrls
 
-export const getServiceUrls: GetBaseServiceUrl<{
-  wsUrl: string
-}> = env => {
+export const getHeadlessV1ServiceUrls = (env: HeadlessV1ServiceEnv): HeadlessV1ServiceUrls => {
   switch (env) {
     case "prod":
       return {
@@ -39,7 +30,7 @@ export const getServiceUrls: GetBaseServiceUrl<{
   }
 }
 
-export const isProd = (productionFactor: string | boolean): boolean => {
+export const isHeadlessV1Prod = (productionFactor: string | boolean): boolean => {
   if (typeof productionFactor === "boolean") {
     return productionFactor
   }
@@ -48,33 +39,35 @@ export const isProd = (productionFactor: string | boolean): boolean => {
 }
 
 // TODO: change to the prod url
-const PASSWORDLESS_PROD_HTTP_URL = "https://growing-narwhal-infinitely.ngrok-free.app"
+const HEADLESS_V2_PROD_HTTP_URL = "https://growing-narwhal-infinitely.ngrok-free.app"
 
-const PASSWORDLESS_STAG_HTTP_URL = "https://growing-narwhal-infinitely.ngrok-free.app"
+const HEADLESS_V2_STAG_HTTP_URL = "https://growing-narwhal-infinitely.ngrok-free.app"
 
-export type PasswordlessServiceUrls = BaseServiceUrls
+export type HeadlessV2ServiceUrls = {
+  httpUrl: string
+}
 
-export type PasswordlessServiceEnv = BaseServiceEnv<PasswordlessServiceUrls>
+export type HeadlessV2ServiceEnv = ServiceEnv | HeadlessV2ServiceUrls
 
-export const getPasswordlessServiceUrls: GetBaseServiceUrl<PasswordlessServiceUrls> = env => {
+export const getHeadlessV2ServiceUrls = (env: HeadlessV2ServiceEnv): HeadlessV2ServiceUrls => {
   switch (env) {
     case "prod":
       return {
-        httpUrl: PASSWORDLESS_PROD_HTTP_URL,
+        httpUrl: HEADLESS_V2_PROD_HTTP_URL,
       }
     case "stag":
       return {
-        httpUrl: PASSWORDLESS_STAG_HTTP_URL,
+        httpUrl: HEADLESS_V2_STAG_HTTP_URL,
       }
     default:
       return env
   }
 }
 
-export const isPasswordlessProd = (productionFactor: string | boolean): boolean => {
+export const isHeadlessV2Prod = (productionFactor: string | boolean): boolean => {
   if (typeof productionFactor === "boolean") {
     return productionFactor
   }
 
-  return productionFactor === PASSWORDLESS_PROD_HTTP_URL
+  return productionFactor === HEADLESS_V2_PROD_HTTP_URL
 }

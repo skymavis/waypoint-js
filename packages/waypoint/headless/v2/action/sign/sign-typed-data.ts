@@ -1,12 +1,12 @@
 import { type Address, type Hex, type TypedDataDefinition, verifyTypedData } from "viem"
 
-import { isPasswordlessProd } from "../../../common"
+import { isHeadlessV2Prod } from "../../../common"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
 import { createTracker, HeadlessEventName } from "../../../common/track/track"
 import { prepareTypedData } from "../../../common/transaction/prepare-typed-data"
 import { hexToBase64 } from "../../../common/utils/convertor"
 import { toEthereumSignature } from "../../../common/utils/signature"
-import { sign } from "../sign"
+import { signApi } from "../../api/sign"
 
 export type SignTypedDataParams = {
   typedData: TypedDataDefinition
@@ -23,11 +23,11 @@ export const signTypedData = async (params: SignTypedDataParams): Promise<Hex> =
     event: HeadlessEventName.signTypedData,
     waypointToken: params.waypointToken,
     passwordlessServiceUrl: params.httpUrl,
-    isProdEnv: isPasswordlessProd(params.httpUrl),
+    isProdEnv: isHeadlessV2Prod(params.httpUrl),
   })
 
   try {
-    const signResult = await sign({
+    const signResult = await signApi({
       messageBase64: hexToBase64(prepareTypedData(typedData)),
       waypointToken,
       httpUrl,

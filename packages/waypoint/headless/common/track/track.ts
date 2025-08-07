@@ -13,7 +13,7 @@ const AUTHORIZATION_PROD = "Basic ODZkMTNkMmYtYWFmYy00M2YyLWJhZDctNDI2NTBiYmJmZT
 const AUTHORIZATION_STAG = "Basic ZDU1ODQyODYtOWIwYS00MzE3LWI3YjktOWRjOTQwNmFiMzJlOg=="
 
 export enum HeadlessEventName {
-  //-------------------------------- Headless V1 Event Name --------------------------------
+  // * Headless V1 Event Name
   backupShard = "backupShard",
   decryptShard = "decryptShard",
   keygen = "keygen",
@@ -23,7 +23,7 @@ export enum HeadlessEventName {
   endEIP1559Transaction = "endEIP1559Transaction",
   sendSponsoredTransaction = "sendSponsoredTransaction",
 
-  //-------------------------------- Headless V2 Event Name --------------------------------
+  // * Headless V2 Event Name
   sendPaidTransactionByPasswordless = "sendPaidTransactionByPasswordless",
   sendSponsoredTransactionByPasswordless = "sendSponsoredTransactionByPasswordless",
   signTypedDataByPasswordless = "signTypedDataByPasswordless",

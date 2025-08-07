@@ -1,6 +1,6 @@
 import { fromBinary } from "@bufbuild/protobuf"
 
-import { isProd } from "../../../common"
+import { isHeadlessV1Prod } from "../../../common"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
 import { createTracker, HeadlessEventName } from "../../../common/track/track"
 import { toTransactionInServerFormat } from "../../../common/transaction/prepare-tx"
@@ -142,7 +142,7 @@ export const sendSponsoredTransaction = async (
   const tracker = createTracker({
     event: HeadlessEventName.sendSponsoredTransaction,
     waypointToken,
-    isProdEnv: isProd(wsUrl),
+    isProdEnv: isHeadlessV1Prod(wsUrl),
     wasmUrl,
   })
 

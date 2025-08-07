@@ -1,7 +1,7 @@
-import { isPasswordlessProd } from "../../../common"
+import { isHeadlessV2Prod } from "../../../common"
 import { createTracker, HeadlessEventName } from "../../../common/track/track"
 import { toTransactionInServerFormat } from "../../../common/transaction/prepare-tx"
-import { send } from "../send"
+import { sendApi } from "../../api/send"
 import { SendTransactionParams, SendTransactionResult } from "./types"
 
 export const sendPaidTransaction = async (
@@ -12,7 +12,7 @@ export const sendPaidTransaction = async (
     event: HeadlessEventName.sendPaidTransactionByPasswordless,
     waypointToken: params.waypointToken,
     passwordlessServiceUrl: params.httpUrl,
-    isProdEnv: isPasswordlessProd(params.httpUrl),
+    isProdEnv: isHeadlessV2Prod(params.httpUrl),
   })
   try {
     const txInServerFormat = await toTransactionInServerFormat({
@@ -21,7 +21,7 @@ export const sendPaidTransaction = async (
       currentAddress: address,
     })
 
-    const { tx_hash } = await send({
+    const { tx_hash } = await sendApi({
       tx: txInServerFormat,
       httpUrl,
       rpcUrl: chain.rpcUrl,

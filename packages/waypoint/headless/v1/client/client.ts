@@ -1,12 +1,12 @@
-import { ServiceEnv } from "../../common"
+import { HeadlessV1ServiceEnv } from "../../common"
 import { TransactionParams } from "../../common/transaction/common"
-import { HeadlessCore } from "./core"
+import { HeadlessV1Core } from "./core"
 
-export type CreateHeadlessClientOpts = {
+export type CreateHeadlessV1ClientOpts = {
   chainId: number
   overrideRpcUrl?: string
 
-  serviceEnv?: ServiceEnv
+  serviceEnv?: HeadlessV1ServiceEnv
   wasmUrl?: string
 }
 
@@ -20,13 +20,13 @@ type ConnectWithPasswordParams = BaseParams & {
   recoveryPassword: string
 }
 
-export class HeadlessClient {
-  private core: HeadlessCore
+export class HeadlessV1Client {
+  private core: HeadlessV1Core
 
-  protected constructor(opts: CreateHeadlessClientOpts) {
+  protected constructor(opts: CreateHeadlessV1ClientOpts) {
     const { chainId, overrideRpcUrl, wasmUrl, serviceEnv = "prod" } = opts
 
-    this.core = new HeadlessCore({
+    this.core = new HeadlessV1Core({
       chainId,
       overrideRpcUrl,
       wasmUrl,
@@ -34,8 +34,8 @@ export class HeadlessClient {
     })
   }
 
-  static create = (opts: CreateHeadlessClientOpts) => {
-    return new HeadlessClient(opts)
+  static create = (opts: CreateHeadlessV1ClientOpts) => {
+    return new HeadlessV1Client(opts)
   }
 
   connect = (params: ConnectParams) => {

@@ -13,7 +13,7 @@ export type SignApiResponse = {
   signature: Hex
 }
 
-export const sign = async (params: SignParams) => {
+export const signApi = async (params: SignParams) => {
   const { httpUrl, waypointToken, messageBase64 } = params
 
   const { data, error } = await request<SignApiResponse, RawServerError>(

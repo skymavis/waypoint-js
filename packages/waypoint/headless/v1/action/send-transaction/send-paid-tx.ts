@@ -1,6 +1,6 @@
 import { keccak256 } from "viem"
 
-import { isProd } from "../../../common"
+import { isHeadlessV1Prod } from "../../../common"
 import { createTracker, HeadlessEventName } from "../../../common/track/track"
 import { toTransactionInServerFormat } from "../../../common/transaction/prepare-tx"
 import { serializeTX } from "../../../common/transaction/serialize-tx"
@@ -127,7 +127,7 @@ export const sendPaidTransaction = async (
       ? HeadlessEventName.endEIP1559Transaction
       : HeadlessEventName.sendLegacyTransaction,
     waypointToken,
-    isProdEnv: isProd(wsUrl),
+    isProdEnv: isHeadlessV1Prod(wsUrl),
   })
 
   try {

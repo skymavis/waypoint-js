@@ -1,7 +1,7 @@
 const HeadlessClientErrorName = "HeadlessClientError"
 
 export enum HeadlessClientErrorCode {
-  //-------------------------------- Headless Common Error --------------------------------
+  // * Common Error
   UnsupportedMethod = -1000,
   InvalidClientShardError = -1101,
   UnsupportedTransactionTypeError = -1102,
@@ -12,17 +12,14 @@ export enum HeadlessClientErrorCode {
   WaypointTokenNotFoundError = -1107,
   ClientShardNotFoundError = -1108,
   InvalidWaypointTokenError = -1109,
-
   InvalidSignatureError = -4404,
   UnknownError = -9900,
 
-  //-------------------------------- Headless V1 Error --------------------------------
   // * socket error
   OpenSocketError = -2200,
   ListenSocketMessageError = -2201,
-  // * when client do NOT process frame with type  = DATA | DONE from socket
+  // * when client do NOT process frame with type = DATA | DONE from socket
   MissingMessageError = -2202,
-
   // * wasm init error
   WebAssemblyNotSupportedError = -3300,
   InstantiateError = -3301,
@@ -34,7 +31,6 @@ export enum HeadlessClientErrorCode {
   WasmReceiveSocketDataError = -3306,
   WasmTriggerSignError = -3307,
   WasmTriggerKeygenError = -3308,
-
   // * action error
   AuthenticateError = -4400,
   DecryptClientShardError = -4401,
@@ -48,11 +44,6 @@ export type HeadlessClientErrorOpts = {
   message: string
   cause: unknown
 }
-
-export type HeadlessClientErrorType = HeadlessClientError & {
-  name: string
-}
-
 export class HeadlessClientError extends Error {
   override name: string
   code: number

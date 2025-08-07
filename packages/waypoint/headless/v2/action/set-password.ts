@@ -1,44 +1,45 @@
-import { isPasswordlessProd, ServerError } from "../../common"
-import { request } from "../../common/request/request"
+import { isHeadlessV2Prod } from "../../common"
 import { createTracker, HeadlessEventName } from "../../common/track/track"
-import { RawServerError } from "../error/raw-server"
-import { BaseParams, EncryptedPasswordParams } from "./types"
+import { setPasswordApi } from "../api/set-password"
+import { BaseParams } from "../api/types"
+import { AESEncrypt } from "./helpers/crypto-actions"
 
-export type SetPasswordParams = BaseParams & EncryptedPasswordParams
-
-export type SetPasswordApiResponse = {
-  uuid: string
+export type SetPasswordActionParams = BaseParams & {
+  password: string
+  exchangePublicKey: string
 }
 
-export const setPassword = async (params: SetPasswordParams) => {
-  const { httpUrl, waypointToken, ciphertextB64, clientEncryptedKeyB64, nonceB64 } = params
+export const setPasswordAction = async (params: SetPasswordActionParams) => {
+  const { httpUrl, waypointToken, password, exchangePublicKey } = params
 
   const tracker = createTracker({
     event: HeadlessEventName.setPassword,
     waypointToken,
     passwordlessServiceUrl: httpUrl,
-    isProdEnv: isPasswordlessProd(httpUrl),
+    isProdEnv: isHeadlessV2Prod(httpUrl),
   })
 
-  const { data, error } = await request<SetPasswordApiResponse, RawServerError>(
-    `post ${httpUrl}/v1/public/rpc/set-password`,
-    {
-      headers: { authorization: waypointToken },
-      body: {
-        ciphertext_b64: ciphertextB64,
-        client_encrypted_key_b64: clientEncryptedKeyB64,
-        nonce_b64: nonceB64,
-      },
-    },
-  )
+  try {
+    const encryptedPassword = await AESEncrypt({
+      content: password,
+      key: exchangePublicKey,
+    })
 
-  if (data) {
+    const data = await setPasswordApi({
+      httpUrl,
+      waypointToken,
+      ciphertextB64: encryptedPassword.ciphertextB64,
+      clientEncryptedKeyB64: encryptedPassword.encryptedKeyB64,
+      nonceB64: encryptedPassword.nonceB64,
+    })
+
     tracker.trackOk({
       response: { ...data },
     })
-    return data
-  }
 
-  tracker.trackError(error)
-  throw new ServerError({ code: error.error_code, message: error.error_message })
+    return data
+  } catch (error) {
+    tracker.trackError(error)
+    throw error
+  }
 }

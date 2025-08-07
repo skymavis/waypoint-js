@@ -2,7 +2,7 @@ import { create, fromBinary, toBinary } from "@bufbuild/protobuf"
 import { secp256k1 } from "@noble/curves/secp256k1"
 import { keccak256, stringToBytes } from "viem"
 
-import { isProd } from "../../common"
+import { isHeadlessV1Prod } from "../../common"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
 import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { bytesToBase64 } from "../../common/utils/convertor"
@@ -132,7 +132,7 @@ export const backupShard = async (params: BackupShardParams): Promise<string> =>
   const tracker = createTracker({
     event: HeadlessEventName.backupShard,
     waypointToken,
-    isProdEnv: isProd(wsUrl),
+    isProdEnv: isHeadlessV1Prod(wsUrl),
   })
 
   try {

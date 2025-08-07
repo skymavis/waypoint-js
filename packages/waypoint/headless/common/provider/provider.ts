@@ -62,9 +62,9 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
     this.core = core
   }
 
-  getAccounts = async () => {
+  getAccounts = () => {
     try {
-      const address = await this.core.getAddress()
+      const address = this.core.getAddress()
       const signable = this.core.isSignable()
 
       if (address && signable) {
@@ -79,8 +79,8 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
 
   requestAccounts = async () => {
     try {
-      const address = await this.core.getAddress()
-      const signable = await this.core.isSignable()
+      const address = this.core.getAddress()
+      const signable = this.core.isSignable()
 
       if (address && signable) {
         return [address] as const

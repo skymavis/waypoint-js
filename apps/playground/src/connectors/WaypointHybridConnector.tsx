@@ -1,7 +1,7 @@
 import { AutoConnectPriority, BaseConnector, IConnectResult } from "@roninnetwork/walletgo"
 import { delegationAuthorize } from "@sky-mavis/waypoint"
 import { HeadlessProvider, ServiceEnv } from "@sky-mavis/waypoint/headless/common"
-import { HeadlessClient } from "@sky-mavis/waypoint/headless/v1"
+import { HeadlessV1Client } from "@sky-mavis/waypoint/headless/v1"
 
 import { RoninLogo } from "./RoninLogo"
 
@@ -53,7 +53,7 @@ export class WaypointHybridConnector extends BaseConnector<HeadlessProvider> {
   }
 
   async connect(chainId: number): Promise<IConnectResult<HeadlessProvider>> {
-    const client = HeadlessClient.create({
+    const client = HeadlessV1Client.create({
       chainId: chainId,
       serviceEnv: this.headlessEnv,
     })

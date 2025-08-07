@@ -1,1 +1,1 @@
-export { type CreateHeadlessPasswordlessCoreOpts, HeadlessPasswordlessCore } from "./client/core"
+export { type CreateHeadlessV2CoreOpts, HeadlessV2Core } from "./client/core"
