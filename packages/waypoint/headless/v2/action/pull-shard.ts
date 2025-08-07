@@ -30,9 +30,7 @@ export async function pullShardAction(params: PullShardActionParams) {
       clientEncryptedKey: arrayBufferToBase64(clientEncryptedKey),
     })
 
-    tracker.trackOk({
-      response: { ...pullShardResult },
-    })
+    tracker.trackOk({})
 
     return AESDecrypt({
       ciphertextB64: pullShardResult.shardCiphertextB64,
