@@ -10,6 +10,7 @@ import {
 } from "viem"
 
 import { VIEM_CHAIN_MAPPING } from "../../../common"
+import { ValidateSponsorTransactionResult } from "../../v1"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { TransactionParams } from "../transaction/common"
 
@@ -34,29 +35,21 @@ export abstract class AbstractHeadlessCore<ExtraOptions extends object = object>
     this.chainId = chainId
     this.waypointToken = waypointToken
     this.clientShard = clientShard
+    const rpcUrl = overrideRpcUrl ?? VIEM_CHAIN_MAPPING[chainId]?.rpcUrls?.default?.http[0]
 
-    if (overrideRpcUrl) {
-      this.rpcUrl = overrideRpcUrl
-      this.publicClient = createClient({
-        transport: http(overrideRpcUrl),
-      })
-    } else {
-      const rpcUrl = VIEM_CHAIN_MAPPING[chainId]?.rpcUrls?.default?.http[0]
-
-      if (!rpcUrl) {
-        throw new HeadlessClientError({
-          cause: undefined,
-          code: HeadlessClientErrorCode.UnsupportedChainIdError,
-          message: `Unsupported chain. Unable to find rpcUrl for chainId="${chainId}". Please provide an "overrideRpcUrl" parameter.`,
-        })
-      }
-
-      this.rpcUrl = rpcUrl
-      this.publicClient = createClient({
-        chain: VIEM_CHAIN_MAPPING[chainId],
-        transport: http(),
+    if (!rpcUrl) {
+      throw new HeadlessClientError({
+        cause: undefined,
+        code: HeadlessClientErrorCode.UnsupportedChainIdError,
+        message: `Unsupported chain. Unable to find rpcUrl for chainId="${chainId}". Please provide an "overrideRpcUrl" parameter.`,
       })
     }
+
+    this.rpcUrl = rpcUrl
+    this.publicClient = createClient({
+      chain: VIEM_CHAIN_MAPPING[chainId],
+      transport: http(rpcUrl),
+    })
   }
 
   setWaypointToken = (waypointToken: string) => {
@@ -75,11 +68,16 @@ export abstract class AbstractHeadlessCore<ExtraOptions extends object = object>
     return this.publicClient
   }
 
-  abstract genMpc: () => Promise<unknown>
+  abstract genMpc: () => Promise<object | string>
 
-  abstract getUserProfile: () => Promise<unknown>
+  abstract getUserProfile: () => Promise<
+    {
+      address: Address
+      uuid: string
+    } & Record<string, unknown>
+  >
 
-  abstract getAddress: () => Address | undefined
+  abstract getAddress: () => Address | null
 
   abstract signMessage: (message: SignableMessage) => Promise<Hex>
 
@@ -89,7 +87,9 @@ export abstract class AbstractHeadlessCore<ExtraOptions extends object = object>
     txHash: Hash
   }>
 
-  abstract validateSponsorTx: (transaction: TransactionParams) => Promise<unknown>
+  abstract validateSponsorTx: (
+    transaction: TransactionParams,
+  ) => Promise<ValidateSponsorTransactionResult>
 
   abstract isSignable: () => boolean
 }

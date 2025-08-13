@@ -11,20 +11,20 @@ import {
   HeadlessV2ServiceEnv,
   isHeadlessV2Prod,
 } from "../../common/utils/service-url"
-import { TokenCache } from "../../v1"
-import { validateSponsorTransaction } from "../../v1/action/helpers/validate-sponsor-tx"
+import { tokenCache } from "../../common/utils/token-cache"
+import { validateSponsorTransaction } from "../../v1"
 import { authenticateAction } from "../action/authenticate"
 import {
   generateExchangeAsymmetricKeyAction,
   generateKeyPasswordlessAction,
 } from "../action/key-actions"
 import { migrateShardAction } from "../action/migrate-shard"
+import { personalSignAction } from "../action/personal-sign"
 import { pullShardAction } from "../action/pull-shard"
-import { sendPaidTransaction } from "../action/send-transaction/send-paid-tx"
-import { sendSponsoredTransaction } from "../action/send-transaction/send-sponsored"
+import { sendPaidTransactionAction } from "../action/send-paid-tx"
+import { sendSponsoredTransactionAction } from "../action/send-sponsored"
 import { setPasswordAction } from "../action/set-password"
-import { personalSign } from "../action/sign/personal-sign"
-import { signTypedData } from "../action/sign/sign-typed-data"
+import { signTypedDataAction } from "../action/sign-typed-data"
 import { getUserProfileApi } from "../api/get-user-profile"
 import { getExchangePublicKeyApi } from "../api/key"
 
@@ -52,7 +52,7 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
     this.httpUrl = httpUrl
   }
 
-  private validateWaypointToken = () => {
+  private ensureWaypointTokenValid = () => {
     if (!this.waypointToken) {
       throw new HeadlessClientError({
         cause: undefined,
@@ -61,11 +61,11 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
       })
     }
 
-    return TokenCache.validateToken(this.waypointToken)
+    return tokenCache.validateToken(this.waypointToken)
   }
 
   isSignable = () => {
-    return this.validateWaypointToken() && !!this.address
+    return this.ensureWaypointTokenValid() && !!this.address
   }
 
   getSignableAddress = async () => {
@@ -81,7 +81,7 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
   }
 
   genMpc = async () => {
-    await this.validateWaypointToken()
+    this.ensureWaypointTokenValid()
 
     return generateKeyPasswordlessAction({
       httpUrl: this.httpUrl,
@@ -90,7 +90,7 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
   }
 
   getUserProfile = async () => {
-    await this.validateWaypointToken()
+    this.ensureWaypointTokenValid()
 
     const userProfile = await getUserProfileApi({
       httpUrl: this.httpUrl,
@@ -103,13 +103,13 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
   }
 
   getAddress = () => {
-    return this.address
+    return this.address ?? null
   }
 
   signMessage = async (message: SignableMessage) => {
     const address = await this.getSignableAddress()
 
-    return personalSign({
+    return personalSignAction({
       message,
       waypointToken: this.waypointToken,
       address,
@@ -120,7 +120,7 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
   signTypedData = async (typedData: TypedDataDefinition) => {
     const address = await this.getSignableAddress()
 
-    return signTypedData({
+    return signTypedDataAction({
       typedData,
       waypointToken: this.waypointToken,
       address,
@@ -133,7 +133,7 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
     const address = await this.getSignableAddress()
 
     if (isRoninGasSponsorTransaction(transaction.type)) {
-      return sendSponsoredTransaction({
+      return sendSponsoredTransactionAction({
         waypointToken: this.waypointToken,
         httpUrl: this.httpUrl,
         address,
@@ -145,7 +145,7 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
       })
     }
 
-    return sendPaidTransaction({
+    return sendPaidTransactionAction({
       waypointToken: this.waypointToken,
       httpUrl: this.httpUrl,
       transaction,
@@ -158,7 +158,7 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
   }
 
   private genExchangeAsymmetricKey = async () => {
-    await this.validateWaypointToken()
+    this.ensureWaypointTokenValid()
 
     const generateAsymmetricKeyResult = await generateExchangeAsymmetricKeyAction({
       httpUrl: this.httpUrl,
@@ -175,7 +175,7 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
       return this.publicKey
     }
 
-    await this.validateWaypointToken()
+    this.ensureWaypointTokenValid()
 
     try {
       const getPublicKeyResult = await getExchangePublicKeyApi({
@@ -199,7 +199,7 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
       return this.clientShard
     }
 
-    await this.validateWaypointToken()
+    this.ensureWaypointTokenValid()
     const publicKey = await this.getExchangePublicKey()
 
     return pullShardAction({
@@ -210,7 +210,7 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
   }
 
   migrateShardFromPassword = async (clientShard?: string) => {
-    await this.validateWaypointToken()
+    this.ensureWaypointTokenValid()
     const shard = clientShard || this.clientShard
 
     if (!shard) {
@@ -236,7 +236,7 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
 
     const currentAddress = await this.getSignableAddress()
 
-    return await validateSponsorTransaction({
+    return validateSponsorTransaction({
       httpUrl: lockboxHttpUrl,
       waypointToken,
       chain: { chainId, rpcUrl },
@@ -246,6 +246,7 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
   }
 
   setPassword = async (password: string) => {
+    // Ensure user has an address
     await this.getSignableAddress()
     const exchangePublicKey = await this.getExchangePublicKey()
 
@@ -258,6 +259,7 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
   }
 
   authenticate = async (password: string) => {
+    // Ensure user has an address
     await this.getSignableAddress()
     const exchangePublicKey = await this.getExchangePublicKey()
 

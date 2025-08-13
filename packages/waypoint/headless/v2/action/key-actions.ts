@@ -1,15 +1,13 @@
 import { isHeadlessV2Prod } from "../../common"
 import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { generateExchangeAsymmetricKeyApi, generateKeyPasswordlessApi } from "../api/key"
-import { BaseParams } from "../api/types"
+import { BaseParams } from "../types"
 
-export type GenerateExchangeKeyActionParams = BaseParams
-
-export async function generateKeyPasswordlessAction(params: GenerateExchangeKeyActionParams) {
+export async function generateKeyPasswordlessAction(params: BaseParams) {
   const { httpUrl, waypointToken } = params
 
   const tracker = createTracker({
-    event: HeadlessEventName.genPasswordlessKey,
+    event: HeadlessEventName.genKeyByHeadlessV2,
     waypointToken: waypointToken,
     passwordlessServiceUrl: httpUrl,
     isProdEnv: isHeadlessV2Prod(httpUrl),
@@ -32,15 +30,11 @@ export async function generateKeyPasswordlessAction(params: GenerateExchangeKeyA
   }
 }
 
-export type GenerateExchangeAsymmetricKeyActionParams = BaseParams
-
-export async function generateExchangeAsymmetricKeyAction(
-  params: GenerateExchangeAsymmetricKeyActionParams,
-) {
+export async function generateExchangeAsymmetricKeyAction(params: BaseParams) {
   const { httpUrl, waypointToken } = params
 
   const tracker = createTracker({
-    event: HeadlessEventName.genExchangeAsymmetricKey,
+    event: HeadlessEventName.genExchangeAsymmetricKeyByHeadlessV2,
     waypointToken: waypointToken,
     passwordlessServiceUrl: httpUrl,
     isProdEnv: isHeadlessV2Prod(httpUrl),

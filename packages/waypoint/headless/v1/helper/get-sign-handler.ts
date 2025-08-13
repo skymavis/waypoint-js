@@ -1,5 +1,5 @@
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
-import { createWasmInstance } from "../../wasm/create"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
+import { createWasmInstance } from "../wasm/create"
 
 export const wasmGetSignHandler = async (wasmUrl: string) => {
   const instance = await createWasmInstance(wasmUrl)

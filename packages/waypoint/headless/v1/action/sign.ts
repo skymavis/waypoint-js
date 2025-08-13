@@ -3,18 +3,18 @@ import { type Hex, keccak256 } from "viem"
 
 import { hexToBase64, jsonToBytes } from "../../common/utils/convertor"
 import { toEthereumSignature } from "../../common/utils/signature"
-import { FrameSchema, Type } from "../proto/rpc"
-import { SignRequestSchema, SignType } from "../proto/sign"
-import { decodeAuthenticateData, sendAuthenticate } from "./helpers/authenticate"
-import { wasmGetSignHandler } from "./helpers/get-sign-handler"
-import { createFrameQueue, openSocket } from "./helpers/open-socket"
+import { decodeAuthenticateData, sendAuthenticate } from "../helper/authenticate"
+import { wasmGetSignHandler } from "../helper/get-sign-handler"
+import { createFrameQueue, openSocket } from "../helper/open-socket"
 import {
   decodeProtocolDataAndTransferToWasm,
   decodeSessionAndTransferToWasm,
   sendProtocolData,
   wasmGetProtocolData,
-} from "./helpers/send-round-data"
-import { wasmTriggerSign } from "./helpers/trigger-sign"
+} from "../helper/send-round-data"
+import { wasmTriggerSign } from "../helper/trigger-sign"
+import { FrameSchema, Type } from "../proto/rpc"
+import { SignRequestSchema, SignType } from "../proto/sign"
 
 const sendSignMessageRequest = (socket: WebSocket, rawMessage: Hex) => {
   const signRequest = create(SignRequestSchema, {

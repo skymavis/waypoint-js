@@ -30,11 +30,7 @@ export const getHeadlessV1ServiceUrls = (env: HeadlessV1ServiceEnv): HeadlessV1S
   }
 }
 
-export const isHeadlessV1Prod = (productionFactor: string | boolean): boolean => {
-  if (typeof productionFactor === "boolean") {
-    return productionFactor
-  }
-
+export const isHeadlessV1Prod = (productionFactor: string): boolean => {
   return productionFactor === LOCKBOX_PROD_WS_URL || productionFactor === LOCKBOX_PROD_HTTP_URL
 }
 
@@ -64,10 +60,6 @@ export const getHeadlessV2ServiceUrls = (env: HeadlessV2ServiceEnv): HeadlessV2S
   }
 }
 
-export const isHeadlessV2Prod = (productionFactor: string | boolean): boolean => {
-  if (typeof productionFactor === "boolean") {
-    return productionFactor
-  }
-
+export const isHeadlessV2Prod = (productionFactor: string): boolean => {
   return productionFactor === HEADLESS_V2_PROD_HTTP_URL
 }

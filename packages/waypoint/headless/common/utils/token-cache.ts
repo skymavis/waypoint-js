@@ -3,13 +3,13 @@ import { jwtDecode } from "jwt-decode"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import type { WaypointTokenPayload } from "./token"
 
-export interface CachedTokenInfo {
+interface CachedTokenInfo {
   sub: string
   exp: number
   decodedAt: number
 }
 
-export class TokenCache {
+class TokenCache {
   private static instance: TokenCache
   private cache: Map<string, CachedTokenInfo> = new Map()
   private readonly BUFFER = 10
@@ -48,10 +48,8 @@ export class TokenCache {
     return Date.now() / 1000 > exp - this.BUFFER
   }
 
-  static validateToken(waypointToken: string): boolean {
-    const tokenCache = this.getInstance()
-
-    const cachedInfo = tokenCache.getCachedTokenInfo(waypointToken)
+  validateToken(waypointToken: string): boolean {
+    const cachedInfo = this.getCachedTokenInfo(waypointToken)
     if (cachedInfo) {
       return true
     }
@@ -63,11 +61,11 @@ export class TokenCache {
       if (!sub) throw "Token does not have an subject (sub field)"
       if (!exp) throw "Token does not have an expiration time (exp field)"
 
-      if (tokenCache.isTokenExpired(exp)) {
+      if (this.isTokenExpired(exp)) {
         throw `Token expired at ${new Date(exp * 1000).toString()} (exp="${exp}")`
       }
 
-      tokenCache.setCachedTokenInfo(waypointToken, payload)
+      this.setCachedTokenInfo(waypointToken, payload)
 
       return true
     } catch (error) {
@@ -79,3 +77,5 @@ export class TokenCache {
     }
   }
 }
+
+export const tokenCache = TokenCache.getInstance()

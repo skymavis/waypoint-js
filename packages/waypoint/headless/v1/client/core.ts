@@ -4,19 +4,19 @@ import { AbstractHeadlessCore, CreateAbstractHeadlessCoreOpts } from "../../comm
 import { TransactionParams } from "../../common/transaction/common"
 import { isRoninGasSponsorTransaction } from "../../common/transaction/tx-type-check"
 import { getHeadlessV1ServiceUrls, HeadlessV1ServiceEnv } from "../../common/utils/service-url"
-import { TokenCache } from "../../common/utils/token-cache"
+import { tokenCache } from "../../common/utils/token-cache"
 import { backupShard } from "../action/backup-shard"
 import { decryptShard } from "../action/decrypt-shard"
 import { encryptShard } from "../action/encrypt-shard"
 import { getAddressFromShard } from "../action/get-address"
 import { getBackupClientShard } from "../action/get-backup-shard"
 import { getUserProfile } from "../action/get-user-profile"
-import { validateSponsorTransaction } from "../action/helpers/validate-sponsor-tx"
 import { keygen } from "../action/keygen"
 import { personalSign } from "../action/personal-sign"
 import { sendPaidTransaction } from "../action/send-transaction/send-paid-tx"
 import { sendSponsoredTransaction } from "../action/send-transaction/send-sponsored"
 import { signTypedData } from "../action/sign-typed-data"
+import { validateSponsorTransaction } from "../helper/validate-sponsor-tx"
 import { WASM_URL } from "../wasm/cdn"
 
 type ExtraOptions = {
@@ -48,7 +48,7 @@ export class HeadlessV1Core extends AbstractHeadlessCore<ExtraOptions> {
 
     try {
       const isValidShard = isAddress(getAddressFromShard(clientShard))
-      const isValidToken = TokenCache.validateToken(waypointToken)
+      const isValidToken = tokenCache.validateToken(waypointToken)
 
       return isValidShard && isValidToken
     } catch (error) {

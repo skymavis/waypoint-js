@@ -2,16 +2,16 @@ import { isHeadlessV1Prod } from "../../common"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
 import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { bytesToJson } from "../../common/utils/convertor"
-import { type ActionHandler, type KeygenHandlerDoResponse } from "../wasm/types"
-import { decodeAuthenticateData, sendAuthenticate } from "./helpers/authenticate"
-import { wasmGetKeygenHandler } from "./helpers/get-keygen-handler"
-import { createFrameQueue, openSocket } from "./helpers/open-socket"
+import { decodeAuthenticateData, sendAuthenticate } from "../helper/authenticate"
+import { wasmGetKeygenHandler } from "../helper/get-keygen-handler"
+import { createFrameQueue, openSocket } from "../helper/open-socket"
 import {
   decodeProtocolDataAndTransferToWasm,
   decodeSessionAndTransferToWasm,
   sendProtocolData,
   wasmGetProtocolData,
-} from "./helpers/send-round-data"
+} from "../helper/send-round-data"
+import { type ActionHandler, type KeygenHandlerDoResponse } from "../wasm/types"
 
 const wasmTriggerKeygen = async (keygenHandler: ActionHandler) => {
   try {

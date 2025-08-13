@@ -1,6 +1,6 @@
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
-import { base64ToHex, bytesToBase64, bytesToJson } from "../../../common/utils/convertor"
-import { type ActionHandler, type SignHandlerDoResult } from "../../wasm/types"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
+import { base64ToHex, bytesToBase64, bytesToJson } from "../../common/utils/convertor"
+import { type ActionHandler, type SignHandlerDoResult } from "../wasm/types"
 
 // * trigger signing process in wasm
 export const wasmTriggerSign = async (

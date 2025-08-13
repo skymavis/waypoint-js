@@ -5,19 +5,19 @@ import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/er
 import { createTracker, HeadlessEventName } from "../../../common/track/track"
 import { toTransactionInServerFormat } from "../../../common/transaction/prepare-tx"
 import { decodeServerError } from "../../error/server"
-import { MessageSchema } from "../../proto/message"
-import { Frame, Type } from "../../proto/rpc"
-import { getAddressFromShard } from "../get-address"
-import { decodeAuthenticateData, sendAuthenticate } from "../helpers/authenticate"
-import { wasmGetSignHandler } from "../helpers/get-sign-handler"
-import { createFrameQueue, openSocket } from "../helpers/open-socket"
+import { decodeAuthenticateData, sendAuthenticate } from "../../helper/authenticate"
+import { wasmGetSignHandler } from "../../helper/get-sign-handler"
+import { createFrameQueue, openSocket } from "../../helper/open-socket"
 import {
   decodeProtocolDataAndTransferToWasm,
   decodeSessionAndTransferToWasm,
   sendProtocolData,
   wasmGetProtocolData,
-} from "../helpers/send-round-data"
-import { wasmTriggerSign } from "../helpers/trigger-sign"
+} from "../../helper/send-round-data"
+import { wasmTriggerSign } from "../../helper/trigger-sign"
+import { MessageSchema } from "../../proto/message"
+import { Frame, Type } from "../../proto/rpc"
+import { getAddressFromShard } from "../get-address"
 import { sendTransactionRequest } from "./send-tx-request"
 import { toTxHash } from "./to-tx-hash"
 import { SendTransactionParams, SendTransactionResult } from "./types"

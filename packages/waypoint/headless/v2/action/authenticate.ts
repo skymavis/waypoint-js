@@ -1,8 +1,8 @@
 import { isHeadlessV2Prod } from "../../common"
 import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { authenticateApi } from "../api/authenticate"
-import { BaseParams } from "../api/types"
-import { AESEncrypt } from "./helpers/crypto-actions"
+import { AESEncrypt } from "../helper/crypto-actions"
+import { BaseParams } from "../types"
 
 export type AuthenticateActionParams = BaseParams & {
   password: string
@@ -13,7 +13,7 @@ export const authenticateAction = async (params: AuthenticateActionParams) => {
   const { httpUrl, waypointToken, password, exchangePublicKey } = params
 
   const tracker = createTracker({
-    event: HeadlessEventName.authenticate,
+    event: HeadlessEventName.authenticateByHeadlessV2,
     waypointToken,
     passwordlessServiceUrl: httpUrl,
     isProdEnv: isHeadlessV2Prod(httpUrl),

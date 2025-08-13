@@ -24,16 +24,16 @@ export enum HeadlessEventName {
   sendSponsoredTransaction = "sendSponsoredTransaction",
 
   // * Headless V2 Event Name
-  sendPaidTransactionByPasswordless = "sendPaidTransactionByPasswordless",
-  sendSponsoredTransactionByPasswordless = "sendSponsoredTransactionByPasswordless",
-  signTypedDataByPasswordless = "signTypedDataByPasswordless",
-  personalSignByPasswordless = "personalSignByPasswordless",
-  genPasswordlessKey = "genPasswordlessKey",
-  migrateFromPasswordWallet = "migrateFromPasswordWallet",
-  genExchangeAsymmetricKey = "genExchangeAsymmetricKey",
-  pullPasswordlessClientShard = "pullPasswordlessClientShard",
-  setPassword = "setPassword",
-  authenticate = "authenticate",
+  sendPaidTransactionByHeadlessV2 = "sendPaidTransactionByHeadlessV2",
+  sendSponsoredTransactionByHeadlessV2 = "sendSponsoredTransactionByHeadlessV2",
+  signTypedDataByHeadlessV2 = "signTypedDataByHeadlessV2",
+  personalSignByHeadlessV2 = "personalSignByHeadlessV2",
+  genKeyByHeadlessV2 = "genKeyByHeadlessV2",
+  migrateFromPasswordWalletByHeadlessV2 = "migrateFromPasswordWalletByHeadlessV2",
+  genExchangeAsymmetricKeyByHeadlessV2 = "genExchangeAsymmetricKeyByHeadlessV2",
+  pullClientShardByHeadlessV2 = "pullClientShardByHeadlessV2",
+  setPasswordByHeadlessV2 = "setPasswordByHeadlessV2",
+  authenticateByHeadlessV2 = "authenticateByHeadlessV2",
 }
 export type PropertiesBase = {
   user_agent: string

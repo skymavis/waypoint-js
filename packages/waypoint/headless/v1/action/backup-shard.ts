@@ -7,6 +7,9 @@ import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error
 import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { bytesToBase64 } from "../../common/utils/convertor"
 import { decodeServerError } from "../error/server"
+import { decodeAuthenticateData, sendAuthenticate } from "../helper/authenticate"
+import { checkWeakBk } from "../helper/check-weak-bk"
+import { createFrameQueue, openSocket } from "../helper/open-socket"
 import {
   BackupRequestSchema,
   BackupResponseSchema,
@@ -17,9 +20,6 @@ import {
 import { Frame, FrameSchema, Type } from "../proto/rpc"
 import { encryptShard } from "./encrypt-shard"
 import { getSecretFromShard } from "./get-address"
-import { decodeAuthenticateData, sendAuthenticate } from "./helpers/authenticate"
-import { checkWeakBk } from "./helpers/check-weak-bk"
-import { createFrameQueue, openSocket } from "./helpers/open-socket"
 
 export type BackupShardParams = {
   waypointToken: string

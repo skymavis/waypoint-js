@@ -62,22 +62,18 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
     this.core = core
   }
 
-  getAccounts = () => {
-    try {
-      const address = this.core.getAddress()
-      const signable = this.core.isSignable()
+  getAccounts = (): Address[] => {
+    const address = this.core.getAddress()
+    const signable = this.core.isSignable()
 
-      if (address && signable) {
-        return [address] as const
-      }
-    } catch (error) {
-      /* empty */
+    if (address && signable) {
+      return [address] as const
     }
 
     return []
   }
 
-  requestAccounts = async () => {
+  requestAccounts = () => {
     try {
       const address = this.core.getAddress()
       const signable = this.core.isSignable()
@@ -91,9 +87,7 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
       }
     }
 
-    throw new UnauthorizedProviderError(
-      new Error("The headless passwordless core is not signable."),
-    )
+    throw new UnauthorizedProviderError(new Error("The headless core is not signable."))
   }
 
   personalSign = async (params: [data: Hex, address: Address]) => {

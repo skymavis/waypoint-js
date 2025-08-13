@@ -2,7 +2,7 @@ import { concatBytes, numberToBytes, stringToBytes } from "viem"
 
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
 import { bytesToBase64 } from "../../common/utils/convertor"
-import { deriveKey } from "./helpers/key"
+import { deriveKey } from "../helper/key"
 
 const packEncryptedContent = (
   cipherText: Uint8Array,

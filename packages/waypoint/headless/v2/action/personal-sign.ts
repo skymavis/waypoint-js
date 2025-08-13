@@ -6,24 +6,22 @@ import {
   verifyMessage,
 } from "viem"
 
-import { isHeadlessV2Prod } from "../../../common"
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
-import { createTracker, HeadlessEventName } from "../../../common/track/track"
-import { hexToBase64 } from "../../../common/utils/convertor"
-import { toEthereumSignature } from "../../../common/utils/signature"
-import { signMessageApi } from "../../api/sign"
+import { isHeadlessV2Prod } from "../../common"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
+import { createTracker, HeadlessEventName } from "../../common/track/track"
+import { hexToBase64 } from "../../common/utils/convertor"
+import { toEthereumSignature } from "../../common/utils/signature"
+import { signMessageApi } from "../api/sign"
+import { BaseParams } from "../types"
 
-export type PersonalSignParams = {
+export type PersonalSignParams = BaseParams & {
   message: SignableMessage
-  waypointToken: string
   address: Address
-
-  httpUrl: string
 }
 
-export const personalSign = async (params: PersonalSignParams): Promise<Hex> => {
+export const personalSignAction = async (params: PersonalSignParams): Promise<Hex> => {
   const tracker = createTracker({
-    event: HeadlessEventName.personalSign,
+    event: HeadlessEventName.personalSignByHeadlessV2,
     waypointToken: params.waypointToken,
     passwordlessServiceUrl: params.httpUrl,
     isProdEnv: isHeadlessV2Prod(params.httpUrl),

@@ -2,9 +2,8 @@ import { isHeadlessV2Prod } from "../../common"
 import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { arrayBufferToBase64 } from "../../common/utils/convertor"
 import { pullShardApi } from "../api/pull-shard"
-import { BaseParams } from "../api/types"
-import { AESDecrypt } from "./helpers/crypto-actions"
-import { encryptContent } from "./helpers/key-actions"
+import { AESDecrypt, encryptContent } from "../helper/crypto-actions"
+import { BaseParams } from "../types"
 
 export type PullShardActionParams = BaseParams & {
   exchangePublicKey: string
@@ -14,7 +13,7 @@ export async function pullShardAction(params: PullShardActionParams) {
   const { httpUrl, waypointToken, exchangePublicKey } = params
 
   const tracker = createTracker({
-    event: HeadlessEventName.pullPasswordlessClientShard,
+    event: HeadlessEventName.pullClientShardByHeadlessV2,
     waypointToken: waypointToken,
     passwordlessServiceUrl: httpUrl,
     isProdEnv: isHeadlessV2Prod(httpUrl),

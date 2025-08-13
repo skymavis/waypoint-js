@@ -1,11 +1,11 @@
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf"
 import { v4 as uuidv4 } from "uuid"
 
-import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
-import { addBearerPrefix } from "../../../common/utils/token"
-import { decodeServerError } from "../../error/server"
-import { AuthenticateRequestSchema, AuthenticateResponseSchema } from "../../proto/auth"
-import { Frame, FrameSchema, Type } from "../../proto/rpc"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
+import { addBearerPrefix } from "../../common/utils/token"
+import { decodeServerError } from "../error/server"
+import { AuthenticateRequestSchema, AuthenticateResponseSchema } from "../proto/auth"
+import { Frame, FrameSchema, Type } from "../proto/rpc"
 
 export const sendAuthenticate = (socket: WebSocket, waypointToken: string) => {
   const authRequest = create(AuthenticateRequestSchema, {

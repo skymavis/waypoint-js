@@ -4,9 +4,9 @@ import { isHeadlessV1Prod } from "../../common"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
 import { createTracker, HeadlessEventName } from "../../common/track/track"
 import { base64ToBytes } from "../../common/utils/convertor"
+import { checkWeakBk } from "../helper/check-weak-bk"
+import { deriveKey } from "../helper/key"
 import { IV_LENGTH_BYTE, TAG_LENGTH_BYTE } from "./encrypt-shard"
-import { checkWeakBk } from "./helpers/check-weak-bk"
-import { deriveKey } from "./helpers/key"
 
 const unpackEncryptedContent = (
   packedContent: string,

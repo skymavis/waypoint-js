@@ -1,14 +1,14 @@
 import { Address } from "viem"
 
-import { ServerError } from "../../../common/error/server"
-import { request } from "../../../common/request/request"
+import { ServerError } from "../../common/error/server"
+import { request } from "../../common/request/request"
 import {
   ChainParams,
   SupportedTransaction,
   TransactionParams,
-} from "../../../common/transaction/common"
-import { toTransactionInServerFormat } from "../../../common/transaction/prepare-tx"
-import { RawServerError } from "../../error/raw-server"
+} from "../../common/transaction/common"
+import { toTransactionInServerFormat } from "../../common/transaction/prepare-tx"
+import { RawServerError } from "../error/raw-server"
 
 type ValidateSponsorTransactionApiResponse = {
   data: ValidateSponsorTransactionResult

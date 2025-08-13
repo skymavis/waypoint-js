@@ -2,10 +2,7 @@ import { Address } from "viem"
 
 import { PreferMethod, ServerError } from "../../common"
 import { request } from "../../common/request/request"
-import { RawServerError } from "../error/raw-server"
-import { BaseParams } from "./types"
-
-export type GetUserProfileParams = BaseParams
+import { BaseParams, RawServerError } from "../types"
 
 export type GetUserProfileApiResponse = {
   uuid: string
@@ -14,7 +11,7 @@ export type GetUserProfileApiResponse = {
   prefer_method: PreferMethod
 }
 
-export const getUserProfileApi = async (params: GetUserProfileParams) => {
+export const getUserProfileApi = async (params: BaseParams) => {
   const { httpUrl, waypointToken } = params
 
   const { data, error } = await request<GetUserProfileApiResponse, RawServerError>(

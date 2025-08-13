@@ -47,8 +47,8 @@ export {
   validateSponsorTransaction,
   type ValidateSponsorTransactionParams,
   type ValidateSponsorTransactionResult,
-} from "./action/helpers/validate-sponsor-tx"
+} from "./helper/validate-sponsor-tx"
 
 // utils
-export { TokenCache } from "../common/utils/token-cache"
+export { tokenCache } from "../common/utils/token-cache"
 export { WASM_URL } from "./wasm/cdn"

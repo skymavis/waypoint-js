@@ -3,8 +3,7 @@ import { Hash } from "viem"
 import { ServerError } from "../../common"
 import { request } from "../../common/request/request"
 import { TransactionInServerFormat } from "../../common/transaction/common"
-import { RawServerError } from "../error/raw-server"
-import { BaseParams } from "./types"
+import { BaseParams, RawServerError } from "../types"
 
 export type SendTransactionParams = BaseParams & {
   tx: TransactionInServerFormat

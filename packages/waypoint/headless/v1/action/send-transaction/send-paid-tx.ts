@@ -6,18 +6,18 @@ import { toTransactionInServerFormat } from "../../../common/transaction/prepare
 import { serializeTX } from "../../../common/transaction/serialize-tx"
 import { isEIP1559CompatibleTransaction } from "../../../common/transaction/tx-type-check"
 import { decodeServerError } from "../../error/server"
-import { Type } from "../../proto/rpc"
-import { getAddressFromShard } from "../get-address"
-import { decodeAuthenticateData, sendAuthenticate } from "../helpers/authenticate"
-import { wasmGetSignHandler } from "../helpers/get-sign-handler"
-import { createFrameQueue, openSocket } from "../helpers/open-socket"
+import { decodeAuthenticateData, sendAuthenticate } from "../../helper/authenticate"
+import { wasmGetSignHandler } from "../../helper/get-sign-handler"
+import { createFrameQueue, openSocket } from "../../helper/open-socket"
 import {
   decodeProtocolDataAndTransferToWasm,
   decodeSessionAndTransferToWasm,
   sendProtocolData,
   wasmGetProtocolData,
-} from "../helpers/send-round-data"
-import { wasmTriggerSign } from "../helpers/trigger-sign"
+} from "../../helper/send-round-data"
+import { wasmTriggerSign } from "../../helper/trigger-sign"
+import { Type } from "../../proto/rpc"
+import { getAddressFromShard } from "../get-address"
 import { sendTransactionRequest } from "./send-tx-request"
 import { toTxHash } from "./to-tx-hash"
 import { SendTransactionParams, SendTransactionResult } from "./types"

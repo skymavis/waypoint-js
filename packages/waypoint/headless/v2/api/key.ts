@@ -1,15 +1,12 @@
 import { ServerError } from "../../common"
 import { request } from "../../common/request/request"
-import { RawServerError } from "../error/raw-server"
-import { BaseParams } from "./types"
-
-export type GenerateExchangeKeyParams = BaseParams
+import { BaseParams, RawServerError } from "../types"
 
 export type GenerateExchangeKeyApiResponse = {
   uuid: string
 }
 
-export async function generateKeyPasswordlessApi(params: GenerateExchangeKeyParams) {
+export async function generateKeyPasswordlessApi(params: BaseParams) {
   const { httpUrl, waypointToken } = params
 
   const { data, error } = await request<GenerateExchangeKeyApiResponse, RawServerError>(
@@ -26,15 +23,11 @@ export async function generateKeyPasswordlessApi(params: GenerateExchangeKeyPara
   throw new ServerError({ code: error.error_code, message: error.error_message })
 }
 
-export type GenerateExchangeAsymmetricKeyParams = BaseParams
-
 export type GenerateExchangeAsymmetricKeyApiResponse = {
   public_key: string
 }
 
-export async function generateExchangeAsymmetricKeyApi(
-  params: GenerateExchangeAsymmetricKeyParams,
-) {
+export async function generateExchangeAsymmetricKeyApi(params: BaseParams) {
   const { httpUrl, waypointToken } = params
 
   const { data, error } = await request<GenerateExchangeAsymmetricKeyApiResponse, RawServerError>(

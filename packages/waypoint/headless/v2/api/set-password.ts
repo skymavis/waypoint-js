@@ -1,7 +1,6 @@
 import { ServerError } from "../../common"
 import { request } from "../../common/request/request"
-import { RawServerError } from "../error/raw-server"
-import { BaseParams, EncryptedPasswordParams } from "./types"
+import { BaseParams, EncryptedPasswordParams, RawServerError } from "../types"
 
 export type SetPasswordParams = BaseParams & EncryptedPasswordParams
 
