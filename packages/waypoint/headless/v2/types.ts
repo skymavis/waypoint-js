@@ -12,6 +12,7 @@ export type RawServerError = {
 }
 
 export type BaseParams = {
+  enableTracking?: boolean
   httpUrl: string
   waypointToken: string
 }

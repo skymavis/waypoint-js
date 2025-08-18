@@ -117,11 +117,11 @@ export class HeadlessV2Core extends AbstractHeadlessCore<ExtraOptions> {
     })
   }
 
-  signTypedData = async (typedData: TypedDataDefinition) => {
+  signTypedData = async (data: TypedDataDefinition | string) => {
     const address = await this.getSignableAddress()
 
     return signTypedDataAction({
-      typedData,
+      data,
       waypointToken: this.waypointToken,
       address,
       httpUrl: this.httpUrl,

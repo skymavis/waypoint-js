@@ -9,11 +9,15 @@ import {
   type HashTypedDataParameters,
   type HashTypedDataReturnType,
   type Hex,
+  InternalRpcError,
   keccak256,
   toHex,
   type TypedData,
+  TypedDataDefinition,
   validateTypedData,
 } from "viem"
+
+import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 
 type MessageTypeProperty = {
   name: string
@@ -205,4 +209,23 @@ function encodeField({
   }
 
   return [{ type }, value]
+}
+
+export function parseTypedData(data: TypedDataDefinition | string): TypedDataDefinition {
+  let typedData: TypedDataDefinition
+  try {
+    if (typeof data === "string") {
+      typedData = JSON.parse(data) as TypedDataDefinition
+    } else {
+      typedData = data
+    }
+    return typedData
+  } catch (err) {
+    const parseError = new HeadlessClientError({
+      cause: err,
+      code: HeadlessClientErrorCode.ParseTypedDataError,
+      message: `Unable to parse typedData="${data}".`,
+    })
+    throw new InternalRpcError(parseError)
+  }
 }

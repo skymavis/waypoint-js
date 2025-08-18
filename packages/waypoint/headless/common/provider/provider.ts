@@ -122,22 +122,6 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
   signTypedDataV4 = async (params: [address: Address, data: TypedDataDefinition | string]) => {
     const [address, data] = params
 
-    let typedData: TypedDataDefinition
-    try {
-      if (typeof data === "string") {
-        typedData = JSON.parse(data) as TypedDataDefinition
-      } else {
-        typedData = data
-      }
-    } catch (err) {
-      const parseError = new HeadlessClientError({
-        cause: err,
-        code: HeadlessClientErrorCode.ParseTypedDataError,
-        message: `Unable to parse typedData="${data}".`,
-      })
-      throw new InternalRpcError(parseError)
-    }
-
     const [currentAddress] = await this.requestAccounts()
     if (!isAddressEqual(address, currentAddress)) {
       const notMatchError = new HeadlessClientError({
@@ -149,7 +133,7 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
     }
 
     try {
-      return await this.core.signTypedData(typedData)
+      return this.core.signTypedData(data)
     } catch (err) {
       if (err instanceof Error) {
         throw new InternalRpcError(err)

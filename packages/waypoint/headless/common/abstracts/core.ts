@@ -81,7 +81,7 @@ export abstract class AbstractHeadlessCore<ExtraOptions extends object = object>
 
   abstract signMessage: (message: SignableMessage) => Promise<Hex>
 
-  abstract signTypedData: (typedData: TypedDataDefinition) => Promise<Hex>
+  abstract signTypedData: (data: TypedDataDefinition | string) => Promise<Hex>
 
   abstract sendTransaction: (transaction: TransactionParams) => Promise<{
     txHash: Hash

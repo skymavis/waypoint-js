@@ -156,7 +156,7 @@ const KeygenTestPage = () => {
         wsUrl: LOCKBOX_STAG_WS_URL,
         clientShard: CLIENT_SHARD,
         waypointToken: WAYPOINT_TOKEN,
-        typedData: SAMPLE_TYPED_DATA,
+        data: SAMPLE_TYPED_DATA,
       }),
     )
   }

@@ -3,12 +3,12 @@ import { type Hex, type TypedDataDefinition, verifyTypedData } from "viem"
 import { isHeadlessV1Prod } from "../../common"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../../common/error/client"
 import { createTracker, HeadlessEventName } from "../../common/track/track"
-import { prepareTypedData } from "../../common/transaction/prepare-typed-data"
+import { parseTypedData, prepareTypedData } from "../../common/transaction/prepare-typed-data"
 import { getAddressFromShard } from "./get-address"
 import { _sign } from "./sign"
 
 export type SignTypedDataParams = {
-  typedData: TypedDataDefinition
+  data: TypedDataDefinition | string
 
   waypointToken: string
   clientShard: string
@@ -26,7 +26,8 @@ export const signTypedData = async (params: SignTypedDataParams): Promise<Hex> =
   })
 
   try {
-    const { typedData, ...restParams } = params
+    const { data, ...restParams } = params
+    const typedData = parseTypedData(data)
     const address = getAddressFromShard(params.clientShard)
     const rawMessage = prepareTypedData(typedData)
 

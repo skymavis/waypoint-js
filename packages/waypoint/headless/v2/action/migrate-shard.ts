@@ -10,14 +10,16 @@ export type MigrateShardActionParams = BaseParams & {
 }
 
 export const migrateShardAction = async (params: MigrateShardActionParams) => {
-  const { httpUrl, waypointToken, clientShard, exchangePublicKey } = params
+  const { httpUrl, waypointToken, clientShard, exchangePublicKey, enableTracking = true } = params
 
-  const tracker = createTracker({
-    event: HeadlessEventName.migrateFromPasswordWalletByHeadlessV2,
-    waypointToken,
-    passwordlessServiceUrl: httpUrl,
-    isProdEnv: isHeadlessV2Prod(httpUrl),
-  })
+  const tracker = enableTracking
+    ? createTracker({
+        event: HeadlessEventName.migrateFromPasswordWalletByHeadlessV2,
+        waypointToken,
+        passwordlessServiceUrl: httpUrl,
+        isProdEnv: isHeadlessV2Prod(httpUrl),
+      })
+    : null
 
   try {
     const encryptedShardPayload = await AESEncrypt({
@@ -33,13 +35,13 @@ export const migrateShardAction = async (params: MigrateShardActionParams) => {
       shardNonceB64: encryptedShardPayload.nonceB64,
     })
 
-    tracker.trackOk({
+    tracker?.trackOk({
       response: { ...data },
     })
 
     return data
   } catch (error) {
-    tracker.trackError(error)
+    tracker?.trackError(error)
     throw error
   }
 }

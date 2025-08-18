@@ -4,14 +4,16 @@ import { generateExchangeAsymmetricKeyApi, generateKeyPasswordlessApi } from "..
 import { BaseParams } from "../types"
 
 export async function generateKeyPasswordlessAction(params: BaseParams) {
-  const { httpUrl, waypointToken } = params
+  const { httpUrl, waypointToken, enableTracking = true } = params
 
-  const tracker = createTracker({
-    event: HeadlessEventName.genKeyByHeadlessV2,
-    waypointToken: waypointToken,
-    passwordlessServiceUrl: httpUrl,
-    isProdEnv: isHeadlessV2Prod(httpUrl),
-  })
+  const tracker = enableTracking
+    ? createTracker({
+        event: HeadlessEventName.genKeyByHeadlessV2,
+        waypointToken: waypointToken,
+        passwordlessServiceUrl: httpUrl,
+        isProdEnv: isHeadlessV2Prod(httpUrl),
+      })
+    : null
 
   try {
     const data = await generateKeyPasswordlessApi({
@@ -19,37 +21,40 @@ export async function generateKeyPasswordlessAction(params: BaseParams) {
       waypointToken,
     })
 
-    tracker.trackOk({
+    tracker?.trackOk({
       response: { ...data },
     })
 
     return data
   } catch (error) {
-    tracker.trackError(error)
+    tracker?.trackError(error)
     throw error
   }
 }
 
 export async function generateExchangeAsymmetricKeyAction(params: BaseParams) {
-  const { httpUrl, waypointToken } = params
+  const { httpUrl, waypointToken, enableTracking = true } = params
 
-  const tracker = createTracker({
-    event: HeadlessEventName.genExchangeAsymmetricKeyByHeadlessV2,
-    waypointToken: waypointToken,
-    passwordlessServiceUrl: httpUrl,
-    isProdEnv: isHeadlessV2Prod(httpUrl),
-  })
+  const tracker = enableTracking
+    ? createTracker({
+        event: HeadlessEventName.genExchangeAsymmetricKeyByHeadlessV2,
+        waypointToken: waypointToken,
+        passwordlessServiceUrl: httpUrl,
+        isProdEnv: isHeadlessV2Prod(httpUrl),
+      })
+    : null
+
   try {
     const data = await generateExchangeAsymmetricKeyApi({
       httpUrl,
       waypointToken,
     })
 
-    tracker.trackOk({})
+    tracker?.trackOk({})
 
     return data
   } catch (error) {
-    tracker.trackError(error)
+    tracker?.trackError(error)
     throw error
   }
 }

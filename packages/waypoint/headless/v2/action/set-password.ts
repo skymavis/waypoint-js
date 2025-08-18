@@ -10,14 +10,16 @@ export type SetPasswordActionParams = BaseParams & {
 }
 
 export const setPasswordAction = async (params: SetPasswordActionParams) => {
-  const { httpUrl, waypointToken, password, exchangePublicKey } = params
+  const { httpUrl, waypointToken, password, exchangePublicKey, enableTracking = true } = params
 
-  const tracker = createTracker({
-    event: HeadlessEventName.setPasswordByHeadlessV2,
-    waypointToken,
-    passwordlessServiceUrl: httpUrl,
-    isProdEnv: isHeadlessV2Prod(httpUrl),
-  })
+  const tracker = enableTracking
+    ? createTracker({
+        event: HeadlessEventName.setPasswordByHeadlessV2,
+        waypointToken,
+        passwordlessServiceUrl: httpUrl,
+        isProdEnv: isHeadlessV2Prod(httpUrl),
+      })
+    : null
 
   try {
     const encryptedPassword = await AESEncrypt({
@@ -33,13 +35,13 @@ export const setPasswordAction = async (params: SetPasswordActionParams) => {
       nonceB64: encryptedPassword.nonceB64,
     })
 
-    tracker.trackOk({
+    tracker?.trackOk({
       response: { ...data },
     })
 
     return data
   } catch (error) {
-    tracker.trackError(error)
+    tracker?.trackError(error)
     throw error
   }
 }

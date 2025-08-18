@@ -7,13 +7,15 @@ import { SendTransactionParams, SendTransactionResult } from "../types"
 export const sendSponsoredTransactionAction = async (
   params: SendTransactionParams,
 ): Promise<SendTransactionResult> => {
-  const { chain, transaction, waypointToken, httpUrl, address } = params
-  const tracker = createTracker({
-    event: HeadlessEventName.sendSponsoredTransactionByHeadlessV2,
-    waypointToken: params.waypointToken,
-    passwordlessServiceUrl: params.httpUrl,
-    isProdEnv: isHeadlessV2Prod(params.httpUrl),
-  })
+  const { chain, transaction, waypointToken, httpUrl, address, enableTracking = true } = params
+  const tracker = enableTracking
+    ? createTracker({
+        event: HeadlessEventName.sendSponsoredTransactionByHeadlessV2,
+        waypointToken: params.waypointToken,
+        passwordlessServiceUrl: params.httpUrl,
+        isProdEnv: isHeadlessV2Prod(params.httpUrl),
+      })
+    : null
 
   try {
     const txInServerFormat = await toTransactionInServerFormat({
@@ -27,7 +29,7 @@ export const sendSponsoredTransactionAction = async (
       rpcUrl: chain.rpcUrl,
       waypointToken,
     })
-    tracker.trackOk({
+    tracker?.trackOk({
       request: { transaction, chain },
       response: { txHash: result.tx_hash },
     })
@@ -35,7 +37,7 @@ export const sendSponsoredTransactionAction = async (
       txHash: result.tx_hash,
     }
   } catch (error) {
-    tracker.trackError(error)
+    tracker?.trackError(error)
     throw error
   }
 }

@@ -124,11 +124,11 @@ export class HeadlessV1Core extends AbstractHeadlessCore<ExtraOptions> {
     })
   }
 
-  signTypedData = (typedData: TypedDataDefinition) => {
+  signTypedData = (data: TypedDataDefinition | string) => {
     const { clientShard, wsUrl, waypointToken, wasmUrl } = this
 
     return signTypedData({
-      typedData,
+      data,
       clientShard,
       waypointToken,
 

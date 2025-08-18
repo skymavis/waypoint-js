@@ -20,15 +20,18 @@ export type PersonalSignParams = BaseParams & {
 }
 
 export const personalSignAction = async (params: PersonalSignParams): Promise<Hex> => {
-  const tracker = createTracker({
-    event: HeadlessEventName.personalSignByHeadlessV2,
-    waypointToken: params.waypointToken,
-    passwordlessServiceUrl: params.httpUrl,
-    isProdEnv: isHeadlessV2Prod(params.httpUrl),
-  })
-  try {
-    const { message, waypointToken, address, httpUrl } = params
+  const { message, waypointToken, address, httpUrl, enableTracking = true } = params
 
+  const tracker = enableTracking
+    ? createTracker({
+        event: HeadlessEventName.personalSignByHeadlessV2,
+        waypointToken: params.waypointToken,
+        passwordlessServiceUrl: params.httpUrl,
+        isProdEnv: isHeadlessV2Prod(params.httpUrl),
+      })
+    : null
+
+  try {
     const signResult = await signMessageApi({
       messageBase64: hexToBase64(toPrefixedMessage(message)),
       waypointToken,
@@ -51,13 +54,13 @@ export const personalSignAction = async (params: PersonalSignParams): Promise<He
       })
     }
 
-    tracker.trackOk({
+    tracker?.trackOk({
       request: { message },
     })
 
     return signature
   } catch (error) {
-    tracker.trackError(error)
+    tracker?.trackError(error)
     throw error
   }
 }

@@ -10,14 +10,16 @@ export type PullShardActionParams = BaseParams & {
 }
 
 export async function pullShardAction(params: PullShardActionParams) {
-  const { httpUrl, waypointToken, exchangePublicKey } = params
+  const { httpUrl, waypointToken, exchangePublicKey, enableTracking = true } = params
 
-  const tracker = createTracker({
-    event: HeadlessEventName.pullClientShardByHeadlessV2,
-    waypointToken: waypointToken,
-    passwordlessServiceUrl: httpUrl,
-    isProdEnv: isHeadlessV2Prod(httpUrl),
-  })
+  const tracker = enableTracking
+    ? createTracker({
+        event: HeadlessEventName.pullClientShardByHeadlessV2,
+        waypointToken: waypointToken,
+        passwordlessServiceUrl: httpUrl,
+        isProdEnv: isHeadlessV2Prod(httpUrl),
+      })
+    : null
 
   try {
     const { encryptedContent: clientEncryptedKey, encryptionKey } =
@@ -29,7 +31,7 @@ export async function pullShardAction(params: PullShardActionParams) {
       clientEncryptedKey: arrayBufferToBase64(clientEncryptedKey),
     })
 
-    tracker.trackOk({})
+    tracker?.trackOk({})
 
     return AESDecrypt({
       ciphertextB64: pullShardResult.shardCiphertextB64,
@@ -37,7 +39,7 @@ export async function pullShardAction(params: PullShardActionParams) {
       aesKey: encryptionKey,
     })
   } catch (error) {
-    tracker.trackError(error)
+    tracker?.trackError(error)
     throw error
   }
 }
