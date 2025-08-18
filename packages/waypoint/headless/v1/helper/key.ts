@@ -28,5 +28,5 @@ export const deriveKey = async (waypointToken: string, recoveryPassword: string)
   const salt = stringToBytes(`${DEFAULT_ISS}:${sub}`)
   const password = stringToBytes(`${DEFAULT_ISS}:${sub}:${recoveryPassword}`)
 
-  return await createDerivedKey(password, salt)
+  return createDerivedKey(password, salt)
 }

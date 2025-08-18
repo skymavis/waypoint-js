@@ -181,7 +181,7 @@ export class HeadlessV1Core extends AbstractHeadlessCore<ExtraOptions> {
     const { httpUrl, waypointToken, chainId, rpcUrl, getAddress } = this
 
     const currentAddress = getAddress()
-    return await validateSponsorTransaction({
+    return validateSponsorTransaction({
       httpUrl,
       waypointToken,
       chain: { chainId, rpcUrl },

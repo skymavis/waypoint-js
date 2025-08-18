@@ -76,7 +76,7 @@ const fetchEIP1559GasSuggestion = async (
       maxPriorityFeePerGas: data.medium.max_priority_fee_per_gas,
     }
   } catch (error) {
-    return await viemEstimateFeesPerGas(client)
+    return viemEstimateFeesPerGas(client)
   }
 }
 
@@ -132,8 +132,8 @@ export async function estimateFeesPerGas(
   const { type, gasPrice } = params
 
   try {
-    if (isEIP1559CompatibleTransaction(type)) return await handleEIP1559Transaction(client, params)
-    return await handleLegacyTransaction(client, gasPrice)
+    if (isEIP1559CompatibleTransaction(type)) return handleEIP1559Transaction(client, params)
+    return handleLegacyTransaction(client, gasPrice)
   } catch (error) {
     throw new HeadlessClientError({
       cause: error,

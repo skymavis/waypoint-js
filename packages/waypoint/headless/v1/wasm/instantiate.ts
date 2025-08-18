@@ -24,7 +24,7 @@ const wasmBrowserInstantiate = async (wasmModuleUrl: string, importObject: WebAs
     const wasmResponse = await fetch(wasmModuleUrl)
     const wasmArrayBuffer = await wasmResponse.arrayBuffer()
 
-    return await WebAssembly.instantiate(wasmArrayBuffer, importObject)
+    return WebAssembly.instantiate(wasmArrayBuffer, importObject)
   } catch (error) {
     throw new HeadlessClientError({
       code: HeadlessClientErrorCode.InstantiateError,

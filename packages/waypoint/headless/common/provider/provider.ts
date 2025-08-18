@@ -104,7 +104,7 @@ export class HeadlessProvider extends EventEmitter implements HeadlessProviderTy
     }
 
     try {
-      return await this.core.signMessage({ raw: data })
+      return this.core.signMessage({ raw: data })
     } catch (err) {
       if (err instanceof Error) {
         throw new InternalRpcError(err)
