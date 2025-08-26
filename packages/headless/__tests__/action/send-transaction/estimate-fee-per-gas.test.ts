@@ -3,8 +3,8 @@ import { estimateFeesPerGas as viemEstimateFeesPerGas, getGasPrice } from "viem/
 import { ronin, saigon } from "viem/chains"
 import { beforeEach, describe, expect, test, vi } from "vitest"
 
-import { request } from "../../../../headless/common/request/request"
-import { SupportedTransaction } from "../../../../headless/common/transaction/common"
+import { request } from "../../../common/request/request"
+import { SupportedTransaction } from "../../../common/transaction/common"
 import {
   applyBuffer,
   estimateFeesPerGas,
@@ -12,10 +12,10 @@ import {
   GAS_PRICE_BUFFER_PERCENTAGE,
   GAS_SUGGESTION_ROUTES,
   GasSuggestionResponse,
-} from "../../../../headless/common/transaction/estimate-fee-per-gas"
-import { isEIP1559CompatibleTransaction } from "../../../../headless/common/transaction/tx-type-check"
+} from "../../../common/transaction/estimate-fee-per-gas"
+import { isEIP1559CompatibleTransaction } from "../../../common/transaction/tx-type-check"
 
-vi.mock("../../../../headless/common/request/request", () => ({
+vi.mock("../../../common/request/request", () => ({
   request: vi.fn(),
 }))
 
@@ -24,7 +24,7 @@ vi.mock("viem/actions", () => ({
   estimateFeesPerGas: vi.fn(),
 }))
 
-vi.mock("../../../../headless/common/transaction/tx-type-check", () => ({
+vi.mock("../../../common/transaction/tx-type-check", () => ({
   isEIP1559CompatibleTransaction: vi.fn().mockReturnValue(false),
 }))
 

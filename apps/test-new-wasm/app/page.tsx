@@ -14,7 +14,7 @@ import {
   signTypedData,
   SupportedTransaction,
   validateSponsorTransaction,
-} from "@sky-mavis/waypoint/headless/v1"
+} from "@sky-mavis/headless/v1"
 import { useState } from "react"
 import { getAddress, toHex, TypedDataDefinition } from "viem"
 import { saigon } from "viem/chains"

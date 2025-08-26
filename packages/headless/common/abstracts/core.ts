@@ -9,8 +9,8 @@ import {
   TypedDataDefinition,
 } from "viem"
 
-import { VIEM_CHAIN_MAPPING } from "../../../common"
 import { ValidateSponsorTransactionResult } from "../../v1"
+import { VIEM_CHAIN_MAPPING } from "../chain"
 import { HeadlessClientError, HeadlessClientErrorCode } from "../error/client"
 import { TransactionParams } from "../transaction/common"
 

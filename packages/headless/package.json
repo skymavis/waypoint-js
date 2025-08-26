@@ -1,9 +1,9 @@
 {
-  "name": "@sky-mavis/waypoint",
+  "name": "@sky-mavis/headless",
   "repository": {
-    "url": "https://github.com/skymavis/waypoint-js"
+    "url": "https://github.com/skymavis/headless-js"
   },
-  "version": "5.0.0-beta.09",
+  "version": "0.1.0",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -23,30 +23,20 @@
   ],
   "exports": {
     "./package.json": "./package.json",
-    ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/module/index.js",
-      "require": "./dist/commonjs/index.js"
-    },
     "./common": {
       "types": "./dist/types/common/index.d.ts",
       "import": "./dist/module/common/index.js",
       "require": "./dist/commonjs/common/index.js"
     },
-    "./web": {
-      "types": "./dist/types/web/index.d.ts",
-      "import": "./dist/module/web/index.js",
-      "require": "./dist/commonjs/web/index.js"
+    "./v1": {
+      "types": "./dist/types/v1/index.d.ts",
+      "import": "./dist/module/v1/index.js",
+      "require": "./dist/commonjs/v1/index.js"
     },
-    "./skynet": {
-      "types": "./dist/types/skynet/index.d.ts",
-      "import": "./dist/module/skynet/index.js",
-      "require": "./dist/commonjs/skynet/index.js"
-    },
-    "./deposit": {
-      "types": "./dist/types/deposit/index.d.ts",
-      "import": "./dist/module/deposit/index.js",
-      "require": "./dist/commonjs/deposit/index.js"
+    "./v2": {
+      "types": "./dist/types/v2/index.d.ts",
+      "import": "./dist/module/v2/index.js",
+      "require": "./dist/commonjs/v2/index.js"
     }
   },
   "scripts": {
@@ -61,20 +51,16 @@
     "@babel/preset-env": "7.24.4",
     "@bufbuild/protobuf": "2.2.2",
     "@noble/curves": "1.6.0",
-    "@noble/hashes": "1.7.1",
     "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-commonjs": "25.0.7",
     "@rollup/plugin-node-resolve": "15.2.3",
     "@sky-mavis/eslint-config-ts": "workspace:*",
     "@types/node": "20.12.11",
-    "@vitest/ui": "2.1.4",
     "eslint": "8.57.0",
-    "fs-extra": "11.2.0",
     "genversion": "3.2.0",
     "glob": "11.0.0",
     "jsdom": "25.0.1",
     "jwt-decode": "4.0.0",
-    "ofetch": "1.4.0",
     "prettier": "3.2.5",
     "rollup": "4.14.1",
     "rollup-plugin-generate-package-json": "3.2.0",

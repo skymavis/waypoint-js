@@ -3,20 +3,17 @@ import { estimateGas, getTransactionCount } from "viem/actions"
 import { ronin } from "viem/chains"
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 
-import {
-  HeadlessClientError,
-  HeadlessClientErrorCode,
-} from "../../../../headless/common/error/client"
+import { HeadlessClientError, HeadlessClientErrorCode } from "../../../common/error/client"
 import {
   PAYER_INFO,
   SupportedTransaction,
   type TransactionParams,
   UnsupportedTransaction,
-} from "../../../../headless/common/transaction/common"
+} from "../../../common/transaction/common"
 import {
   estimateFeesPerGas,
   EstimateFeesPerGasReturnType,
-} from "../../../../headless/common/transaction/estimate-fee-per-gas"
+} from "../../../common/transaction/estimate-fee-per-gas"
 import {
   DEFAULT_DATA,
   DEFAULT_VALUE,
@@ -29,17 +26,17 @@ import {
   validateFromAddress,
   validateToAddress,
   validateTransactionType,
-} from "../../../../headless/common/transaction/prepare-tx"
-import { isSupportedTransaction } from "../../../../headless/common/transaction/tx-type-check"
+} from "../../../common/transaction/prepare-tx"
+import { isSupportedTransaction } from "../../../common/transaction/tx-type-check"
 
 vi.mock("viem/actions", () => ({
   estimateGas: vi.fn(),
   getTransactionCount: vi.fn(),
 }))
-vi.mock("../../../../headless/common/transaction/estimate-fee-per-gas", () => ({
+vi.mock("../../../common/transaction/estimate-fee-per-gas", () => ({
   estimateFeesPerGas: vi.fn(),
 }))
-vi.mock("../../../../headless/common/transaction/tx-type-check", () => ({
+vi.mock("../../../common/transaction/tx-type-check", () => ({
   isSupportedTransaction: vi.fn(),
 }))
 
