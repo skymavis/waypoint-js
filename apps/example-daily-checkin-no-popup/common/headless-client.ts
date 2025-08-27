@@ -1,5 +1,5 @@
-import { HeadlessProvider } from "@sky-mavis/waypoint/headless/common"
-import { HeadlessV1Client } from "@sky-mavis/waypoint/headless/v1"
+import { HeadlessProvider } from "@sky-mavis/headless/common"
+import { HeadlessV1Client } from "@sky-mavis/headless/v1"
 import { createWalletClient, custom, getAddress, isAddressEqual } from "viem"
 
 import { saigon } from "./chain"
