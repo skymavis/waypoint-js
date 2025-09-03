@@ -357,9 +357,7 @@ async function migrateV1ToV2() {
 
 ## EIP-1193 Provider Support
 
-Both V1 and V2 cores can be wrapped with `HeadlessProvider` for standard Web3 integration.
-
-### Usage
+Both V1 and V2 cores can be wrapped with `HeadlessProvider` for standard Web3 integration:
 
 ```typescript
 import { HeadlessProvider } from '@sky-mavis/headless/common'
