@@ -37,7 +37,7 @@ User client shard is encrypted with user-recovery password and stored securely i
 ### Initialization
 
 ```typescript
-import { HeadlessCoreFactory, PreferMethod, HeadlessProvider } from '@sky-mavis/headless'
+import { HeadlessCoreFactory, PreferMethod } from '@sky-mavis/headless/common'
 import { ronin } from 'viem/chains'
 
 // Initialize V1 core
@@ -214,7 +214,7 @@ User client shard is stored securely in isolated compute environments without us
 ### Initialization
 
 ```typescript
-import { HeadlessCoreFactory, PreferMethod, HeadlessProvider } from '@sky-mavis/headless'
+import { HeadlessCoreFactory, PreferMethod } from '@sky-mavis/headless/common'
 import { ronin } from 'viem/chains'
 
 // Initialize V2 core
@@ -337,7 +337,7 @@ Migrate existing V1 wallet to V2 wallet while maintaining the same wallet addres
 ### Migration Process
 
 ```typescript
-import { HeadlessCoreFactory, PreferMethod } from '@sky-mavis/headless'
+import { HeadlessCoreFactory, PreferMethod } from '@sky-mavis/headless/common'
 
 async function migrateV1ToV2() {
   const v1ClientShard = 'your-v1-client-shard'
@@ -360,7 +360,7 @@ async function migrateV1ToV2() {
 Both V1 and V2 cores can be wrapped with `HeadlessProvider` for standard Web3 integration:
 
 ```typescript
-import { HeadlessProvider } from '@sky-mavis/headless'
+import { HeadlessProvider } from '@sky-mavis/headless/common'
 
 // Wrap any core (V1 or V2) with EIP-1193 provider
 const headlessProvider = new HeadlessProvider(headlessCore)
@@ -392,7 +392,7 @@ const txHash = await headlessProvider.request({
 Full TypeScript support with type-safe cores:
 
 ```typescript
-import { HeadlessCoreFactory, PreferMethod, HeadlessProvider } from '@sky-mavis/headless'
+import { HeadlessCoreFactory, PreferMethod, HeadlessProvider } from '@sky-mavis/headless/common'
 import { ronin } from 'viem/chains'
 
 // V1 core
