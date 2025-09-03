@@ -6,8 +6,8 @@ A headless client library for Sky Mavis Waypoint that provides programmatic acce
 
 This library provides two distinct versions for interacting with Ronin MPC wallets:
 
-- **[V1 (Recovery Password)](./v1/)** - MPC model allowing user client shard to be encrypted with user-recovery password and stored securely in MPC server
-- **[V2 (Passwordless)](./v2/)** - MPC model allowing user client shard to be stored securely in isolated compute environments without user-recovery password
+- **[V1 (Recovery Password)](#v1---recovery-password)** - MPC model allowing user client shard to be encrypted with user-recovery password and stored securely in MPC server
+- **[V2 (Passwordless)](#v2---passwordless)** - MPC model allowing user client shard to be stored securely in isolated compute environments without user-recovery password
 
 ## Installation
 
