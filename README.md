@@ -29,7 +29,7 @@
 | Name                                                                        | Features                                                                        |
 | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | [packages/waypoint](/packages/waypoint)                                     | SDK lets developers integrate with Ronin Waypoint seamlessly & easily.          |
-| [packages/waypoint/headless](/packages/waypoint/headless)                   | SDK lets developers interact with the Ronin Waypoint wallet without a pop-up.   |
+| [packages/headless](/packages/headless)                   | SDK lets developers interact with the Ronin Waypoint wallet without a pop-up.   |
 | [apps/playground](/apps/playground)                                         | Playground lets developers explore the various features of the Ronin Waypoint.  |
 | [apps/example-daily-checkin](/apps/example-daily-checkin)                   | Example of a daily check-in application.                                        |
 | [apps/example-daily-checkin-no-popup](/apps/example-daily-checkin-no-popup) | Example of a daily check-in application run on Telegram that uses headless SDK. |

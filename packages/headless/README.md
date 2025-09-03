@@ -1,6 +1,6 @@
 # @sky-mavis/headless
 
-A headless client library for Sky Mavis Waypoint that provides programmatic access to **Ronin MPC wallet operations** without requiring any interface.
+A headless client library for Sky Mavis Waypoint that provides programmatic access to **Ronin MPC wallet operations** without requiring any interface. Supports EIP-1193 provider standard for seamless Web3 integration.
 
 ## Overview
 
@@ -32,11 +32,12 @@ User client shard is encrypted with user-recovery password and stored securely i
 - Encrypted client shard with user-recovery password
 - Secure storage in MPC server
 - Full wallet interaction capabilities
+- EIP-1193 provider support
 
 ### Initialization
 
 ```typescript
-import { HeadlessCoreFactory, PreferMethod } from '@sky-mavis/headless'
+import { HeadlessCoreFactory, PreferMethod, HeadlessProvider } from '@sky-mavis/headless'
 import { ronin } from 'viem/chains'
 
 // Initialize V1 core
@@ -137,12 +138,13 @@ async function v1NewUserExample() {
     // Send transaction
     const transaction: TransactionParams = {
       to: '0x1234567890123456789012345678901234567890',
-      value: '1000000000000000000',
-      data: '0x'
+      value: '1000000000000000000'
     }
     
     const txResult = await v1Core.sendTransaction(transaction)
     console.log('Transaction Hash:', txResult.txHash)
+
+
   } catch (error) {
     console.error('Error:', error)
   }
@@ -183,8 +185,7 @@ async function v1ExistingUserExample() {
     // Send transaction
     const transaction: TransactionParams = {
       to: '0x1234567890123456789012345678901234567890',
-      value: '1000000000000000000',
-      data: '0x'
+      value: '1000000000000000000'
     }
     
     const txResult = await v1Core.sendTransaction(transaction)
@@ -208,11 +209,12 @@ User client shard is stored securely in isolated compute environments without us
 - Secure storage in isolated compute environments
 - Direct wallet interaction without any password
 - Migration support from V1
+- EIP-1193 provider support
 
 ### Initialization
 
 ```typescript
-import { HeadlessCoreFactory, PreferMethod } from '@sky-mavis/headless'
+import { HeadlessCoreFactory, PreferMethod, HeadlessProvider } from '@sky-mavis/headless'
 import { ronin } from 'viem/chains'
 
 // Initialize V2 core
@@ -285,11 +287,12 @@ async function v2NewUser() {
     
     const txResult = await v2Core.sendTransaction({
       to: '0x1234567890123456789012345678901234567890',
-      value: '2000000000000000000',
-      data: '0x'
+      value: '2000000000000000000'
     })
     
     console.log('Transaction Hash:', txResult.txHash)
+
+
   } catch (error) {
     console.error('Error:', error)
   }
@@ -313,8 +316,7 @@ async function v2ExistingUser() {
     
     const txResult = await v2Core.sendTransaction({
       to: '0x1234567890123456789012345678901234567890',
-      value: '1500000000000000000',
-      data: '0x'
+      value: '1500000000000000000'
     })
     
     console.log('Transaction Hash:', txResult.txHash)
@@ -336,7 +338,6 @@ Migrate existing V1 wallet to V2 wallet while maintaining the same wallet addres
 
 ```typescript
 import { HeadlessCoreFactory, PreferMethod } from '@sky-mavis/headless'
-import { ronin } from 'viem/chains'
 
 async function migrateV1ToV2() {
   const v1ClientShard = 'your-v1-client-shard'
@@ -354,12 +355,46 @@ async function migrateV1ToV2() {
 
 ---
 
+## EIP-1193 Provider Support
+
+Both V1 and V2 cores can be wrapped with `HeadlessProvider` for standard Web3 integration.
+
+### Usage
+
+```typescript
+import { HeadlessProvider } from '@sky-mavis/headless/common'
+
+// Wrap any core (V1 or V2) with EIP-1193 provider
+const headlessProvider = new HeadlessProvider(headlessCore)
+
+// Use standard Web3 methods
+const accounts = await headlessProvider.request({ method: 'eth_accounts' })
+const chainId = await headlessProvider.request({ method: 'eth_chainId' })
+
+// Sign message
+const signature = await headlessProvider.request({
+  method: 'personal_sign',
+  params: ['Hello World!', accounts[0]]
+})
+
+// Send transaction
+const txHash = await headlessProvider.request({
+  method: 'eth_sendTransaction',
+  params: [{
+    to: '0x1234567890123456789012345678901234567890',
+    value: '0x1BC16D674EC80000', // 2 RON in hex
+  }]
+})
+```
+
+---
+
 ## TypeScript Support
 
 Full TypeScript support with type-safe cores:
 
 ```typescript
-import { HeadlessCoreFactory, PreferMethod } from '@sky-mavis/headless'
+import { HeadlessCoreFactory, PreferMethod, HeadlessProvider } from '@sky-mavis/headless'
 import { ronin } from 'viem/chains'
 
 // V1 core
