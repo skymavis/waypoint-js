@@ -74,9 +74,9 @@ type TrackActionData =
       action_properties: ErrorProperties & PropertiesBase
     }
 
-type TrackData<E = unknown> = {
+type TrackData = {
   uuid: string
-  event: E
+  event: HeadlessEventName
   ref: string
   // * Format "YYYY-MM-DD HH:mm:ss"
   timestamp: string
@@ -88,12 +88,12 @@ type TrackData<E = unknown> = {
   user_id: string
 } & TrackActionData
 
-type TrackEvent<E = unknown> = {
+type TrackEvent = {
   type: "track"
-  data: TrackData<E>
+  data: TrackData
 }
 
-const track = <E = unknown>(events: TrackEvent<E>[], isProdEnv: boolean) => {
+const track = (events: TrackEvent[], isProdEnv: boolean) => {
   const headers = new Headers({})
   headers.set("Authorization", isProdEnv ? AUTHORIZATION_PROD : AUTHORIZATION_STAG)
   headers.set("Content-Type", CONTENT_TYPE)
