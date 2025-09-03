@@ -32,7 +32,7 @@ User client shard is encrypted with user-recovery password and stored securely i
 - Encrypted client shard with user-recovery password
 - Secure storage in MPC server
 - Full wallet interaction capabilities
-- EIP-1193 provider support
+- [EIP-1193 provider support](#eip-1193-provider-support)
 
 ### Initialization
 
@@ -209,7 +209,7 @@ User client shard is stored securely in isolated compute environments without us
 - Secure storage in isolated compute environments
 - Direct wallet interaction without any password
 - Migration support from V1
-- EIP-1193 provider support
+- [EIP-1193 provider support](#eip-1193-provider-support)
 
 ### Initialization
 
