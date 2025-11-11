@@ -1,6 +1,8 @@
+import { v4 as uuidv4 } from "uuid"
+
 import { CommunicateHelper } from "../common/communicate"
 import { RONIN_WAYPOINT_ORIGIN_PROD } from "../common/gate"
-import { openPopup } from "../common/popup"
+import { buildUrlWithQuery, openPopup } from "../common/popup"
 
 export type DepositConfig = {
   clientId: string
@@ -55,29 +57,36 @@ export class Deposit {
     this.communicateHelper = new CommunicateHelper(waypointOrigin)
   }
 
+  private getDepositUrlBase(): string {
+    return `${this.waypointOrigin}/client/${this.clientId}/deposit`
+  }
+
+  private buildQuery(state: string, params?: StartDepositParams) {
+    const { email, walletAddress, fiatCurrency, cryptoCurrency, fiatAmount } = params ?? {}
+    return {
+      state,
+      email,
+      environment: this.environment,
+      theme: this.theme,
+      origin: this.redirectUri,
+      redirect_uri: this.redirectUri,
+      wallet_address: walletAddress,
+      fiat_currency: fiatCurrency,
+      crypto_currency: cryptoCurrency,
+      fiat_amount: fiatAmount,
+    }
+  }
+
   start = async (params?: StartDepositParams) => {
     const response = await this.communicateHelper.sendRequest<OrderSuccessMessage>(state => {
-      const { email, walletAddress, fiatCurrency, cryptoCurrency, fiatAmount } = params ?? {}
-
-      const query = {
-        state,
-        email,
-        environment: this.environment,
-        theme: this.theme,
-        origin: this.redirectUri,
-        redirect_uri: this.redirectUri,
-        wallet_address: walletAddress,
-        fiat_currency: fiatCurrency,
-        crypto_currency: cryptoCurrency,
-        fiat_amount: fiatAmount,
-      }
+      const query = this.buildQuery(state, params)
 
       const popupConfig = {
         width: DEPOSIT_POPUP_WIDTH,
         height: DEPOSIT_POPUP_HEIGHT,
       }
 
-      return openPopup(`${this.waypointOrigin}/client/${this.clientId}/deposit`, query, popupConfig)
+      return openPopup(this.getDepositUrlBase(), query, popupConfig)
     })
 
     return {
@@ -88,5 +97,12 @@ export class Deposit {
       fiatAmount: response.fiat_amount,
       cryptoAmount: response.crypto_amount,
     }
+  }
+
+  dryRun = (params?: StartDepositParams): string => {
+    const state = uuidv4()
+    const query = this.buildQuery(state, params)
+    const url = buildUrlWithQuery(this.getDepositUrlBase(), query)
+    return url.toString()
   }
 }
