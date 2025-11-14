@@ -61,7 +61,7 @@ export class Deposit {
   private readonly clientId: string
   private readonly waypointOrigin: string
   private readonly redirectUri: string
-  private readonly origin: string
+  private readonly origin?: string
   private readonly environment?: string
   private readonly theme?: string
   private communicateHelper?: CommunicateHelper
@@ -71,7 +71,7 @@ export class Deposit {
     const {
       waypointOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
       redirectUri,
-      origin = typeof window !== "undefined" ? window.location.origin : "",
+      origin,
       clientId,
       environment,
       onramperOptions,
