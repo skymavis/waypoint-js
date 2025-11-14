@@ -25,6 +25,10 @@ export const buildUrlWithQuery = (inputUrl: string, query?: Record<string, UrlPa
       )}`
       return
     }
+    if (typeof value === "object") {
+      url.searchParams.set(key, JSON.stringify(value))
+      return
+    }
     url.searchParams.set(key, value.toString())
   })
   return url

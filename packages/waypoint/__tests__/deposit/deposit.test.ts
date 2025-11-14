@@ -64,8 +64,7 @@ describe("Deposit.start", () => {
       email: "user@example.com",
       environment: "development",
       theme: "dark",
-      origin: "https://app.example/callback",
-      redirect_uri: "https://app.example/callback",
+      redirect: "https://app.example/callback",
       wallet_address: "0x0000000000000000000000000000000000000001",
       fiat_currency: "USD",
       crypto_currency: "RON",
@@ -116,8 +115,7 @@ describe("Deposit.dryRun", () => {
     expect(params.get("email")).toBe("user@example.com")
     expect(params.get("environment")).toBe("development")
     expect(params.get("theme")).toBe("dark")
-    expect(params.get("origin")).toBe("https://app.example/callback")
-    expect(params.get("redirect_uri")).toBe("https://app.example/callback")
+    expect(params.get("redirect")).toBe("https://app.example/callback")
     expect(params.get("wallet_address")).toBe("0x0000000000000000000000000000000000000001")
     expect(params.get("fiat_currency")).toBe("USD")
     expect(params.get("crypto_currency")).toBe("RON")
