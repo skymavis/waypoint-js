@@ -32,9 +32,11 @@ type OrderSuccessMessage = {
   crypto_amount: number
 }
 
+type Address = string
+
 type OnramperStartParams = {
   networkWallets?: {
-    [key in OnlyCryptoNetworks]?: string
+    [key in OnlyCryptoNetworks]?: Address
   }
 }
 
