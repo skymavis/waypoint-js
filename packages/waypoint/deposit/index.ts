@@ -56,7 +56,6 @@ const DEPOSIT_POPUP_WIDTH = 500
 const DEPOSIT_POPUP_HEIGHT = 790
 
 export class Deposit {
-  private readonly onramperOptions?: OnramperBaseProps
   private readonly clientId: string
   private readonly waypointOrigin: string
   private readonly redirectUri: string
@@ -64,6 +63,7 @@ export class Deposit {
   private readonly environment?: string
   private readonly theme?: string
   private communicateHelper?: CommunicateHelper
+  private readonly onramperOptions?: OnramperBaseProps
 
   constructor(config: DepositConfig) {
     const {
@@ -72,6 +72,7 @@ export class Deposit {
       origin = typeof window !== "undefined" ? window.location.origin : "",
       clientId,
       environment,
+      onramperOptions,
       theme,
     } = config
 
@@ -81,7 +82,7 @@ export class Deposit {
     this.environment = environment
     this.theme = theme
     this.origin = origin
-    this.onramperOptions = "onramperOptions" in config ? config.onramperOptions : undefined
+    this.onramperOptions = onramperOptions
   }
 
   private getDepositUrlBase(): string {
