@@ -58,14 +58,13 @@ describe("Deposit.start", () => {
     const [url, query, popupCfg] = (openPopup as unknown as Mock).mock.calls[0]
 
     expect(url).toBe("https://waypoint.example/client/client-123/deposit")
-    expect(popupCfg).toStrictEqual({ width: 500, height: 728 })
+    expect(popupCfg).toStrictEqual({ width: 500, height: 790 })
     expect(query).toMatchObject({
       state: "state-123",
       email: "user@example.com",
       environment: "development",
       theme: "dark",
-      origin: "https://app.example/callback",
-      redirect_uri: "https://app.example/callback",
+      redirect: "https://app.example/callback",
       wallet_address: "0x0000000000000000000000000000000000000001",
       fiat_currency: "USD",
       crypto_currency: "RON",
@@ -104,7 +103,9 @@ describe("Deposit.dryRun", () => {
     const url = new URL(result)
     expect(url.origin).toBe("https://waypoint.example")
     expect(url.pathname).toBe("/client/client-123/deposit")
-    expect(url.hash).toBe("")
+    expect(url.hash).toBe(
+      "#data=%7B%22roninDepositOptions%22%3A%7B%7D%2C%22onramperOptions%22%3A%7B%7D%7D",
+    )
 
     const params = url.searchParams
     const state = params.get("state")
@@ -116,8 +117,7 @@ describe("Deposit.dryRun", () => {
     expect(params.get("email")).toBe("user@example.com")
     expect(params.get("environment")).toBe("development")
     expect(params.get("theme")).toBe("dark")
-    expect(params.get("origin")).toBe("https://app.example/callback")
-    expect(params.get("redirect_uri")).toBe("https://app.example/callback")
+    expect(params.get("redirect")).toBe("https://app.example/callback")
     expect(params.get("wallet_address")).toBe("0x0000000000000000000000000000000000000001")
     expect(params.get("fiat_currency")).toBe("USD")
     expect(params.get("crypto_currency")).toBe("RON")
