@@ -116,12 +116,14 @@ export class Deposit {
       fiat_currency: fiatCurrency,
       crypto_currency: cryptoCurrency,
       fiat_amount: fiatAmount,
-      ronin_deposit_options: {
-        ...roninDepositParams,
-      },
-      onramper_options: {
-        ...onramperParams,
-        ...this.onramperOptions,
+      data: {
+        roninDepositOptions: {
+          ...roninDepositParams,
+        },
+        onramperOptions: {
+          ...onramperParams,
+          ...this.onramperOptions,
+        },
       },
     }
   }

@@ -103,7 +103,9 @@ describe("Deposit.dryRun", () => {
     const url = new URL(result)
     expect(url.origin).toBe("https://waypoint.example")
     expect(url.pathname).toBe("/client/client-123/deposit")
-    expect(url.hash).toBe("")
+    expect(url.hash).toBe(
+      "#data=%7B%22roninDepositOptions%22%3A%7B%7D%2C%22onramperOptions%22%3A%7B%7D%7D",
+    )
 
     const params = url.searchParams
     const state = params.get("state")
