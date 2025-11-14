@@ -58,7 +58,7 @@ describe("Deposit.start", () => {
     const [url, query, popupCfg] = (openPopup as unknown as Mock).mock.calls[0]
 
     expect(url).toBe("https://waypoint.example/client/client-123/deposit")
-    expect(popupCfg).toStrictEqual({ width: 500, height: 728 })
+    expect(popupCfg).toStrictEqual({ width: 500, height: 790 })
     expect(query).toMatchObject({
       state: "state-123",
       email: "user@example.com",

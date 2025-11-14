@@ -4,7 +4,6 @@ import { CommunicateHelper } from "../common/communicate"
 import { RONIN_WAYPOINT_ORIGIN_PROD } from "../common/gate"
 import { buildUrlWithQuery, openPopup } from "../common/popup"
 
-type DepositServiceMode = "compound-deposit" | "ronin-deposit" | "onramper"
 type OnlyCryptoNetworks = "ronin" | "ethereum" | "bsc" | "polygon" | "arbitrum" | "base" | "solana"
 
 type OnramperBaseProps = {
@@ -14,22 +13,15 @@ type OnramperBaseProps = {
   redirectAtCheckout?: boolean
 }
 
-type DepositServiceConfigMap = {
-  [K in DepositServiceMode]: K extends "ronin-deposit"
-    ? Record<never, never>
-    : { onramperOptions?: OnramperBaseProps }
-}
-
-export type DepositConfig<T extends DepositServiceMode> = {
+export type DepositConfig = {
   clientId: string
   waypointOrigin?: string
   origin?: string
   redirectUri: string
   environment?: "development" | "production"
   theme?: "light" | "dark"
-} & {
-  [K in T]: { mode?: K } & DepositServiceConfigMap[K]
-}[T]
+  onramperOptions?: OnramperBaseProps
+}
 
 type OrderSuccessMessage = {
   provider: string
@@ -50,34 +42,20 @@ type RoninDepositStartParams = {
   walletAddress?: string
 }
 
-type StartDepositParamMap = {
-  [K in DepositServiceMode]: K extends "ronin-deposit"
-    ? {
-        roninDepositParams?: RoninDepositStartParams
-      }
-    : K extends "onramper"
-      ? {
-          onramperParams?: OnramperStartParams
-        }
-      : {
-          roninDepositParams?: RoninDepositStartParams
-          onramperParams?: OnramperStartParams
-        }
-}
-
-type StartDepositParams<T extends DepositServiceMode> = StartDepositParamMap[T] & {
+type StartDepositParams = {
   email?: string
   walletAddress?: string
   fiatCurrency?: string
   fiatAmount?: number
   cryptoCurrency?: string
+  onramperParams?: OnramperStartParams
+  roninDepositParams?: RoninDepositStartParams
 }
 
 const DEPOSIT_POPUP_WIDTH = 500
-const DEPOSIT_POPUP_HEIGHT = 770
+const DEPOSIT_POPUP_HEIGHT = 790
 
-export class Deposit<T extends DepositServiceMode> {
-  private readonly mode: T
+export class Deposit {
   private readonly onramperOptions?: OnramperBaseProps
   private readonly clientId: string
   private readonly waypointOrigin: string
@@ -87,7 +65,7 @@ export class Deposit<T extends DepositServiceMode> {
   private readonly theme?: string
   private communicateHelper?: CommunicateHelper
 
-  constructor(config: DepositConfig<T>) {
+  constructor(config: DepositConfig) {
     const {
       waypointOrigin = RONIN_WAYPOINT_ORIGIN_PROD,
       redirectUri,
@@ -95,7 +73,6 @@ export class Deposit<T extends DepositServiceMode> {
       clientId,
       environment,
       theme,
-      mode = "compound-deposit",
     } = config
 
     this.waypointOrigin = waypointOrigin
@@ -104,7 +81,6 @@ export class Deposit<T extends DepositServiceMode> {
     this.environment = environment
     this.theme = theme
     this.origin = origin
-    this.mode = mode as T
     this.onramperOptions = "onramperOptions" in config ? config.onramperOptions : undefined
   }
 
@@ -118,11 +94,16 @@ export class Deposit<T extends DepositServiceMode> {
     return this.communicateHelper
   }
 
-  private buildQuery(state: string, params?: StartDepositParams<T>) {
-    const { email, walletAddress, fiatCurrency, cryptoCurrency, fiatAmount } = params ?? {}
-    const roninDepositParams =
-      params && "roninDepositParams" in params ? params.roninDepositParams : undefined
-    const onramperParams = params && "onramperParams" in params ? params.onramperParams : undefined
+  private buildQuery(state: string, params?: StartDepositParams) {
+    const {
+      email,
+      walletAddress,
+      fiatCurrency,
+      cryptoCurrency,
+      fiatAmount,
+      roninDepositParams,
+      onramperParams,
+    } = params ?? {}
 
     return {
       state,
@@ -135,7 +116,6 @@ export class Deposit<T extends DepositServiceMode> {
       fiat_currency: fiatCurrency,
       crypto_currency: cryptoCurrency,
       fiat_amount: fiatAmount,
-      mode: this.mode,
       ronin_deposit_options: {
         ...roninDepositParams,
       },
@@ -146,7 +126,7 @@ export class Deposit<T extends DepositServiceMode> {
     }
   }
 
-  start = async (params?: StartDepositParams<T>) => {
+  start = async (params?: StartDepositParams) => {
     const response = await this.getCommunicateHelper().sendRequest<OrderSuccessMessage>(state => {
       const query = this.buildQuery(state, params)
 
@@ -168,7 +148,7 @@ export class Deposit<T extends DepositServiceMode> {
     }
   }
 
-  dryRun = (params?: StartDepositParams<T>): string => {
+  dryRun = (params?: StartDepositParams): string => {
     const state = uuidv4()
     const query = this.buildQuery(state, params)
     const url = buildUrlWithQuery(this.getDepositUrlBase(), query)
