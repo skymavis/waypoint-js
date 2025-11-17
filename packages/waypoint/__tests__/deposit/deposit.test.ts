@@ -51,7 +51,9 @@ describe("Deposit.start", () => {
       walletAddress: "0x0000000000000000000000000000000000000001",
       fiatCurrency: "USD",
       fiatAmount: 50,
-      cryptoCurrency: "RON",
+      roninDepositParams: {
+        cryptoCurrency: "RON",
+      },
     })
 
     expect(openPopup).toHaveBeenCalledTimes(1)
@@ -67,7 +69,6 @@ describe("Deposit.start", () => {
       redirect: "https://app.example/callback",
       wallet_address: "0x0000000000000000000000000000000000000001",
       fiat_currency: "USD",
-      crypto_currency: "RON",
       fiat_amount: 50,
     })
 
@@ -97,14 +98,16 @@ describe("Deposit.dryRun", () => {
       walletAddress: "0x0000000000000000000000000000000000000001",
       fiatCurrency: "USD",
       fiatAmount: 50,
-      cryptoCurrency: "RON",
+      roninDepositParams: {
+        cryptoCurrency: "RON",
+      },
     })
 
     const url = new URL(result)
     expect(url.origin).toBe("https://waypoint.example")
     expect(url.pathname).toBe("/client/client-123/deposit")
     expect(url.hash).toBe(
-      "#data=%7B%22roninDepositOptions%22%3A%7B%7D%2C%22onramperOptions%22%3A%7B%7D%7D",
+      "#data=%7B%22roninDepositOptions%22%3A%7B%22cryptoCurrency%22%3A%22RON%22%7D%2C%22onramperOptions%22%3A%7B%7D%7D",
     )
 
     const params = url.searchParams
@@ -120,7 +123,6 @@ describe("Deposit.dryRun", () => {
     expect(params.get("redirect")).toBe("https://app.example/callback")
     expect(params.get("wallet_address")).toBe("0x0000000000000000000000000000000000000001")
     expect(params.get("fiat_currency")).toBe("USD")
-    expect(params.get("crypto_currency")).toBe("RON")
     expect(params.get("fiat_amount")).toBe("50")
   })
 })

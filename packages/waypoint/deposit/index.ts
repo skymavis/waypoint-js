@@ -38,18 +38,19 @@ type OnramperStartParams = {
   networkWallets?: {
     [key in OnlyCryptoNetworks]?: Address
   }
+  cryptoCurrency?: string
 }
 
 type RoninDepositStartParams = {
   walletAddress?: string
+  cryptoCurrency?: string
 }
 
-type StartDepositParams = {
+export type StartDepositParams = {
   email?: string
   walletAddress?: string
   fiatCurrency?: string
   fiatAmount?: number
-  cryptoCurrency?: string
   onramperParams?: OnramperStartParams
   roninDepositParams?: RoninDepositStartParams
 }
@@ -98,15 +99,8 @@ export class Deposit {
   }
 
   private buildQuery(state: string, params?: StartDepositParams) {
-    const {
-      email,
-      walletAddress,
-      fiatCurrency,
-      cryptoCurrency,
-      fiatAmount,
-      roninDepositParams,
-      onramperParams,
-    } = params ?? {}
+    const { email, walletAddress, fiatCurrency, fiatAmount, roninDepositParams, onramperParams } =
+      params ?? {}
 
     return {
       state,
@@ -117,7 +111,6 @@ export class Deposit {
       redirect: this.redirectUri,
       wallet_address: walletAddress,
       fiat_currency: fiatCurrency,
-      crypto_currency: cryptoCurrency,
       fiat_amount: fiatAmount,
       data: {
         roninDepositOptions: {
