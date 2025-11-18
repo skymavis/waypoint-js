@@ -70,28 +70,36 @@ const result = await deposit.start({
 
 To start the deposit process, call the `start` method with the following optional parameters:
 
-| Field                | Type   | Required? | Description                                     |
-| -------------------- | ------ | --------- | ----------------------------------------------- |
-| `email`              | string | Optional  | The user's email address.                       |
-| `walletAddress`      | string | Optional  | The user's wallet address.                      |
-| `fiatCurrency`       | string | Optional  | The fiat currency to convert to cryptocurrency. |
-| `fiatAmount`         | number | Optional  | The amount of fiat currency.                    |
-| `onramperParams`     | object | Optional  | Onramper-specific parameters.                   |
-| `roninDepositParams` | object | Optional  | Ronin deposit-specific parameters.              |
+| Field                | Type   | Required? | Description                                                                         |
+| -------------------- | ------ | --------- | ----------------------------------------------------------------------------------- |
+| `email`              | string | Optional  | The user's email address.                                                           |
+| `walletAddress`      | string | Optional  | The user's wallet address.                                                          |
+| `fiatCurrency`       | string | Optional  | The fiat currency to convert to cryptocurrency.                                     |
+| `fiatAmount`         | number | Optional  | The amount of fiat currency.                                                        |
+| `cryptoCurrency`     | object | Optional  | The cryptocurrency to deposit. See [CryptoCurrency Object](#cryptocurrency-object). |
+| `onramperParams`     | object | Optional  | Onramper-specific parameters.                                                       |
+| `roninDepositParams` | object | Optional  | Ronin deposit-specific parameters.                                                  |
+
+#### CryptoCurrency Object
+
+| Field     | Type   | Required? | Description                                                                                     |
+| --------- | ------ | --------- | ----------------------------------------------------------------------------------------------- |
+| `network` | string | Required  | The blockchain network: `ronin`, `ethereum`, `bsc`, `polygon`, `arbitrum`, `base`, or `solana`. |
+| `symbol`  | string | Required  | The cryptocurrency symbol (e.g., `AXS`, `RON`, `ETH`).                                          |
+| `address` | string | Optional  | The token contract address on the specified network.                                            |
+| `chainId` | number | Optional  | The chain ID of the network.                                                                    |
 
 #### Onramper Parameters
 
-| Field            | Type   | Description                                                                                               |
-| ---------------- | ------ | --------------------------------------------------------------------------------------------------------- |
-| `networkWallets` | object | Wallet addresses for different networks (ronin, ethereum, bsc, polygon, arbitrum, base, solana).          |
-| `cryptoCurrency` | string | The cryptocurrency to deposit based on [Onramper ID](https://docs.onramper.com/docs/crypto-asset-support) |
+| Field            | Type   | Description                                                                                      |
+| ---------------- | ------ | ------------------------------------------------------------------------------------------------ |
+| `networkWallets` | object | Wallet addresses for different networks (ronin, ethereum, bsc, polygon, arbitrum, base, solana). |
 
 #### Ronin Deposit Parameters
 
-| Field            | Type   | Description                                  |
-| ---------------- | ------ | -------------------------------------------- |
-| `walletAddress`  | string | The user's wallet address for Ronin network. |
-| `cryptoCurrency` | string | The cryptocurrency to deposit.               |
+| Field           | Type   | Description                                  |
+| --------------- | ------ | -------------------------------------------- |
+| `walletAddress` | string | The user's wallet address for Ronin network. |
 
 ### Success Response
 
@@ -172,12 +180,15 @@ const deposit = new Deposit({
 
 const result = await deposit.start({
   email: 'user@example.com',
+  cryptoCurrency: {
+    network: 'ronin',
+    symbol: 'AXS',
+  },
   onramperParams: {
     networkWallets: {
       ronin: '0x1234567890123456789012345678901234567890',
       ethereum: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
     },
-    cryptoCurrency: 'axs-ronin',
   },
 })
 ```
