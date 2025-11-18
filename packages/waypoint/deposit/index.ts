@@ -5,7 +5,6 @@ import { RONIN_WAYPOINT_ORIGIN_PROD } from "../common/gate"
 import { buildUrlWithQuery, openPopup } from "../common/popup"
 
 type OnlyCryptoNetworks = "ronin" | "ethereum" | "bsc" | "polygon" | "arbitrum" | "base" | "solana"
-
 type OnramperBaseProps = {
   references?: {
     swapAction?: string
@@ -34,22 +33,28 @@ type OrderSuccessMessage = {
 
 type Address = string
 
+export type CryptoCurrency = {
+  network: OnlyCryptoNetworks
+  symbol: string
+  address?: string
+  chainId?: number
+}
+
 type OnramperStartParams = {
   networkWallets?: {
     [key in OnlyCryptoNetworks]?: Address
   }
-  cryptoCurrency?: string
 }
 
 type RoninDepositStartParams = {
   walletAddress?: string
-  cryptoCurrency?: string
 }
 
 export type StartDepositParams = {
   email?: string
   walletAddress?: string
   fiatCurrency?: string
+  cryptoCurrency?: CryptoCurrency
   fiatAmount?: number
   onramperParams?: OnramperStartParams
   roninDepositParams?: RoninDepositStartParams
@@ -99,8 +104,15 @@ export class Deposit {
   }
 
   private buildQuery(state: string, params?: StartDepositParams) {
-    const { email, walletAddress, fiatCurrency, fiatAmount, roninDepositParams, onramperParams } =
-      params ?? {}
+    const {
+      email,
+      walletAddress,
+      fiatCurrency,
+      fiatAmount,
+      cryptoCurrency,
+      roninDepositParams,
+      onramperParams,
+    } = params ?? {}
 
     return {
       state,
@@ -120,6 +132,7 @@ export class Deposit {
           ...onramperParams,
           ...this.onramperOptions,
         },
+        cryptoCurrency: cryptoCurrency,
       },
     }
   }
